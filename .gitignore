@@ -1,0 +1,11 @@
+# Directories
+.vs/
+Temp/
+
+# Visual Studio
+*.user
+
+# Fedora Frisbee
+FedoraFrisbee.sln
+FedoraFrisbee.vcxproj
+FedoraFrisbee.vcxproj.filters
