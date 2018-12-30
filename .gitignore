@@ -6,6 +6,5 @@ Temp/
 *.user
 
 # Fedora Frisbee
-FedoraFrisbee.sln
 FedoraFrisbee.vcxproj
 FedoraFrisbee.vcxproj.filters

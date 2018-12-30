@@ -13,7 +13,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "Vendor/Lib/GLFW"
 	
 project "FedoraFrisbee"
-	location "GameEngineOne"
+	location "Source"
 	kind "ConsoleApp"
 	language "C++"
 
@@ -40,7 +40,7 @@ project "FedoraFrisbee"
 	links
 	{
 		"GLFW",
-		"Vendor/Lib/GLFW/lib/Release/x64/glew32s.lib"
+		"Vendor/Lib/GLFW/lib/Release/x64/glew32s.lib",
 		"opengl32.lib"
 	}
 	filter "system:windows"
