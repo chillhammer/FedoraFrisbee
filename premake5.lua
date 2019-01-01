@@ -20,8 +20,8 @@ project "FedoraFrisbee"
 	targetdir ("Temp/Binary/" .. outputdir .. "/%{prj.name}")
 	objdir ("Temp/Intermediates/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "fedpch.h"
-	pchsource "Source/fedpch.cpp"
+	pchheader "FedPCH.h"
+	pchsource "Source/PCH/FedPCH.cpp"
 
 	files
 	{
@@ -32,6 +32,9 @@ project "FedoraFrisbee"
 	includedirs
 	{
 		"Source",
+		"Source/FedGame",
+		"Source/PCH",
+		"Source/Utility",
 		"Vendor/Lib/spdlog/include",
 		"Vendor/Lib/GLFW/include",
 		"Vendor/Lib/GLEW/include",
@@ -40,13 +43,18 @@ project "FedoraFrisbee"
 	links
 	{
 		"GLFW",
-		"Vendor/Lib/GLFW/lib/Release/x64/glew32s.lib",
+		"Vendor/Lib/GLEW/lib/Release/x64/glew32s.lib",
 		"opengl32.lib"
 	}
 	filter "system:windows"
 		cppdialect "C++17"
 		staticruntime "On"
 		systemversion "latest"
+
+		defines
+		{
+			"FED_PLATFORM_WINDOWS"
+		}
 
 	filter "configurations:Debug"
 		defines "FED_DEBUG"

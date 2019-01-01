@@ -1,0 +1,21 @@
+#pragma once
+
+#include <iostream>
+#include <memory>
+#include <utility>
+#include <algorithm>
+#include <functional>
+
+#include <string>
+#include <sstream>
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+
+// User-Made Headers
+#include <Logger/Log.h>
+
+
+#ifdef FED_PLATFORM_WINDOWS
+#include <Windows.h>
+#endif
