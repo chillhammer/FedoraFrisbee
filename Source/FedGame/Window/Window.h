@@ -1,6 +1,6 @@
 #pragma once
-#include "GLFW/glfw3.h"
-#include "GameEngineOne/Events/Event.h"
+#include <GLFW/glfw3.h>
+#include <EventSystem/Event.h>
 
 namespace Fed
 {

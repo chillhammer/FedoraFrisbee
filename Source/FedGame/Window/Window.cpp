@@ -1,6 +1,8 @@
 #include <FedPCH.h>
-#include "Window.h"
 #include <GLFW/glfw3.h>
+#include <EventSystem/Events/ApplicationEvent.h>
+
+#include "Window.h"
 
 static bool s_GLFWInitialized = false;
 static void GLFWErrorCallback(int error, const char* description) {
@@ -15,7 +17,7 @@ Fed::Window::Window(const WindowProps & props)
 	m_Data.Width = props.Width;
 	m_Data.Height = props.Height;
 
-	//GEO_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+	LOG("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
 	if (!s_GLFWInitialized) {
 		// TODO: glfwTerminate on system shutdown
@@ -30,7 +32,7 @@ Fed::Window::Window(const WindowProps & props)
 	glfwSetWindowUserPointer(m_Window, &m_Data);
 	SetVSync(true);
 
-	//Set GLFW callbacks
+	//Set GLFW callbacks, Event System
 
 	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
