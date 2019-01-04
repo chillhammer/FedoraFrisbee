@@ -1,6 +1,8 @@
 #include <FedPCH.h>
 #include <GLFW/glfw3.h>
 #include <EventSystem/Events/ApplicationEvent.h>
+#include <EventSystem/Events/KeyEvent.h>
+#include <EventSystem/Events/MouseEvent.h>
 
 #include "Window.h"
 

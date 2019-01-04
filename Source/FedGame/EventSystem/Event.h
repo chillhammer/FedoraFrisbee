@@ -1,16 +1,8 @@
 #pragma once
 #include <FedPCH.h>
 #include "EventType.h"
-
-// Macros for creating new events
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\
-								virtual EventType GetEventType() const override { return GetStaticType(); }\
-								virtual const char* GetName() const override { return #type; }
-
-#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
-
-
-namespace Fed {
+namespace Fed
+{
 	// An event is the data passed from Subject to Observer
 	class Event
 	{
@@ -31,4 +23,25 @@ namespace Fed {
 	{
 		return os << e.ToString();
 	}
+
+
+	// Macros for creating new events
+
+	#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() \
+										{ return EventType::##type; }\
+									virtual EventType GetEventType() const override \
+										{ return GetStaticType(); }\
+									virtual const char* GetName() const override \
+										{ return #type; }
+
+	#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override \
+									{ return category; }
+
+	#define EVENT_CLASS_SIMPLE(type, category) \
+		class type ## Event : public Event \
+		{ \
+		public: \
+			EVENT_CLASS_TYPE(WindowClose) \
+			EVENT_CLASS_CATEGORY(EventCategoryApplication) \
+		}
 }
