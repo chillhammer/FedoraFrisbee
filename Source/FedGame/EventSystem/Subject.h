@@ -8,11 +8,11 @@ namespace Fed
 	class Subject
 	{
 	protected:
-		std::list<class IObserver* const>	m_Observers;
+		std::list<class IObserver*>	m_Observers;
 
 	public:
-		void AddObserver(class IObserver* const observer);
-		void RemoveObserver(class IObserver* const observer);
+		void AddObserver(class IObserver* observer);
+		void RemoveObserver(class IObserver* observer);
 		void Notify(class Event* const event);
 	};
 }

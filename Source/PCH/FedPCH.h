@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+	Pre-compiled headers allow for faster compile times.
+	Place headers in here that are relatively stable.
+**/
+
 #include <iostream>
 #include <memory>
 #include <utility>

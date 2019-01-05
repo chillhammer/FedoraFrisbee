@@ -28,7 +28,7 @@ namespace Fed
 		using EventCallbackFn = std::function<void(Event&)>;
 
 		Window(const WindowProps& props);
-		~Window() {}
+		~Window();
 
 		void OnUpdate();
 
@@ -36,10 +36,11 @@ namespace Fed
 		unsigned int GetHeight() const { return m_Data.Height; }
 
 		// Attributes
+		// Must set Event Callback or will crash the game
 		virtual void SetEventCallback(const EventCallbackFn& callback) {
 			m_Data.EventCallback = callback;
 		};
-		virtual void SetVSync(bool enabled) = 0;
+		virtual void SetVSync(bool enabled) { m_Data.VSync = enabled; };
 		virtual bool IsVSync() const { return m_Data.VSync; }
 		GLFWwindow* m_Window;
 

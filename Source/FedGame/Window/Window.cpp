@@ -114,6 +114,12 @@ Fed::Window::Window(const WindowProps & props)
 
 }
 
+void Fed::Window::OnUpdate()
+{
+	glfwPollEvents();
+	glfwSwapBuffers(m_Window);
+}
+
 Fed::Window::~Window()
 {
 	glfwDestroyWindow(m_Window);
