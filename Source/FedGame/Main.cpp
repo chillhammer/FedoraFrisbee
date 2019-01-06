@@ -1,5 +1,9 @@
 #include <FedPCH.h>
 #include <Window/Window.h>
+
+// Decided on global variable rather than class
+bool Running = true;
+
 int main()
 {
 	Fed::Log::Init();
@@ -8,15 +12,15 @@ int main()
 	Fed::WindowProps props;
 	Fed::Window window(props);
 
-	while (true)
+	while (Running)
 	{
+		// App Render
 		glClearColor(1, 0, 1, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// Poll Window Events
 		window.OnUpdate();
 	}
-
-	std::cin.get();
 
 
 

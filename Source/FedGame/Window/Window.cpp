@@ -3,6 +3,7 @@
 #include <EventSystem/Events/ApplicationEvent.h>
 #include <EventSystem/Events/KeyEvent.h>
 #include <EventSystem/Events/MouseEvent.h>
+#include <EventSystem/EventType.h>
 
 #include "Window.h"
 
@@ -11,7 +12,7 @@ static void GLFWErrorCallback(int error, const char* description) {
 	LOG_ERROR("GLFW Error ({0}): {1}", error, description);
 }
 
-
+extern bool Running; // References because Window closes application
 
 Fed::Window::Window(const WindowProps & props)
 {
@@ -33,6 +34,8 @@ Fed::Window::Window(const WindowProps & props)
 	glfwMakeContextCurrent(m_Window);
 	glfwSetWindowUserPointer(m_Window, &m_Data);
 	SetVSync(true);
+
+	m_Data.EventCallback = OnEvent;
 
 	//Set GLFW callbacks, Event System
 
@@ -118,6 +121,20 @@ void Fed::Window::OnUpdate()
 {
 	glfwPollEvents();
 	glfwSwapBuffers(m_Window);
+}
+
+void Fed::Window::OnEvent(Event & e)
+{
+	switch (e.GetEventType())
+	{
+	case EventType::WindowClose:
+		Running = false;
+		break;
+	case EventType::WindowResize:
+		LOG("Window Resized: ({0}, {1})", "1280", "720");
+		//TODO: Create Event Dispatcher to handle appropriate events
+		break;
+	}
 }
 
 Fed::Window::~Window()

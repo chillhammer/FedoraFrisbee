@@ -52,5 +52,7 @@ namespace Fed
 			EventCallbackFn EventCallback;
 		};
 		WindowData m_Data;
+	private:
+		static void OnEvent(Event& e);
 	};
 }
