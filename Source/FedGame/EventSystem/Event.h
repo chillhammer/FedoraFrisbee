@@ -44,4 +44,19 @@ namespace Fed
 			EVENT_CLASS_TYPE(WindowClose) \
 			EVENT_CLASS_CATEGORY(EventCategoryApplication) \
 		}
+
+	// Namespace for functions dealing with Event
+	namespace Evnt
+	{
+		template<typename T>
+		bool Dispatch(Event& event, std::function<bool(T&)> func)
+		{
+			if (event.GetEventType() == T::GetStaticType())
+			{
+				event.Handled = func(*(T*)&m_Event);
+				return true;
+			}
+			return false;
+		}
+	}
 }
