@@ -35,10 +35,10 @@ Fed::Window::Window(const WindowProps & props)
 	glfwSetWindowUserPointer(m_Window, &m_Data);
 	SetVSync(true);
 
-	m_Data.EventCallback = OnEvent;
+	m_Data.EventCallback = std::bind(&Fed::Window::OnEvent, this, std::placeholders::_1);
 
 	//Set GLFW callbacks, Event System
-
+	#pragma region "GLFW Callbacks"
 	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		data.Width = width;
@@ -114,7 +114,7 @@ Fed::Window::Window(const WindowProps & props)
 		MouseMovedEvent event((float)xPos, (float)yPos);
 		data.EventCallback(event);
 	});
-
+	#pragma endregion
 }
 
 void Fed::Window::OnUpdate()
@@ -123,15 +123,22 @@ void Fed::Window::OnUpdate()
 	glfwSwapBuffers(m_Window);
 }
 
+bool Fed::Window::OnWindowResized(WindowResizeEvent & e)
+{
+	LOG("Window Resized: ({0}, {1})", "1280", "720");
+	return true;
+}
+
 void Fed::Window::OnEvent(Event & e)
 {
+	Evnt::Dispatch<WindowResizeEvent>(e, std::bind(&Fed::Window::OnWindowResized, this, std::placeholders::_1));
 	switch (e.GetEventType())
 	{
 	case EventType::WindowClose:
 		Running = false;
 		break;
 	case EventType::WindowResize:
-		LOG("Window Resized: ({0}, {1})", "1280", "720");
+		//LOG("Window Resized: ({0}, {1})", "1280", "720");
 		//TODO: Create Event Dispatcher to handle appropriate events
 		break;
 	}

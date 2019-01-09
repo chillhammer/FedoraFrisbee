@@ -24,9 +24,9 @@ namespace Fed
 		return os << e.ToString();
 	}
 
-
-	// Macros for creating new events
-
+	///////////////////////////////////////////////
+	// Macros for creating new events            //
+	///////////////////////////////////////////////
 	#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() \
 										{ return EventType::##type; }\
 									virtual EventType GetEventType() const override \
@@ -37,6 +37,7 @@ namespace Fed
 	#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override \
 									{ return category; }
 
+	// An event with no properties or special methods
 	#define EVENT_CLASS_SIMPLE(type, category) \
 		class type ## Event : public Event \
 		{ \
@@ -44,8 +45,9 @@ namespace Fed
 			EVENT_CLASS_TYPE(WindowClose) \
 			EVENT_CLASS_CATEGORY(EventCategoryApplication) \
 		}
-
-	// Namespace for functions dealing with Event
+	////////////////////////////////////////////////
+	// Namespace for functions dealing with Event //
+	////////////////////////////////////////////////
 	namespace Evnt
 	{
 		template<typename T>
@@ -53,7 +55,7 @@ namespace Fed
 		{
 			if (event.GetEventType() == T::GetStaticType())
 			{
-				event.Handled = func(*(T*)&m_Event);
+				event.Handled = func(*(T*)&event);
 				return true;
 			}
 			return false;

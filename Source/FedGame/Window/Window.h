@@ -1,6 +1,7 @@
 #pragma once
 #include <GLFW/glfw3.h>
 #include <EventSystem/Event.h>
+#include <EventSystem/Events/ApplicationEvent.h>
 
 namespace Fed
 {
@@ -42,6 +43,8 @@ namespace Fed
 		};
 		virtual void SetVSync(bool enabled) { m_Data.VSync = enabled; };
 		virtual bool IsVSync() const { return m_Data.VSync; }
+
+		bool OnWindowResized(WindowResizeEvent& e);
 		GLFWwindow* m_Window;
 
 		struct WindowData
@@ -53,6 +56,6 @@ namespace Fed
 		};
 		WindowData m_Data;
 	private:
-		static void OnEvent(Event& e);
+		void OnEvent(Event& e);
 	};
 }
