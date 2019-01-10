@@ -35,9 +35,9 @@ Fed::Window::Window(const WindowProps & props)
 	glfwSetWindowUserPointer(m_Window, &m_Data);
 	SetVSync(true);
 
-	m_Data.EventCallback = std::bind(&Fed::Window::OnEvent, this, std::placeholders::_1);
+	m_Data.EventCallback = EVENT_BIND_FN(Window, OnEvent);
 
-	//Set GLFW callbacks, Event System
+	// Set GLFW callbacks, Event System
 	#pragma region "GLFW Callbacks"
 	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -123,25 +123,22 @@ void Fed::Window::OnUpdate()
 	glfwSwapBuffers(m_Window);
 }
 
-bool Fed::Window::OnWindowResized(WindowResizeEvent & e)
-{
-	LOG("Window Resized: ({0}, {1})", "1280", "720");
-	return true;
-}
-
 void Fed::Window::OnEvent(Event & e)
 {
-	Evnt::Dispatch<WindowResizeEvent>(e, std::bind(&Fed::Window::OnWindowResized, this, std::placeholders::_1));
+	Evnt::Dispatch<WindowResizeEvent>(e, EVENT_BIND_FN(Window, OnWindowResized));
+	// Simple Event Handling
 	switch (e.GetEventType())
 	{
 	case EventType::WindowClose:
 		Running = false;
 		break;
-	case EventType::WindowResize:
-		//LOG("Window Resized: ({0}, {1})", "1280", "720");
-		//TODO: Create Event Dispatcher to handle appropriate events
-		break;
 	}
+}
+
+bool Fed::Window::OnWindowResized(WindowResizeEvent & e)
+{
+	LOG("Window Resized: ({0}, {1})", e.GetWidth(), e.GetHeight());
+	return true;
 }
 
 Fed::Window::~Window()
