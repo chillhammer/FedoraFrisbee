@@ -8,17 +8,33 @@
 
 namespace Fed
 {
-	class InputManager
+	class InputManager : IObserver
 	{
 	public:
 		static InputManager& Instance();
-		const Subject MouseMoved;
-		const Subject MouseClicked;
-		const Subject MouseReleased;
-		const Subject MouseScrolled;
-		const Subject KeyPressed;
-		const Subject KeyReleased;
+		Subject MouseMoved;
+		Subject MouseClicked;
+		Subject MouseReleased;
+		Subject MouseScrolled;
+		Subject KeyPressed;
+		Subject KeyReleased;
+
+		void Init();
+		void OnEvent(const Subject* subject, class Event& event);
+		Vector2 GetMousePosition() const;
 	private:
 		InputManager() {};
+
+		static const int MAX_KEYS = 1024;
+		bool m_KeysDown[MAX_KEYS];
+		Vector2 m_MousePosition;
+
+		// Callback functions
+		bool OnMouseMoved(MouseMovedEvent e);
+		bool OnMouseClicked(MouseButtonPressedEvent e);
+		bool OnMouseReleased(MouseButtonReleasedEvent e);
+		bool OnMouseScrolled(MouseScrolledEvent e);
+		bool OnKeyPressed(KeyPressedEvent e);
+		bool OnKeyReleased(KeyReleasedEvent e);
 	};
 }

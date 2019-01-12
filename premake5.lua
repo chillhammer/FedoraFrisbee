@@ -38,6 +38,7 @@ project "FedoraFrisbee"
 		"Vendor/Lib/spdlog/include",
 		"Vendor/Lib/GLFW/include",
 		"Vendor/Lib/GLEW/include",
+		"Vendor/Lib/GLM"
 	}
 
 	links

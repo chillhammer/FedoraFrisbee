@@ -8,6 +8,66 @@ namespace Fed
 		static InputManager input;
 		return input;
 	}
-	
+
+	// Allows to force Singleton lazy instantiation 
+	void InputManager::Init()
+	{
+		MouseMoved.AddObserver(this);
+		MouseClicked.AddObserver(this);
+		MouseReleased.AddObserver(this);
+		MouseScrolled.AddObserver(this);
+		KeyPressed.AddObserver(this);
+		KeyReleased.AddObserver(this);
+
+	}
+
+	// Handles Input Changes. Dispatch events to appropriate callback
+	void InputManager::OnEvent(const Subject * subject, Event & event)
+	{
+		Evnt::Dispatch<MouseMovedEvent>(event, EVENT_BIND_FN(InputManager, OnMouseMoved));
+		Evnt::Dispatch<MouseButtonPressedEvent>(event, EVENT_BIND_FN(InputManager, OnMouseClicked));
+		Evnt::Dispatch<MouseButtonReleasedEvent>(event, EVENT_BIND_FN(InputManager, OnMouseReleased));
+		Evnt::Dispatch<MouseScrolledEvent>(event, EVENT_BIND_FN(InputManager, OnMouseScrolled));
+		Evnt::Dispatch<KeyPressedEvent>(event, EVENT_BIND_FN(InputManager, OnKeyPressed));
+		Evnt::Dispatch<KeyReleasedEvent>(event, EVENT_BIND_FN(InputManager, OnKeyReleased));
+	}
+
+	// Getter for Mouse Position
+	Vector2 InputManager::GetMousePosition() const
+	{
+		return m_MousePosition;
+	}
+
+	#pragma region Callbacks
+	bool InputManager::OnMouseMoved(MouseMovedEvent e)
+	{
+		return false;
+	}
+
+	bool InputManager::OnMouseClicked(MouseButtonPressedEvent e)
+	{
+		return false;
+	}
+
+	bool InputManager::OnMouseReleased(MouseButtonReleasedEvent e)
+	{
+		return false;
+	}
+
+	bool InputManager::OnMouseScrolled(MouseScrolledEvent e)
+	{
+		return false;
+	}
+
+	bool InputManager::OnKeyPressed(KeyPressedEvent e)
+	{
+		return false;
+	}
+
+	bool InputManager::OnKeyReleased(KeyReleasedEvent e)
+	{
+		return false;
+	}
+	#pragma endregion
 
 }

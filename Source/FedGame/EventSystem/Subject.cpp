@@ -4,12 +4,12 @@
 
 namespace Fed
 {
-	void Subject::AddObserver(IObserver* observer)
+	void Subject::AddObserver(IObserver* const observer)
 	{
 		m_Observers.push_back(observer);
 	}
 
-	void Subject::RemoveObserver(IObserver* observer)
+	void Subject::RemoveObserver(IObserver* const observer)
 	{
 		m_Observers.remove(observer);
 	}

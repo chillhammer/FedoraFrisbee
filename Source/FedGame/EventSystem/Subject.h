@@ -12,8 +12,8 @@ namespace Fed
 
 	public:
 		Subject() {};
-		void AddObserver(class IObserver* observer);
-		void RemoveObserver(class IObserver* observer);
+		void AddObserver(class IObserver* const observer);
+		void RemoveObserver(class IObserver* const observer);
 		void Notify(class Event& event) const;
 	};
 

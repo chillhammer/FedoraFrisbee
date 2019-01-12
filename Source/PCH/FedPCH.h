@@ -18,6 +18,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
+// Custom Library
+#include <glm.hpp>
+
 // User-Made Headers
 #include <Logger/Log.h>
 
