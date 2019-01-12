@@ -7,6 +7,7 @@ namespace Fed
 	{
 		friend class Subject;
 	public:
-		virtual void OnEvent(Subject* const subject, class Event* const event) = 0;
+
+		virtual void OnEvent(const Subject* subject, class Event& event) = 0;
 	};
 }

@@ -4,6 +4,7 @@
 #include <EventSystem/Events/KeyEvent.h>
 #include <EventSystem/Events/MouseEvent.h>
 #include <EventSystem/EventType.h>
+#include <Input/InputManager.h>
 
 #include "Window.h"
 
@@ -125,12 +126,31 @@ void Fed::Window::OnUpdate()
 
 void Fed::Window::OnEvent(Event & e)
 {
+	// Resizing should be handled locally
 	Evnt::Dispatch<WindowResizeEvent>(e, EVENT_BIND_FN(Window, OnWindowResized));
-	// Simple Event Handling
+	// Event Handling, Call Appropriate Subject
 	switch (e.GetEventType())
 	{
 	case EventType::WindowClose:
 		Running = false;
+		break;
+	case EventType::MouseMoved:
+		Input.MouseMoved.Notify(e);
+		break;
+	case EventType::MouseButtonPressed:
+		Input.MouseClicked.Notify(e); 
+		break;
+	case EventType::MouseButtonReleased:
+		Input.MouseReleased.Notify(e);
+		break;
+	case EventType::MouseScrolled:
+		Input.MouseScrolled.Notify(e);
+		break;
+	case EventType::KeyPressed:
+		Input.KeyPressed.Notify(e);
+		break;
+	case EventType::KeyReleased:
+		Input.KeyReleased.Notify(e);
 		break;
 	}
 }
