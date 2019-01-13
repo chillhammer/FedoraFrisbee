@@ -3,6 +3,7 @@
 #include <EventSystem/Events/MouseEvent.h>
 #include <EventSystem/Events/KeyEvent.h>
 #include <EventSystem/Subject.h>
+#include "Keys.h"
 
 #define Input InputManager::Instance()
 
@@ -22,6 +23,7 @@ namespace Fed
 		void Init();
 		void OnEvent(const Subject* subject, class Event& event);
 		Vector2 GetMousePosition() const;
+		bool IsKeyDown(int keyCode);
 	private:
 		InputManager() {};
 

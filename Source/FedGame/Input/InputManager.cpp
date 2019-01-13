@@ -38,6 +38,11 @@ namespace Fed
 		return m_MousePosition;
 	}
 
+	bool InputManager::IsKeyDown(int keyCode)
+	{
+		return m_KeysDown[keyCode];
+	}
+
 	#pragma region Callbacks
 	bool InputManager::OnMouseMoved(MouseMovedEvent e)
 	{
@@ -61,11 +66,15 @@ namespace Fed
 
 	bool InputManager::OnKeyPressed(KeyPressedEvent e)
 	{
+		int key = e.GetKeyCode();
+		m_KeysDown[key] = true;
 		return false;
 	}
 
 	bool InputManager::OnKeyReleased(KeyReleasedEvent e)
 	{
+		int key = e.GetKeyCode();
+		m_KeysDown[key] = false;
 		return false;
 	}
 	#pragma endregion
