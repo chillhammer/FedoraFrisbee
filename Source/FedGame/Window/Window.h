@@ -1,8 +1,8 @@
 #pragma once
-#include <GLFW/glfw3.h>
 #include <EventSystem/Event.h>
 #include <EventSystem/Events/ApplicationEvent.h>
 
+struct GLFWwindow;
 namespace Fed
 {
 	struct WindowProps

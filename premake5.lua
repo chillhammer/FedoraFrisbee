@@ -26,7 +26,7 @@ project "FedoraFrisbee"
 	files
 	{
 		"Source/**.h",
-		"Source/**.cpp"
+		"Source/**.cpp",
 	}
 
 	includedirs
@@ -35,6 +35,7 @@ project "FedoraFrisbee"
 		"Source/FedGame",
 		"Source/PCH",
 		"Source/Utility",
+		"Source/Vendor",
 		"Vendor/Lib/spdlog/include",
 		"Vendor/Lib/GLFW/include",
 		"Vendor/Lib/GLEW/include",
@@ -54,7 +55,8 @@ project "FedoraFrisbee"
 
 		defines
 		{
-			"FED_PLATFORM_WINDOWS"
+			"FED_PLATFORM_WINDOWS",
+			"GLEW_STATIC"
 		}
 
 	filter "configurations:Debug"

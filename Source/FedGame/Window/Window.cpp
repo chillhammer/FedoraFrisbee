@@ -1,10 +1,11 @@
 #include <FedPCH.h>
-#include <GLFW/glfw3.h>
 #include <EventSystem/Events/ApplicationEvent.h>
 #include <EventSystem/Events/KeyEvent.h>
 #include <EventSystem/Events/MouseEvent.h>
 #include <EventSystem/EventType.h>
 #include <Input/InputManager.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include "Window.h"
 
@@ -33,6 +34,7 @@ Fed::Window::Window(const WindowProps & props)
 	}
 	m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_Window);
+	glewInit();
 	glfwSetWindowUserPointer(m_Window, &m_Data);
 	SetVSync(true);
 

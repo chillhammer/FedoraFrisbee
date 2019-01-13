@@ -13,15 +13,14 @@ namespace Fed
 	{
 	}
 
+	// Main game loop. State Machine contains in-game logic
 	void Game::Run()
 	{
 		UpdateDeltaTime();
 		m_StateMachine.Update();
 	}
 
-	/**
-		Delta time allows objects to move despite rendering lag
-	**/
+	// Delta time allows objects to move despite rendering lag
 	void Game::UpdateDeltaTime()
 	{
 		double currentTime = glfwGetTime();
