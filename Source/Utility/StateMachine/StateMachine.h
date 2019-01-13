@@ -15,12 +15,21 @@ namespace Fed
 		State<Owner>*   m_pGlobalState;
 
 	public:
-
+		// Standard Constructor
 		StateMachine(Owner* owner) :m_pOwner(owner),
 			m_pCurrentState(nullptr),
 			m_pPreviousState(nullptr),
 			m_pGlobalState(nullptr)
 		{
+		}
+
+		// Initial State Constructor
+		StateMachine(Owner* owner, State<Owner>* initial) : m_pOwner(owner),
+			m_pCurrentState(initial),
+			m_pPreviousState(nullptr),
+			m_pGlobalState(nullptr)
+		{
+			m_pCurrentState->Enter(owner);
 		}
 
 		virtual ~StateMachine() {}
@@ -43,7 +52,8 @@ namespace Fed
 		{
 			ASSERT(pNewState, "<StateMachine::ChangeState>:trying to assign null state to current");
 			m_pPreviousState = m_pCurrentState;
-			m_pCurrentState->Exit(m_pOwner);
+			if (m_pCurrentState)
+				m_pCurrentState->Exit(m_pOwner);
 			m_pCurrentState = pNewState;
 			m_pCurrentState->Enter(m_pOwner);
 		}

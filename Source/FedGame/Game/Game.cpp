@@ -1,13 +1,11 @@
 #include "FedPCH.h"
 #include "Game.h"
+#include "GameStates.h"
 #include <GLFW/glfw3.h>
 
 namespace Fed
 {
-
-
-
-	Game::Game() : m_StateMachine(this)
+	Game::Game() : m_StateMachine(this, Test::Instance())
 	{
 	}
 
