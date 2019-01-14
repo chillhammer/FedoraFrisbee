@@ -1,7 +1,7 @@
 #pragma once
-#include "Game.h"
+#include "GameManager.h"
 namespace Fed
 {
 	// Simple Test State to Experiment
-	STATE_CLASS_SINGLETON(Game, Test);
+	STATE_CLASS_SINGLETON(GameManager, Test);
 }

@@ -23,6 +23,7 @@
 
 // User-Made Headers
 #include <Logger/Log.h>
+#include <Macros.h>
 
 
 #ifdef FED_PLATFORM_WINDOWS

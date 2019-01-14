@@ -56,7 +56,8 @@ project "FedoraFrisbee"
 		defines
 		{
 			"FED_PLATFORM_WINDOWS",
-			"GLEW_STATIC"
+			"GLEW_STATIC",
+			"ENABLE_ASSERTS"
 		}
 
 	filter "configurations:Debug"

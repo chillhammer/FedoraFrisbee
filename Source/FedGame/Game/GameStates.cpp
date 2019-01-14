@@ -6,14 +6,14 @@
 namespace Fed
 {
 	// Test State
-	void Test::Enter(Game* owner)
+	void Test::Enter(GameManager* owner)
 	{
 		LOG("Entering Test State in Game Object");
 	}
-	void Test::Execute(Game* owner)
+	void Test::Execute(GameManager* owner)
 	{
 	}
-	void Test::Exit(Game* owner)
+	void Test::Exit(GameManager* owner)
 	{
 	}
 }

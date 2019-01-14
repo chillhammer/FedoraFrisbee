@@ -1,27 +1,38 @@
 #include "FedPCH.h"
-#include "Game.h"
+#include "GameManager.h"
 #include "GameStates.h"
 #include <GLFW/glfw3.h>
+#include "GameManager.h"
 
 namespace Fed
 {
-	Game::Game() : m_StateMachine(this, Test::Instance())
+	GameManager& GameManager::Instance()
+	{
+		static GameManager instance;
+		return instance;
+	}
+
+	void GameManager::Init()
 	{
 	}
 
-	Game::~Game()
+	GameManager::GameManager() : m_StateMachine(this, Test::Instance())
+	{
+	}
+
+	GameManager::~GameManager()
 	{
 	}
 
 	// Main game loop. State Machine contains in-game logic
-	void Game::Run()
+	void GameManager::Run()
 	{
 		UpdateDeltaTime();
 		m_StateMachine.Update();
 	}
 
 	// Delta time allows objects to move despite rendering lag
-	void Game::UpdateDeltaTime()
+	void GameManager::UpdateDeltaTime()
 	{
 		double currentTime = glfwGetTime();
 		m_DeltaTime = currentTime - m_LastUpdatedTime;

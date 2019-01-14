@@ -1,6 +1,4 @@
 #pragma once
-#include <FedPCH.h>
-#include <Macros.h>
 #include "spdlog/spdlog.h"
 
 namespace Fed {
