@@ -17,7 +17,7 @@ namespace Fed
 	}
 
 	// Draws onto screen
-	void Renderer::Draw(VertexArray & va, const IndexBuffer & ib, const Shader & shader) const
+	void Renderer::Draw(const VertexArray & va, const IndexBuffer & ib, const Shader & shader) const
 	{
 		shader.Bind();
 		va.Bind();
