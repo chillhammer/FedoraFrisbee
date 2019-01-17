@@ -21,6 +21,8 @@ typedef glm::mat4 Matrix4x4;
 typedef glm::quat Quaternion;
 typedef glm::vec4 Vector4;
 
+
+
 #pragma region Debug OpenGl Call
 #define GLCall(x)	\
 	GLClearError();	\

@@ -41,7 +41,7 @@ namespace Fed
 			Vector4 heading = glm::rotate(Rotation, front);
 			//LOG("Heading: {0}, {1}, {2}, {3}", heading.x, heading.y, heading.z, heading.w);
 			//LOG("Rotation: {0}, {1}, {2}, {3}", Rotation.x, Rotation.y, Rotation.z, Rotation.w);
-			return rotMat *  front;
+			return rotMat * side;
 		}
 		Vector3 GetSide() const
 		{

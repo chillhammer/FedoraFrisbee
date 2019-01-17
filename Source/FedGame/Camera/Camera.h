@@ -16,8 +16,11 @@ namespace Fed
 	private:
 		Transform m_Transform;
 		float m_Speed;
+		float m_Sensitivity;
 		Vector2 m_PrevMousePosition;
 		Vector2 m_DeltaMousePosition;
+		float m_Pitch;
+		float m_Yaw;
 		void UpdateMouseDelta();
 	private:
 		bool OnMouseMoved(MouseMovedEvent& e);

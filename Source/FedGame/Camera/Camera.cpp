@@ -6,7 +6,7 @@
 namespace Fed
 {
 	Camera::Camera()
-		: m_Speed(1.f)
+		: m_Speed(1.2f), m_Sensitivity(40.f)
 	{
 	}
 	void Camera::Init()
@@ -39,8 +39,16 @@ namespace Fed
 		Vector2 mouseDelta = m_DeltaMousePosition;
 		float deltaX = mouseDelta.x;
 		float deltaY = mouseDelta.y;
-		m_Transform.SetPitch(m_Transform.GetPitch() + deltaY * Game.DeltaTime());
-		m_Transform.SetYaw(m_Transform.GetYaw() + deltaX * Game.DeltaTime());
+
+		m_Pitch += deltaY * m_Sensitivity * Game.DeltaTime();
+		m_Yaw -= deltaX * m_Sensitivity * Game.DeltaTime();
+		m_Pitch = glm::clamp<float>(m_Pitch, -80, 80);
+
+		m_Transform.SetPitch(glm::radians(m_Pitch));
+		m_Transform.SetYaw(glm::radians(m_Yaw));
+		
+		LOG("Camera Pitch: {0} - Local: {1}", glm::degrees(m_Transform.GetPitch()), m_Pitch);
+		//LOG("Camera Yaw: {0} - Local: {1}", glm::degrees(m_Transform.GetYaw()), m_Yaw);
 		//LOG("DeltaY: {0}", deltaY);
 
 		//LOG("Camera Position: {0}, {1}, {2}", m_Transform.Position.x, m_Transform.Position.y, m_Transform.Position.z);
@@ -64,9 +72,16 @@ namespace Fed
 	// Helper Method
 	void Camera::UpdateMouseDelta()
 	{
+		const int DELTA_CAP = 100;
 		Vector2 delta = Input.GetMousePosition() - m_PrevMousePosition;
 		m_PrevMousePosition = Input.GetMousePosition();
-		m_DeltaMousePosition = delta;
+		if (glm::length2(delta) < DELTA_CAP * DELTA_CAP)
+			m_DeltaMousePosition = delta;
+		else
+		{
+			m_DeltaMousePosition = Vector2(0, 0);
+			LOG("DELTA CAP! {0}", glm::length(delta));
+		}
 	}
 
 	bool Camera::OnMouseMoved(MouseMovedEvent & e)
