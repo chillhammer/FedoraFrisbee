@@ -46,6 +46,8 @@ namespace Fed
 	#pragma region Callbacks
 	bool InputManager::OnMouseMoved(MouseMovedEvent e)
 	{
+		Vector2 newMousePos(e.GetX(), e.GetY());
+		m_MousePosition = newMousePos;
 		return false;
 	}
 

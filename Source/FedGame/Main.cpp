@@ -35,6 +35,7 @@ int main()
 	BoxMesh boxMesh;
 
 	glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f, -1.f, 1.f);
+	proj = glm::perspective(glm::radians(45.f), 640.f / 480.f, 0.f, 1000.f);
 
 
 	//Loads in Shader
@@ -60,7 +61,7 @@ int main()
 		Msh::DrawMesh(boxMesh, shader);
 
 		shader.Bind();
-		shader.SetUniformMat4f("u_MVP", proj);
+		shader.SetUniformMat4f("u_MVP", proj * Game.MainCamera.GetViewMatrix());
 
 		Game.Run();
 

@@ -18,6 +18,7 @@ namespace Fed
 	{
 		for (IObserver* observer : m_Observers)
 		{
+			// TODO: Maybe stop loop if event is Handled
 			observer->OnEvent(this, event);
 		}
 	}

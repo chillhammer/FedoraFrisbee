@@ -16,7 +16,7 @@ namespace Fed
 	{
 	}
 
-	GameManager::GameManager() : m_StateMachine(this, Test::Instance())
+	GameManager::GameManager() : m_StateMachine(this, Test::Instance()), MainCamera()
 	{
 	}
 
@@ -29,6 +29,11 @@ namespace Fed
 	{
 		UpdateDeltaTime();
 		m_StateMachine.Update();
+	}
+
+	float GameManager::DeltaTime() const
+	{
+		return m_DeltaTime;
 	}
 
 	// Delta time allows objects to move despite rendering lag

@@ -9,9 +9,11 @@ namespace Fed
 	void Test::Enter(GameManager* owner)
 	{
 		LOG("Entering Test State in Game Object");
+		owner->MainCamera.Init();
 	}
 	void Test::Execute(GameManager* owner)
 	{
+		owner->MainCamera.Update();
 	}
 	void Test::Exit(GameManager* owner)
 	{

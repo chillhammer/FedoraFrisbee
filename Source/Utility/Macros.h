@@ -2,6 +2,7 @@
 #include <Logger/Log.h>
 #include <vec3.hpp>
 #include <glm.hpp>
+#include <gtc/quaternion.hpp>
 #include <GL/glew.h>
 
 #ifdef ENABLE_ASSERTS
@@ -12,9 +13,13 @@
 
 #define BIT(x) (1 << x)
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 typedef glm::vec3 Vector3;
 typedef glm::vec2 Vector2;
 typedef glm::mat4 Matrix4x4;
+typedef glm::quat Quaternion;
+typedef glm::vec4 Vector4;
 
 #pragma region Debug OpenGl Call
 #define GLCall(x)	\
