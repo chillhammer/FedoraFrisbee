@@ -23,9 +23,6 @@ int main()
 	LOG("Initialized Logger");
 	Input.Init();
 
-	WindowProps props;
-	Window window(props);
-
 	Game.Init();
 
 
@@ -65,8 +62,6 @@ int main()
 
 		Game.Run();
 
-		// Poll Window Events
-		window.OnUpdate();
 	}
 
 

@@ -1,6 +1,7 @@
 #include <FedPCH.h>
 #include <Input/InputManager.h>
 #include <Game/GameManager.h>
+#include <GLFW/glfw3.h>
 #include "Camera.h"
 
 namespace Fed
@@ -13,6 +14,8 @@ namespace Fed
 	{
 		Input.MouseMoved.AddObserver(this);
 		m_PrevMousePosition = Input.GetMousePosition();
+		//glfwSetInputMode(Game.GetWindowPtr(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		
 	}
 
 	void Camera::Update()
@@ -35,20 +38,20 @@ namespace Fed
 		}
 
 		// Look Around
-		UpdateMouseDelta();
-		Vector2 mouseDelta = m_DeltaMousePosition;
-		float deltaX = mouseDelta.x;
-		float deltaY = mouseDelta.y;
+		float deltaX = m_DeltaMousePosition.x;
+		float deltaY = m_DeltaMousePosition.y;
 
 		m_Pitch += deltaY * m_Sensitivity * Game.DeltaTime();
 		m_Yaw -= deltaX * m_Sensitivity * Game.DeltaTime();
 		m_Pitch = glm::clamp<float>(m_Pitch, -80, 80);
+		if (m_Yaw > 360) m_Yaw = 0;
+		if (m_Yaw < 0) m_Yaw = 360;
 
 		m_Transform.SetPitch(glm::radians(m_Pitch));
 		m_Transform.SetYaw(glm::radians(m_Yaw));
 		
-		LOG("Camera Pitch: {0} - Local: {1}", glm::degrees(m_Transform.GetPitch()), m_Pitch);
-		//LOG("Camera Yaw: {0} - Local: {1}", glm::degrees(m_Transform.GetYaw()), m_Yaw);
+		//LOG("Camera Pitch: {0} - Local: {1}", glm::degrees(m_Transform.GetPitch()), m_Pitch);
+		LOG("Camera Yaw: {0} - Local: {1}", glm::degrees(m_Transform.GetYaw()), m_Yaw);
 		//LOG("DeltaY: {0}", deltaY);
 
 		//LOG("Camera Position: {0}, {1}, {2}", m_Transform.Position.x, m_Transform.Position.y, m_Transform.Position.z);
@@ -69,24 +72,12 @@ namespace Fed
 		//return m_Transform.GetMatrix();
 	}
 
-	// Helper Method
-	void Camera::UpdateMouseDelta()
-	{
-		const int DELTA_CAP = 100;
-		Vector2 delta = Input.GetMousePosition() - m_PrevMousePosition;
-		m_PrevMousePosition = Input.GetMousePosition();
-		if (glm::length2(delta) < DELTA_CAP * DELTA_CAP)
-			m_DeltaMousePosition = delta;
-		else
-		{
-			m_DeltaMousePosition = Vector2(0, 0);
-			LOG("DELTA CAP! {0}", glm::length(delta));
-		}
-	}
-
+	static int DELTA_CAP = 100;
 	bool Camera::OnMouseMoved(MouseMovedEvent & e)
 	{
 		//LOG("Camera: Mouse Moved: {0}, {1}", e.GetX(), e.GetY());
+		m_DeltaMousePosition = Vector2( e.GetX() - DELTA_CAP, e.GetY() - DELTA_CAP);
+		glfwSetCursorPos(Game.GetWindowPtr(), DELTA_CAP, DELTA_CAP);
 		return false;
 	}
 

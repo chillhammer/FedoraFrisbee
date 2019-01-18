@@ -15,8 +15,9 @@ namespace Fed
 	void GameManager::Init()
 	{
 	}
-
-	GameManager::GameManager() : m_StateMachine(this, Test::Instance()), MainCamera()
+	static WindowProps props;
+	GameManager::GameManager() : m_StateMachine(this, Test::Instance()), MainCamera(),
+		m_Window(props)
 	{
 	}
 
@@ -29,11 +30,19 @@ namespace Fed
 	{
 		UpdateDeltaTime();
 		m_StateMachine.Update();
+
+		// Poll Window Events
+		m_Window.OnUpdate();
 	}
 
 	float GameManager::DeltaTime() const
 	{
 		return m_DeltaTime;
+	}
+
+	GLFWwindow * GameManager::GetWindowPtr() const
+	{
+		return m_Window.m_Window;
 	}
 
 	// Delta time allows objects to move despite rendering lag
