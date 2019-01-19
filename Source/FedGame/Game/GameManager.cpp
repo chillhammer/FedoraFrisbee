@@ -16,8 +16,8 @@ namespace Fed
 	{
 	}
 	static WindowProps props;
-	GameManager::GameManager() : m_StateMachine(this, Test::Instance()), MainCamera(),
-		m_Window(props)
+	GameManager::GameManager() : m_Window(props),
+		MainCamera(), m_StateMachine(this, Test::Instance())
 	{
 	}
 
@@ -40,9 +40,9 @@ namespace Fed
 		return m_DeltaTime;
 	}
 
-	GLFWwindow * GameManager::GetWindowPtr() const
+	const Window& GameManager::GetWindow() const
 	{
-		return m_Window.m_Window;
+		return m_Window;
 	}
 
 	// Delta time allows objects to move despite rendering lag

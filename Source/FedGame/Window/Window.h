@@ -41,8 +41,11 @@ namespace Fed
 		virtual void SetEventCallback(const EventCallbackFn& callback) {
 			m_Data.EventCallback = callback;
 		};
-		virtual void SetVSync(bool enabled) { m_Data.VSync = enabled; };
-		virtual bool IsVSync() const { return m_Data.VSync; }
+		void SetVSync(bool enabled) { m_Data.VSync = enabled; };
+		bool IsVSync() const { return m_Data.VSync; }
+
+		void SetCursorEnabled(bool enabled) const;
+		void SetCursorPosition(float x, float y) const;
 
 		bool OnWindowResized(WindowResizeEvent& e);
 		GLFWwindow* m_Window;

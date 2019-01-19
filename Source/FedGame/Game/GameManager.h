@@ -16,19 +16,21 @@ namespace Fed
 		void Init();
 		void Run();
 		float DeltaTime() const;
-		GLFWwindow* GetWindowPtr() const;
+		const Window& GetWindow() const;
 		~GameManager();
-	public:
-		Camera MainCamera;
 	private:
 		GameManager();
 		void UpdateDeltaTime();
 
 		// Properties
-		StateMachine<GameManager> m_StateMachine;
 		double m_LastUpdatedTime = 0;
 		double m_DeltaTime = 0;
-		Window m_Window;
 
+		// Big Classes - in Initialized Order
+		Window m_Window;
+	public:
+		Camera MainCamera;
+	private:
+		StateMachine<GameManager> m_StateMachine;
 	};
 }

@@ -7,19 +7,20 @@
 namespace Fed
 {
 	Camera::Camera()
-		: m_Speed(1.2f), m_Sensitivity(40.f)
+		: m_Speed(1.4f), m_Sensitivity(40.f)
 	{
+		m_Transform.Position.z = -2.f;
 	}
 	void Camera::Init()
 	{
+		LOG("Initialized Camera");
 		Input.MouseMoved.AddObserver(this);
 		m_PrevMousePosition = Input.GetMousePosition();
-		//glfwSetInputMode(Game.GetWindowPtr(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-		
 	}
 
 	void Camera::Update()
 	{
+		// First Person Movement
 		if (Input.IsKeyDown(KEY_W))
 		{
 			m_Transform.Position += m_Transform.GetHeading() * m_Speed * Game.DeltaTime();
@@ -36,23 +37,37 @@ namespace Fed
 		{
 			m_Transform.Position -= m_Transform.GetSide() * m_Speed * Game.DeltaTime();
 		}
+		if (Input.IsKeyDown(KEY_LEFT_SHIFT))
+		{
+			m_Transform.Position -= Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTime();
+		}
+		if (Input.IsKeyDown(KEY_SPACE))
+		{
+			m_Transform.Position += Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTime();
+		}
+
 
 		// Look Around
 		float deltaX = m_DeltaMousePosition.x;
 		float deltaY = m_DeltaMousePosition.y;
 
-		m_Pitch += deltaY * m_Sensitivity * Game.DeltaTime();
-		m_Yaw -= deltaX * m_Sensitivity * Game.DeltaTime();
-		m_Pitch = glm::clamp<float>(m_Pitch, -80, 80);
+		m_Pitch -= deltaY * m_Sensitivity * Game.DeltaTime();
+		m_Yaw += deltaX * m_Sensitivity * Game.DeltaTime();
+		m_Pitch = glm::clamp<float>(m_Pitch, -89, 89);
 		if (m_Yaw > 360) m_Yaw = 0;
 		if (m_Yaw < 0) m_Yaw = 360;
 
-		m_Transform.SetPitch(glm::radians(m_Pitch));
-		m_Transform.SetYaw(glm::radians(m_Yaw));
+		m_Transform.SetPitch(m_Pitch);
+		m_Transform.SetYaw(m_Yaw);
+
+		// Reset Delta Movement
+		m_DeltaMousePosition = Vector2(0, 0);
+
+		// Invisible Cursor
+		Game.GetWindow().SetCursorEnabled(false);
 		
-		//LOG("Camera Pitch: {0} - Local: {1}", glm::degrees(m_Transform.GetPitch()), m_Pitch);
-		LOG("Camera Yaw: {0} - Local: {1}", glm::degrees(m_Transform.GetYaw()), m_Yaw);
-		//LOG("DeltaY: {0}", deltaY);
+		//LOG("Camera Pitch: {0} - Local: {1}", m_Transform.GetPitch(), m_Pitch);
+		//LOG("Camera Yaw: {0} - Local: {1}", m_Transform.GetYaw(), m_Yaw);
 
 		//LOG("Camera Position: {0}, {1}, {2}", m_Transform.Position.x, m_Transform.Position.y, m_Transform.Position.z);
 		//LOG("Camera Heading: {0}, {1}, {2}", m_Transform.GetHeading().x, m_Transform.GetHeading().y, m_Transform.GetHeading().z);
@@ -69,15 +84,15 @@ namespace Fed
 	Matrix4x4 Camera::GetViewMatrix()
 	{
 		return glm::lookAt(m_Transform.Position, m_Transform.Position + m_Transform.GetHeading(), m_Transform.GetUp());
-		//return m_Transform.GetMatrix();
 	}
 
-	static int DELTA_CAP = 100;
+	static int DELTA_CAP = 300;
+	// Sets delta mouse movement
 	bool Camera::OnMouseMoved(MouseMovedEvent & e)
 	{
 		//LOG("Camera: Mouse Moved: {0}, {1}", e.GetX(), e.GetY());
 		m_DeltaMousePosition = Vector2( e.GetX() - DELTA_CAP, e.GetY() - DELTA_CAP);
-		glfwSetCursorPos(Game.GetWindowPtr(), DELTA_CAP, DELTA_CAP);
+		Game.GetWindow().SetCursorPosition(DELTA_CAP, DELTA_CAP);
 		return false;
 	}
 

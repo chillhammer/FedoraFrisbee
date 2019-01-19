@@ -38,6 +38,8 @@ Fed::Window::Window(const WindowProps & props)
 	glfwSetWindowUserPointer(m_Window, &m_Data);
 	SetVSync(true);
 
+	
+
 	m_Data.EventCallback = EVENT_BIND_FN(Window, OnEvent);
 
 	// Set GLFW callbacks, Event System
@@ -155,6 +157,23 @@ void Fed::Window::OnEvent(Event & e)
 		Input.KeyReleased.Notify(e);
 		break;
 	}
+}
+
+void Fed::Window::SetCursorEnabled(bool enabled) const
+{
+	if (!enabled)
+	{
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	}
+	else
+	{
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+}
+
+void Fed::Window::SetCursorPosition(float x, float y) const
+{
+	glfwSetCursorPos(m_Window, x, y);
 }
 
 bool Fed::Window::OnWindowResized(WindowResizeEvent & e)

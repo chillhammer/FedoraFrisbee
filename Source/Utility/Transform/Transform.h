@@ -1,6 +1,7 @@
 #pragma once
 #include <FedPCH.h>
 #include <gtx/quaternion.hpp>
+#include <gtx/euler_angles.hpp>
 
 /**
 	Data related to change runtime rendering/physics.
@@ -10,11 +11,12 @@ namespace Fed
 {
 	Vector3 GetEulerAngles(const Quaternion& quat);
 	Quaternion ConvertEulerToQuaternion(const Vector3& eulerAngles);
+	float ProcessAngle(float angle);
 
 	struct Transform
 	{
 		Vector3 Position;
-		Quaternion Rotation;
+		Vector3 Rotation;
 		Vector3 Scale;
 
 		Matrix4x4 GetMatrix() const
@@ -23,7 +25,7 @@ namespace Fed
 			glm::translate(posMat, Position);
 
 			Matrix4x4 rotMat(1.f);
-			glm::toMat4(Rotation);
+			rotMat = glm::eulerAngleXYZ(Rotation.x, Rotation.y, Rotation.z);
 
 			Matrix4x4 scaleMat(1.f);
 			glm::scale(scaleMat, Scale);
@@ -36,12 +38,15 @@ namespace Fed
 			Vector4 up(0.f, 1.f, 0.f, 0.f);
 			Vector4 side(0.f, 0.f, 1.f, 0.f);
 			Matrix4x4 rotMat(1.f);
-			rotMat = glm::toMat4(Rotation);
-			//rotMat = glm::rotate(GetPitch(), front, );
-			Vector4 heading = glm::rotate(Rotation, front);
+
+			Vector3 heading;
+			heading.x = cos(glm::radians(GetYaw())) * cos(glm::radians(GetPitch()));
+			heading.y = sin(glm::radians(GetPitch()));
+			heading.z = sin(glm::radians(GetYaw())) * cos(glm::radians(GetPitch()));
+			heading = glm::normalize(heading);
 			//LOG("Heading: {0}, {1}, {2}, {3}", heading.x, heading.y, heading.z, heading.w);
 			//LOG("Rotation: {0}, {1}, {2}, {3}", Rotation.x, Rotation.y, Rotation.z, Rotation.w);
-			return rotMat * side;
+			return heading;
 		}
 		Vector3 GetSide() const
 		{
@@ -55,34 +60,30 @@ namespace Fed
 
 		float GetPitch() const
 		{
-			return GetEulerAngles(Rotation).x;
+			return Rotation.x;
 		}
 		float GetYaw() const
 		{
-			return GetEulerAngles(Rotation).y;
+			return Rotation.y;
 		}
 		float GetRoll() const
 		{
-			return GetEulerAngles(Rotation).z;
+			return Rotation.z;
 		}
 		void SetPitch(float angle)
 		{
-			//LOG("Pitch being set to: {0}", angle);
-			Vector3 eulers = GetEulerAngles(Rotation);
-			eulers.x = angle;
-			Rotation = ConvertEulerToQuaternion(eulers);
+			angle = ProcessAngle(angle);
+			Rotation.x = angle;
 		}
 		void SetYaw(float angle)
 		{
-			Vector3 eulers = GetEulerAngles(Rotation);
-			eulers.y = angle;
-			Rotation = ConvertEulerToQuaternion(eulers);
+			angle = ProcessAngle(angle);
+			Rotation.y = angle;
 		}
 		void SetRoll(float angle)
 		{
-			Vector3 eulers = GetEulerAngles(Rotation);
-			eulers.z = angle;
-			Rotation = ConvertEulerToQuaternion(eulers);
+			angle = ProcessAngle(angle);
+			Rotation.z = angle;
 		}
 	};
 }
