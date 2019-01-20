@@ -25,10 +25,6 @@ int main()
 
 	Game.Init();
 
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	BoxMesh boxMesh;
 
 	glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f, -1.f, 1.f);
@@ -39,9 +35,8 @@ int main()
 	Shader shader("Shaders/Basic.shader");
 	shader.Bind();
 	shader.SetUniform4f("u_Color", 0.6, 0.2, 0.2, 1.0);
-	shader.SetUniformMat4f("u_MVP", proj);
 
-	Texture texture("../Assets/Textures/golemn.png");
+	Texture texture("../Assets/Textures/wood.png");
 	texture.Bind();
 	shader.SetUniform1i("u_Texture", 0);
 

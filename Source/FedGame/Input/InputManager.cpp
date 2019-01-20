@@ -18,7 +18,7 @@ namespace Fed
 		MouseScrolled.AddObserver(this);
 		KeyPressed.AddObserver(this);
 		KeyReleased.AddObserver(this);
-
+		m_MousePosition = Vector2(0, 0);
 	}
 
 	// Handles Input Changes. Dispatch events to appropriate callback
@@ -36,6 +36,12 @@ namespace Fed
 	Vector2 InputManager::GetMousePosition() const
 	{
 		return m_MousePosition;
+	}
+
+	// Only changes local variable, not actual cursor position
+	void InputManager::SetMousePosition(Vector2 mousePos)
+	{
+		m_MousePosition = mousePos;
 	}
 
 	bool InputManager::IsKeyDown(int keyCode)

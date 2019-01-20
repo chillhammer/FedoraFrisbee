@@ -7,9 +7,9 @@
 namespace Fed
 {
 	Camera::Camera()
-		: m_Speed(1.4f), m_Sensitivity(40.f)
+		: m_Speed(1.4f), m_Sensitivity(40.f), m_Yaw(270)
 	{
-		m_Transform.Position.z = -2.f;
+		m_Transform.Position.z = 2.f;
 	}
 	void Camera::Init()
 	{
@@ -54,8 +54,6 @@ namespace Fed
 		m_Pitch -= deltaY * m_Sensitivity * Game.DeltaTime();
 		m_Yaw += deltaX * m_Sensitivity * Game.DeltaTime();
 		m_Pitch = glm::clamp<float>(m_Pitch, -89, 89);
-		if (m_Yaw > 360) m_Yaw = 0;
-		if (m_Yaw < 0) m_Yaw = 360;
 
 		m_Transform.SetPitch(m_Pitch);
 		m_Transform.SetYaw(m_Yaw);
@@ -91,7 +89,14 @@ namespace Fed
 	bool Camera::OnMouseMoved(MouseMovedEvent & e)
 	{
 		//LOG("Camera: Mouse Moved: {0}, {1}", e.GetX(), e.GetY());
-		m_DeltaMousePosition = Vector2( e.GetX() - DELTA_CAP, e.GetY() - DELTA_CAP);
+		if (Input.GetMousePosition() != Vector2(0, 0)) // Initial Mouse Delta Jump Ignored
+		{
+			m_DeltaMousePosition = Vector2(e.GetX() - DELTA_CAP, e.GetY() - DELTA_CAP);
+		}
+		else
+		{
+			LOG("Inital Camera Jump");
+		}
 		Game.GetWindow().SetCursorPosition(DELTA_CAP, DELTA_CAP);
 		return false;
 	}

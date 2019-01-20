@@ -31,6 +31,9 @@ Fed::Window::Window(const WindowProps & props)
 		glfwSetErrorCallback(GLFWErrorCallback);
 
 		s_GLFWInitialized = true;
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	}
 	m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_Window);
@@ -38,7 +41,14 @@ Fed::Window::Window(const WindowProps & props)
 	glfwSetWindowUserPointer(m_Window, &m_Data);
 	SetVSync(true);
 
-	
+	GLCall(glEnable(GL_BLEND));
+	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+	GLCall(glEnable(GL_DEPTH_TEST));
+	GLCall(glEnable(GL_CULL_FACE));
+	GLCall(glDepthMask(GL_TRUE));
+	GLCall(glDepthFunc(GL_LEQUAL));
+	GLCall(glDepthRange(0.f, 1.f));
 
 	m_Data.EventCallback = EVENT_BIND_FN(Window, OnEvent);
 
@@ -174,6 +184,7 @@ void Fed::Window::SetCursorEnabled(bool enabled) const
 void Fed::Window::SetCursorPosition(float x, float y) const
 {
 	glfwSetCursorPos(m_Window, x, y);
+	Input.SetMousePosition(Vector2(x, y));
 }
 
 bool Fed::Window::OnWindowResized(WindowResizeEvent & e)

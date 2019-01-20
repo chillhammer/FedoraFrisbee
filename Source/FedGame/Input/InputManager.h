@@ -23,6 +23,7 @@ namespace Fed
 		void Init();
 		void OnEvent(const Subject* subject, class Event& event);
 		Vector2 GetMousePosition() const;
+		void SetMousePosition(Vector2 mousePos);
 		bool IsKeyDown(int keyCode);
 	private:
 		InputManager() {};
