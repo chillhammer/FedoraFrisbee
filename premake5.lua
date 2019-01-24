@@ -39,13 +39,15 @@ project "FedoraFrisbee"
 		"Vendor/Lib/spdlog/include",
 		"Vendor/Lib/GLFW/include",
 		"Vendor/Lib/GLEW/include",
-		"Vendor/Lib/GLM"
+		"Vendor/Lib/GLM",
+		"Vendor/Lib/Assimp/include"
 	}
 
 	links
 	{
 		"GLFW",
 		"Vendor/Lib/GLEW/lib/Release/x64/glew32s.lib",
+		"Vendor/Lib/Assimp/lib/assimpd.lib",
 		"opengl32.lib"
 	}
 	filter "system:windows"
