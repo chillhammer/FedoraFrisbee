@@ -1,5 +1,6 @@
 #pragma once
 #include <Graphics/Mesh/Mesh.h>
+#include <Graphics/OpenGL/Texture.h>
 namespace Fed
 {
 	/**
@@ -8,7 +9,7 @@ namespace Fed
 	class BoxMesh : public Mesh
 	{
 	public:
-		BoxMesh();
+		BoxMesh(Texture& texture);
 		~BoxMesh();
 
 	private:

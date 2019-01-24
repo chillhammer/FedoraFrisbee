@@ -56,8 +56,8 @@ namespace Fed
 	};
 	static int sides = 6;
 
-	BoxMesh::BoxMesh() 
-		: Mesh(positions, sizeof(float) * 5 * (4 * sides), indicies, (6 * sides))
+	BoxMesh::BoxMesh(Texture& texture) 
+		: Mesh(positions, sizeof(float) * 5 * (4 * sides), indicies, (6 * sides), texture)
 	{
 	}
 

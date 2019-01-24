@@ -4,9 +4,10 @@
 namespace Fed
 {
 	Mesh::Mesh(const void* vertexData, unsigned int vertexBufferSize, 
-		const unsigned int* indexData, unsigned int indexSize)
+		const unsigned int* indexData, unsigned int indexSize, Texture& texture)
 		:	m_VertexBuffer(vertexData, vertexBufferSize),
-			m_IndexBuffer(indexData, indexSize)
+			m_IndexBuffer(indexData, indexSize),
+			m_Texture(texture)
 	{
 		SetBufferLayout(GetBufferLayout());
 		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
@@ -33,6 +34,11 @@ namespace Fed
 		return m_IndexBuffer;
 	}
 
+	const Texture & Mesh::GetTexture() const
+	{
+		return m_Texture;
+	}
+
 	// Private Methods
 	void Mesh::SetBufferLayout(VertexBufferLayout layout)
 	{
@@ -40,8 +46,10 @@ namespace Fed
 	}
 
 	// Debug function to draw mesh
-	void Msh::DrawMesh(const Mesh & mesh, const Shader & shader)
+	void Msh::DrawMesh(const Mesh & mesh, Shader & shader)
 	{
+		mesh.GetTexture().Bind();
+		shader.SetUniform1i("u_Texture", 0);
 		Renderer renderer;
 		renderer.Draw(mesh.GetVertexArray(), mesh.GetIndexBuffer(), shader);
 	}

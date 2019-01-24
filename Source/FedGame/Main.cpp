@@ -25,8 +25,6 @@ int main()
 
 	Game.Init();
 
-	BoxMesh boxMesh;
-
 	glm::mat4 proj = glm::ortho(-2.f, 2.f, -1.5f, 1.5f, -1.f, 1.f);
 	proj = glm::perspective(glm::radians(45.f), 640.f / 480.f, 0.f, 1000.f);
 
@@ -36,9 +34,8 @@ int main()
 	shader.Bind();
 	shader.SetUniform4f("u_Color", 0.6, 0.2, 0.2, 1.0);
 
-	Texture texture("../Assets/Textures/wood.png");
-	texture.Bind();
-	shader.SetUniform1i("u_Texture", 0);
+	Texture wood("../Assets/Textures/wood.png");
+	BoxMesh boxMesh(wood);
 
 	//Sets up Renderer
 	Renderer renderer;
