@@ -12,6 +12,7 @@
 #include <Graphics/OpenGL/Texture.h>
 #include <Objects/Box/BoxMesh.h>
 #include <gtc/matrix_transform.hpp>
+#include <Graphics/Model/Model.h>
 
 using namespace Fed;
 // Decided on global variable rather than class
@@ -34,8 +35,14 @@ int main()
 	shader.Bind();
 	shader.SetUniform4f("u_Color", 0.6, 0.2, 0.2, 1.0);
 
+	Shader modelShader("Shaders/Model.shader");
+	modelShader.Bind();
+	modelShader.SetUniform4f("u_Color", 0.4, 0.6, 0.2, 1.0);
+
 	Texture wood("../Assets/Textures/wood.png");
 	BoxMesh boxMesh(wood);
+	Model suit("../Assets/Models/Nanosuit/nanosuit.obj");
+	//Model robopadron("../Assets/Models/robopadron.obj");
 
 	//Sets up Renderer
 	Renderer renderer;
@@ -47,10 +54,15 @@ int main()
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
-		Msh::DrawMesh(boxMesh, shader);
+		boxMesh.Draw(shader);
+		suit.Draw(modelShader);
+		//robopadron.Draw(shader);
 
 		shader.Bind();
 		shader.SetUniformMat4f("u_MVP", proj * Game.MainCamera.GetViewMatrix());
+		
+		modelShader.Bind();
+		modelShader.SetUniformMat4f("u_MVP", proj * Game.MainCamera.GetViewMatrix());
 
 		Game.Run();
 

@@ -5,14 +5,37 @@
 
 namespace Fed
 {
+	Texture::Texture()
+	{
+		GLCall(glGenTextures(1, &m_RendererID));
+	}
 	Texture::Texture(const std::string & path) : m_FilePath(path), m_LocalBuffer(nullptr),
 		m_Height(0), m_Width(0), m_BPP(0)
 	{
+		GLCall(glGenTextures(1, &m_RendererID));
+		LoadTexture(m_FilePath);
+	}
+
+	// TODO: Optimize Textur copy constructor
+	Texture::Texture(const Texture & other) : m_FilePath(other.m_FilePath), m_LocalBuffer(nullptr),
+		m_Height(0), m_Width(0), m_BPP(0)
+	{
+		GLCall(glGenTextures(1, &m_RendererID));
+		LoadTexture(other.m_FilePath);
+	}
+
+	Texture::~Texture()
+	{
+		GLCall(glDeleteTextures(1, &m_RendererID));
+	}
+
+	void Texture::LoadTexture(const std::string & path)
+	{
+		m_FilePath = path;
 		stbi_set_flip_vertically_on_load(1);
 		m_LocalBuffer = stbi_load(m_FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 4);
 
-		// Create and Bind
-		GLCall(glGenTextures(1, &m_RendererID));
+		// Bind
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
 
 		// Setting OpenGL Parameters
@@ -28,11 +51,6 @@ namespace Fed
 		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 		if (m_LocalBuffer)
 			stbi_image_free(m_LocalBuffer);
-	}
-
-	Texture::~Texture()
-	{
-		GLCall(glDeleteTextures(1, &m_RendererID));
 	}
 
 	void Texture::Bind(unsigned int slot) const

@@ -12,8 +12,10 @@ namespace Fed
 	{
 	private:
 		unsigned int m_RendererID;
+		bool m_HasBuffer;
 	public:
 		VertexArray();
+		VertexArray(const VertexArray& other);
 		~VertexArray();
 
 		void Bind() const;

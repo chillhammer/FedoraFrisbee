@@ -1,5 +1,5 @@
 #pragma once
-#include <Graphics/Mesh/Mesh.h>
+#include <Graphics/Model/Mesh.h>
 #include <Graphics/OpenGL/Texture.h>
 namespace Fed
 {

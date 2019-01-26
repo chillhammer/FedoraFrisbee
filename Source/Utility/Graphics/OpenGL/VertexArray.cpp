@@ -6,6 +6,13 @@ namespace Fed
 {
 	VertexArray::VertexArray()
 	{
+		m_HasBuffer = false;
+		GLCall(glGenVertexArrays(1, &m_RendererID));
+	}
+
+	VertexArray::VertexArray(const VertexArray & other)
+	{
+		ASSERT(true, "Restriction on copying Vertex Array");
 		GLCall(glGenVertexArrays(1, &m_RendererID));
 	}
 
