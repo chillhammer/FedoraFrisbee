@@ -19,6 +19,7 @@ namespace Fed
 		Texture(const Texture& other);
 		~Texture();
 
+		void LoadTexture();
 		void LoadTexture(const std::string& path);
 		void Bind(unsigned int slot = 0) const;
 		void Unbind() const;

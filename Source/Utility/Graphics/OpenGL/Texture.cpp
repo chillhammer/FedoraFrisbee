@@ -21,7 +21,6 @@ namespace Fed
 		m_Height(0), m_Width(0), m_BPP(0)
 	{
 		GLCall(glGenTextures(1, &m_RendererID));
-		LoadTexture(other.m_FilePath);
 	}
 
 	Texture::~Texture()
@@ -29,11 +28,19 @@ namespace Fed
 		GLCall(glDeleteTextures(1, &m_RendererID));
 	}
 
+	void Texture::LoadTexture()
+	{
+		if (m_FilePath == "")
+			ASSERT(false, "Cannot load texture with invalid file path");
+		LoadTexture(m_FilePath);
+	}
+
 	void Texture::LoadTexture(const std::string & path)
 	{
 		m_FilePath = path;
 		stbi_set_flip_vertically_on_load(1);
 		m_LocalBuffer = stbi_load(m_FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 4);
+		ASSERT(m_LocalBuffer, "Failed to load texture");
 
 		// Bind
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));

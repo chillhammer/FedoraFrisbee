@@ -13,6 +13,7 @@ namespace Fed
 			m_IndexBuffer(indexData, indexSize),
 			m_Texture(texture)
 	{
+		m_Texture.LoadTexture();
 		SetBufferLayout(GetBufferLayout());
 		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
 	}
@@ -22,7 +23,7 @@ namespace Fed
 			m_IndexBuffer(other.m_IndexBuffer),
 			m_Texture(other.m_Texture)
 	{
-		ASSERT(true, "Cannot copy over Base Mesh Object");
+		ASSERT(false, "Cannot copy over Base Mesh Object");
 	}
 
 	Mesh::~Mesh()
@@ -32,7 +33,7 @@ namespace Fed
 	{
 		if (m_VertexBuffer.IsEmpty() || m_IndexBuffer.IsEmpty() || m_Texture.GetWidth() == 0)
 		{
-			ASSERT(true, "Mesh cannot draw. It is empty");
+			ASSERT(false, "Mesh cannot draw. It is empty");
 		}
 		m_Texture.Bind();
 		shader.SetUniform1i("u_Texture", 0);

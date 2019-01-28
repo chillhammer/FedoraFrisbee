@@ -74,6 +74,16 @@ namespace Fed
 				LOG_WARN("Default tex coords");
 				vertex.TexCoords = Vector2(0.0f, 0.0f);
 			}
+			//// tangent
+			//vector.x = mesh->mTangents[i].x;
+			//vector.y = mesh->mTangents[i].y;
+			//vector.z = mesh->mTangents[i].z;
+			//vertex.Tangent = vector;
+			//// bitangent
+			//vector.x = mesh->mBitangents[i].x;
+			//vector.y = mesh->mBitangents[i].y;
+			//vector.z = mesh->mBitangents[i].z;
+			//vertex.Bitangent = vector;
 			vertices.push_back(vertex);
 		}
 		// now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
@@ -88,32 +98,16 @@ namespace Fed
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
 		// 1. diffuse maps
-		std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE);
-		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+		Texture diffuseTexture = LoadMaterialTexture(material, aiTextureType_DIFFUSE);
 
 		//Texture wood("../Assets/Textures/wood.png");
-		//diffuseMaps[0]
-		if (diffuseMaps.size() == 0)
-		{
-			LOG("Wood!");
-			//diffuseMaps.push_back(wood);
-		} 
-		else
-			LOG("Not Wood!");
-		// return a mesh object created from the extracted mesh data
-		return ImportedMesh(vertices, indices, diffuseMaps[0]);
+		return ImportedMesh(vertices, indices, diffuseTexture);
 	}
-	std::vector<Texture> Model::LoadMaterialTextures(aiMaterial * mat, aiTextureType type)
+	Texture Model::LoadMaterialTexture(aiMaterial* mat, aiTextureType type)
 	{
-		std::vector<Texture> textures;
-		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-		{
-			aiString str;
-			mat->GetTexture(type, i, &str);
-			//Texture texture(m_Directory + '/' + str.C_Str());
-			LOG("Trying to get texture: {0}", m_Directory + '/' + str.C_Str());
-			textures.emplace_back(Texture(m_Directory + '/' + str.C_Str()));
-		}
-		return textures;
+		aiString str;
+		mat->GetTexture(type, 0, &str);
+		LOG("Trying to get texture: {0}", m_Directory + '/' + str.C_Str());
+		return Texture(m_Directory + '/' + str.C_Str());
 	}
 }

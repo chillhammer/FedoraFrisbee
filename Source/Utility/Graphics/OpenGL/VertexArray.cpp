@@ -12,7 +12,7 @@ namespace Fed
 
 	VertexArray::VertexArray(const VertexArray & other)
 	{
-		ASSERT(true, "Restriction on copying Vertex Array");
+		ASSERT(false, "Restriction on copying Vertex Array");
 		GLCall(glGenVertexArrays(1, &m_RendererID));
 	}
 

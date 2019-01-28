@@ -27,6 +27,6 @@ namespace Fed
 		void LoadModel(std::string path);
 		void ProcessNode(aiNode *node, const aiScene *scene);
 		ImportedMesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
-		std::vector<Texture> LoadMaterialTextures(aiMaterial *mat, aiTextureType type);
+		Texture LoadMaterialTexture(aiMaterial *mat, aiTextureType type);
 	};
 }

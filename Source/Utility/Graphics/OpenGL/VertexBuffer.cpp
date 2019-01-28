@@ -19,7 +19,7 @@ namespace Fed
 	VertexBuffer::VertexBuffer(const VertexBuffer & other)
 		:	m_Data(other.m_Data), m_Size(other.m_Size)
 	{
-		ASSERT(true, "Restriction on VertexBuffer Copy Constructor");
+		ASSERT(false, "Restriction on VertexBuffer Copy Constructor");
 		GLCall(glGenBuffers(1, &m_RendererID));
 		SetBufferData(m_Data, m_Size);
 	}

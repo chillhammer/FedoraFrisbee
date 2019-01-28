@@ -40,6 +40,7 @@ int main()
 	modelShader.SetUniform4f("u_Color", 0.4, 0.6, 0.2, 1.0);
 
 	Texture wood("../Assets/Textures/wood.png");
+	wood.LoadTexture();
 	BoxMesh boxMesh(wood);
 	Model suit("../Assets/Models/Nanosuit/nanosuit.obj");
 	//Model robopadron("../Assets/Models/robopadron.obj");
