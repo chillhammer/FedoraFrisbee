@@ -15,6 +15,8 @@ namespace Fed
 		static GameManager& Instance();
 		void Init();
 		void Run();
+		bool IsRunning() const;
+		void Shutdown();
 		float DeltaTime() const;
 		const Window& GetWindow() const;
 		~GameManager();
@@ -25,6 +27,7 @@ namespace Fed
 		// Properties
 		double m_LastUpdatedTime = 0;
 		double m_DeltaTime = 0;
+		bool m_Running = true;
 
 		// Big Classes - in Initialized Order
 		Window m_Window;

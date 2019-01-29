@@ -6,6 +6,7 @@
 #include <Input/InputManager.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <Game/GameManager.h>
 
 #include "Window.h"
 
@@ -14,7 +15,7 @@ static void GLFWErrorCallback(int error, const char* description) {
 	LOG_ERROR("GLFW Error ({0}): {1}", error, description);
 }
 
-extern bool Running; // References because Window closes application
+//extern bool Running; // References because Window closes application
 
 Fed::Window::Window(const WindowProps & props)
 {
@@ -154,7 +155,7 @@ void Fed::Window::OnEvent(Event & e)
 	switch (e.GetEventType())
 	{
 	case EventType::WindowClose:
-		Running = false;
+		Game.Shutdown();
 		break;
 	case EventType::MouseMoved:
 		Input.MouseMoved.Notify(e);

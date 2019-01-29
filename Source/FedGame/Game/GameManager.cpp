@@ -35,6 +35,17 @@ namespace Fed
 		m_Window.OnUpdate();
 	}
 
+	bool GameManager::IsRunning() const
+	{
+		return m_Running;
+	}
+
+	void GameManager::Shutdown()
+	{
+		LOG("Shutting down game");
+		m_Running = -false;
+	}
+
 	float GameManager::DeltaTime() const
 	{
 		return m_DeltaTime;

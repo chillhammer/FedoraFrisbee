@@ -84,6 +84,13 @@ namespace Fed
 		return glm::lookAt(m_Transform.Position, m_Transform.Position + m_Transform.GetHeading(), m_Transform.GetUp());
 	}
 
+	Matrix4x4 Camera::GetProjectionMatrix()
+	{
+		float fov = 45.f;
+		float aspect = (float)Game.GetWindow().GetWidth() / (float) Game.GetWindow().GetHeight();
+		return glm::perspective(glm::radians(fov), aspect, 0.1f, 100.f);
+	}
+
 	static int DELTA_CAP = 300;
 	// Sets delta mouse movement
 	bool Camera::OnMouseMoved(MouseMovedEvent & e)

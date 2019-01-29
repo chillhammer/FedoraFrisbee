@@ -39,13 +39,15 @@ void main()
 	vec3 lightDir = normalize(u_LightPosition - v_FragPos);
 	float intensity = dot(norm, lightDir);
 
-	intensity += 0.75f;
+	/*intensity += 0.9f;
 	if (intensity > 0.5f)
 		intensity = 1.f;
 	else
-		intensity = 0.5f;
-	intensity *= 2.f;
-	float baseline = 0.f;
+		intensity = 0.25f;
+	intensity *= 0.8f;*/
+	// Cel-Shading
+	intensity = (intensity + 0.9f > 0.5f ? 0.8f : 0.2f);
+	float baseline = 0.6f;
 
 	if (u_UseTexture)
 		color = texture(u_Texture, v_TexCoord);
@@ -53,5 +55,4 @@ void main()
 		color = vec4(u_Color, 1.0);
 
 	color *= (baseline + intensity);
-	color.w = 0;
 };

@@ -13,6 +13,7 @@ namespace Fed
 		void Update();
 		void OnEvent(const Subject* subject, Event& e);
 		Matrix4x4 GetViewMatrix();
+		Matrix4x4 GetProjectionMatrix();
 	private:
 		Transform m_Transform;
 		float m_Speed;
@@ -21,7 +22,6 @@ namespace Fed
 		Vector2 m_DeltaMousePosition;
 		float m_Pitch;
 		float m_Yaw;
-		void UpdateMouseDelta();
 	private:
 		bool OnMouseMoved(MouseMovedEvent& e);
 	};
