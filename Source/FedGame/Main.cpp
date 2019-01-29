@@ -15,6 +15,7 @@
 #include <Graphics/Model/Model.h>
 #include <Graphics/Model/ImportedModel.h>
 #include <Graphics/Model/SingleMeshModel.h>
+#include <Resources/ResourceManager.h>
 
 using namespace Fed;
 
@@ -24,6 +25,8 @@ int main()
 	Input.Init();
 
 	Game.Init();
+
+	Resources.Init();
 
 	//Loads in Shader
 	Shader shader("Shaders/Basic.shader");
@@ -39,8 +42,9 @@ int main()
 	wood.LoadTexture();
 	BoxMesh boxMesh(wood);
 	//ImportedModel suit("../Assets/Models/Nanosuit/nanosuit.obj");
-	ImportedModel robopadron("../Assets/Models/robopadron.obj");
+	//ImportedModel robopadron("../Assets/Models/robopadron.obj");
 	Model& refModel = SingleMeshModel(boxMesh);
+	ModelPtr robopadron = Resources.GetModel("RoboPadron");
 
 	Renderer renderer;
 
@@ -50,7 +54,7 @@ int main()
 		renderer.Clear();
 
 		//suit.Draw(modelShader);
-		robopadron.Draw(modelShader);
+		robopadron->Draw(modelShader);
 
 		refModel.Draw(shader);
 

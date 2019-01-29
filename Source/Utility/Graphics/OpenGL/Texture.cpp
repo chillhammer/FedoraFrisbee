@@ -8,6 +8,7 @@ namespace Fed
 	Texture::Texture()
 	{
 		GLCall(glGenTextures(1, &m_RendererID));
+
 	}
 	Texture::Texture(const std::string & path) : m_FilePath(path), m_LocalBuffer(nullptr),
 		m_Height(0), m_Width(0), m_BPP(0)
