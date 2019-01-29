@@ -13,7 +13,6 @@ namespace Fed
 		m_Height(0), m_Width(0), m_BPP(0)
 	{
 		GLCall(glGenTextures(1, &m_RendererID));
-		LoadTexture(m_FilePath);
 	}
 
 	// TODO: Optimize Textur copy constructor

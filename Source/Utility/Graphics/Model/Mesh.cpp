@@ -18,10 +18,21 @@ namespace Fed
 		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
 	}
 
+	Mesh::Mesh(const void* vertexData, unsigned int vertexBufferSize,
+		const unsigned int* indexData, unsigned int indexSize, Vector3 color)
+		: m_VertexBuffer(vertexData, vertexBufferSize),
+		m_IndexBuffer(indexData, indexSize),
+		m_Color(color)
+	{
+		SetBufferLayout(GetBufferLayout());
+		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
+	}
+
 	Mesh::Mesh(const Mesh & other)
 		:	m_VertexBuffer(other.m_VertexBuffer),
 			m_IndexBuffer(other.m_IndexBuffer),
-			m_Texture(other.m_Texture)
+			m_Texture(other.m_Texture),
+			m_Color(other.m_Color)
 	{
 		ASSERT(false, "Cannot copy over Base Mesh Object");
 	}
@@ -35,16 +46,26 @@ namespace Fed
 		{
 			ASSERT(false, "Mesh cannot draw. It is empty");
 		}
-		m_Texture.Bind();
-		shader.SetUniform1i("u_Texture", 0);
+		shader.Bind();
+		if (m_Texture.GetFilePath() != "") {
+			m_Texture.Bind();
+			shader.SetUniform1i("u_Texture", 0);
+			shader.SetUniform1i("u_UseTexture", 1);
+		} else {
+			shader.SetUniform3f("u_Color", m_Color.x, m_Color.y, m_Color.z);
+			shader.SetUniform1i("u_UseTexture", 0);
+		}
+		
 		Renderer renderer;
 		renderer.Draw(m_VertexArray, m_IndexBuffer, shader);
 	}
-	void Mesh::SetData(const void * vertexData, unsigned int vertexBufferSize, const unsigned int * indexData, unsigned int indexSize, const Texture& texture)
+	void Mesh::SetData(const void * vertexData, unsigned int vertexBufferSize, const unsigned int * indexData, unsigned int indexSize, const Texture& texture, Vector3 color)
 	{
 		m_VertexBuffer.SetBufferData(vertexData, vertexBufferSize);
 		m_IndexBuffer.SetBufferData(indexData, indexSize);
-		m_Texture.LoadTexture(texture.GetFilePath());
+		if (texture.GetFilePath() != "")
+			m_Texture.LoadTexture(texture.GetFilePath());
+		m_Color = color;
 		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
 	}
 	// Standard layout of vertex data. Meant to be overriden in child classes

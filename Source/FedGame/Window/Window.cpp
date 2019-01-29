@@ -44,10 +44,12 @@ Fed::Window::Window(const WindowProps & props)
 	//GLCall(glEnable(GL_BLEND));
 	//GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+	glViewport(0, 0, props.Width, props.Height);
+
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glEnable(GL_CULL_FACE));
 	GLCall(glDepthMask(GL_TRUE));
-	GLCall(glDepthFunc(GL_LEQUAL));
+	GLCall(glDepthFunc(GL_LESS));
 	GLCall(glDepthRange(0.f, 1.f));
 
 	m_Data.EventCallback = EVENT_BIND_FN(Window, OnEvent);

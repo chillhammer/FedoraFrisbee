@@ -16,6 +16,8 @@ namespace Fed {
 	public:
 		ImportedMesh(std::vector<Vertex> vertexBuffer, std::vector<unsigned int> indexBuffer,
 			Texture texture);
+		ImportedMesh(std::vector<Vertex> vertexBuffer, std::vector<unsigned int> indexBuffer,
+			Vector3 color);
 		ImportedMesh(const ImportedMesh& other);
 		virtual ~ImportedMesh();
 	private:

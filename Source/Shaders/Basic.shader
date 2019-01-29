@@ -21,11 +21,14 @@ layout(location = 0) out vec4 color;
 
 in vec2 v_TexCoord;
 
-uniform vec4 u_Color;
+uniform vec3 u_Color;
 uniform sampler2D u_Texture;
+uniform bool u_UseTexture;
 
 void main()
 {
-	vec4 texColor = texture(u_Texture, v_TexCoord);
-	color = texColor;
+	if (u_UseTexture)
+		color = texture(u_Texture, v_TexCoord);
+	else
+		color = vec4(u_Color, 1.0);
 };
