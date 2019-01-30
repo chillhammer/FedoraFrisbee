@@ -7,7 +7,7 @@
 namespace Fed
 {
 	Camera::Camera()
-		: m_Speed(1.4f), m_Sensitivity(40.f), m_Yaw(270)
+		: m_Speed(3.4f), m_Sensitivity(40.f), m_Yaw(270)
 	{
 		m_Transform.Position.z = 2.f;
 	}

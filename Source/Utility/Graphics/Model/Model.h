@@ -12,4 +12,6 @@ namespace Fed
 	public:
 		virtual void Draw(Shader& shader) = 0;
 	};
+
+	typedef std::shared_ptr<Model> ModelPtr;
 }

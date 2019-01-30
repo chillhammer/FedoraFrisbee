@@ -29,22 +29,15 @@ int main()
 	Resources.Init();
 
 	//Loads in Shader
-	Shader shader("Shaders/Basic.shader");
-	shader.Bind();
 
 	Vector3 lightPosition(1.f, 3.f, 1.f);
 
-	Shader modelShader("Shaders/Model.shader");
-	modelShader.Bind();
-	modelShader.SetUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
+	ShaderPtr shader = Resources.GetShader("Model");
+	shader->Bind();
+	shader->SetUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
 
-	Texture wood("../Assets/Textures/wood.png");
-	wood.LoadTexture();
-	BoxMesh boxMesh(wood);
-	//ImportedModel suit("../Assets/Models/Nanosuit/nanosuit.obj");
-	//ImportedModel robopadron("../Assets/Models/robopadron.obj");
-	Model& refModel = SingleMeshModel(boxMesh);
 	ModelPtr robopadron = Resources.GetModel("RoboPadron");
+	ModelPtr suit = Resources.GetModel("Suit");
 
 	Renderer renderer;
 
@@ -53,17 +46,10 @@ int main()
 		// App Render
 		renderer.Clear();
 
-		//suit.Draw(modelShader);
-		robopadron->Draw(modelShader);
+		suit->Draw(*shader);
+		robopadron->Draw(*shader);
 
-		refModel.Draw(shader);
-
-		shader.Bind();
-		shader.SetUniformMat4f("u_MVP", Game.MainCamera.GetProjectionMatrix() * Game.MainCamera.GetViewMatrix());
-		
-		modelShader.Bind();
-		modelShader.SetUniformMat4f("u_MVP", Game.MainCamera.GetProjectionMatrix() * Game.MainCamera.GetViewMatrix());
-		
+		shader->SetUniformMat4f("u_MVP", Game.MainCamera.GetProjectionMatrix() * Game.MainCamera.GetViewMatrix());
 
 		Game.Run();
 

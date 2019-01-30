@@ -1,10 +1,8 @@
 #pragma once
 #include <unordered_map>
 #include <Graphics/Model/Model.h>
-#include <Graphics/Model/ImportedModel.h>
 
 #define Resources ResourceManager::Instance()
-typedef std::shared_ptr<Fed::Model> ModelPtr;
 
 namespace Fed
 {
@@ -17,11 +15,14 @@ namespace Fed
 	public:
 		static ResourceManager& Instance();
 		void Init();
-		ModelPtr GetModel(std::string name);
+		ModelPtr	GetModel(std::string name);
+		ShaderPtr	GetShader(std::string name);
 	private:
 		ResourceManager() {};
 		void LoadModels();
+		void LoadShaders();
 
 		std::unordered_map<std::string, ModelPtr> m_ModelTable;
+		std::unordered_map<std::string, ShaderPtr> m_ShaderTable;
 	};
 }
