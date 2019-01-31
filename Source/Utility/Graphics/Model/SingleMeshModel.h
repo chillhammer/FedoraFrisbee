@@ -14,7 +14,7 @@ namespace Fed
 	{
 	public:
 		SingleMeshModel(Mesh& mesh) : m_Mesh(mesh) {};
-		void Draw(Shader& shader) { m_Mesh.Draw(shader); };
+		void Draw(const ShaderPtr& shader, const Matrix4x4& model) { m_Mesh.Draw(shader, model); };
 	private:
 		Mesh& m_Mesh;
 	};

@@ -28,7 +28,7 @@ namespace Fed
 	void ResourceManager::LoadModels()
 	{
 		m_ModelTable.emplace("RoboPadron",	new ImportedModel("../Assets/Models/robopadron.obj"));
-		m_ModelTable.emplace("Suit",		new ImportedModel("../Assets/Models/Nanosuit/nanosuit.obj"));
+		//m_ModelTable.emplace("Suit",		new ImportedModel("../Assets/Models/Nanosuit/nanosuit.obj"));
 	}
 	void ResourceManager::LoadShaders()
 	{

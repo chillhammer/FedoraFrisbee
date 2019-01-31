@@ -16,7 +16,7 @@ namespace Fed
 			const unsigned int* indexData, unsigned int indexSize, Vector3 color);
 		Mesh(const Mesh& other);
 		virtual ~Mesh();
-		void Draw(Shader& shader);
+		void Draw(const ShaderPtr& shader, const Matrix4x4& model);
 	protected:
 		void SetData(const void* vertexData, unsigned int vertexBufferSize,
 			const unsigned int* indexData, unsigned int indexSize, const Texture& texture, Vector3 color);

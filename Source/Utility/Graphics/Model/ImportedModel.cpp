@@ -9,10 +9,10 @@ namespace Fed
 	}
 
 	// Loops Through All Meshes, Then Draws
-	void ImportedModel::Draw(Shader& shader)
+	void ImportedModel::Draw(const ShaderPtr& shader, const Matrix4x4& model)
 	{
 		for (unsigned int i = 0; i < m_Meshes.size(); i++)
-			m_Meshes[i].Draw(shader);
+			m_Meshes[i].Draw(shader, model);
 	}
 
 	// Base function to load in model

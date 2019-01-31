@@ -10,7 +10,7 @@ namespace Fed
 	class Model
 	{
 	public:
-		virtual void Draw(Shader& shader) = 0;
+		virtual void Draw(const ShaderPtr& shader, const Matrix4x4& model) = 0;
 	};
 
 	typedef std::shared_ptr<Model> ModelPtr;

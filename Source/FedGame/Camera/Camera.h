@@ -5,6 +5,7 @@
 
 namespace Fed
 {
+	enum CameraMode { NoClip, Pivot };
 	class Camera : IObserver
 	{
 	public:
@@ -14,6 +15,8 @@ namespace Fed
 		void OnEvent(const Subject* subject, Event& e);
 		Matrix4x4 GetViewMatrix();
 		Matrix4x4 GetProjectionMatrix();
+	public:
+		CameraMode Mode;
 	private:
 		Transform m_Transform;
 		float m_Speed;
@@ -22,6 +25,8 @@ namespace Fed
 		Vector2 m_DeltaMousePosition;
 		float m_Pitch;
 		float m_Yaw;
+		Vector3 m_PivotPosition;
+		float m_PivotLength;
 	private:
 		bool OnMouseMoved(MouseMovedEvent& e);
 	};

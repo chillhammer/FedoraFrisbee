@@ -9,12 +9,13 @@ out vec2 v_TexCoord;
 out vec3 v_Normal;
 out vec3 v_FragPos;
 
-uniform mat4 u_MVP;
+uniform mat4 u_Model;
+uniform mat4 u_ViewProjection;
 
 void main()
 {
-	gl_Position = u_MVP * vec4(position, 1.0);
-	v_FragPos = position;
+	gl_Position = u_ViewProjection * u_Model * vec4(position, 1.0);
+	v_FragPos = vec3(u_Model * vec4(position, 1.0));
 	v_TexCoord = texCoord;
 	v_Normal = normals;
 };
@@ -39,7 +40,7 @@ void main()
 	vec3 lightDir = normalize(u_LightPosition - v_FragPos);
 	float intensity = dot(norm, lightDir);
 
-	// Cel-Shading
+	// Cell-Shading
 	intensity = (intensity + 0.9f > 0.5f ? 0.8f : 0.2f);
 	float baseline = 0.6f;
 

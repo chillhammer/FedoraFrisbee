@@ -12,12 +12,18 @@ namespace Fed
 		return instance;
 	}
 
+	// Called to setup dependencies, namely GLFW
 	void GameManager::Init()
 	{
 	}
+	// Called to enter first state
+	void GameManager::Start()
+	{
+		m_StateMachine.ChangeState(Test::Instance());
+	}
 	static WindowProps props;
 	GameManager::GameManager() : m_Window(props),
-		MainCamera(), m_StateMachine(this, Test::Instance())
+		m_StateMachine(this)
 	{
 	}
 
@@ -43,7 +49,7 @@ namespace Fed
 	void GameManager::Shutdown()
 	{
 		LOG("Shutting down game");
-		m_Running = -false;
+		m_Running = false;
 	}
 
 	float GameManager::DeltaTime() const

@@ -17,7 +17,7 @@ namespace Fed
 	{
 	public:
 		ImportedModel(char* path);
-		void Draw(Shader & shader);
+		void Draw(const ShaderPtr& shader, const Matrix4x4& model);
 	private:
 		std::vector<ImportedMesh> m_Meshes;
 

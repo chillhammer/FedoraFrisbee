@@ -7,7 +7,8 @@
 namespace Fed
 {
 	Camera::Camera()
-		: m_Speed(3.4f), m_Sensitivity(40.f), m_Yaw(270)
+		:	m_Speed(3.4f), m_Sensitivity(40.f), m_Yaw(270), 
+			Mode(CameraMode::Pivot), m_PivotLength(4.6f), m_PivotPosition(0, 2.3f, 0.4f)
 	{
 		m_Transform.Position.z = 2.f;
 	}
@@ -16,53 +17,65 @@ namespace Fed
 		LOG("Initialized Camera");
 		Input.MouseMoved.AddObserver(this);
 		m_PrevMousePosition = Input.GetMousePosition();
+
+		// Invisible Cursor
+		Game.GetWindow().SetCursorEnabled(false);
 	}
 
 	void Camera::Update()
 	{
 		// First Person Movement
-		if (Input.IsKeyDown(KEY_W))
+		if (Mode == CameraMode::NoClip)
 		{
-			m_Transform.Position += m_Transform.GetHeading() * m_Speed * Game.DeltaTime();
-		}
-		if (Input.IsKeyDown(KEY_S))
-		{
-			m_Transform.Position -= m_Transform.GetHeading() * m_Speed * Game.DeltaTime();
-		}
-		if (Input.IsKeyDown(KEY_D))
-		{
-			m_Transform.Position += m_Transform.GetSide() * m_Speed * Game.DeltaTime();
-		}
-		if (Input.IsKeyDown(KEY_A))
-		{
-			m_Transform.Position -= m_Transform.GetSide() * m_Speed * Game.DeltaTime();
-		}
-		if (Input.IsKeyDown(KEY_LEFT_SHIFT))
-		{
-			m_Transform.Position -= Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTime();
-		}
-		if (Input.IsKeyDown(KEY_SPACE))
-		{
-			m_Transform.Position += Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTime();
-		}
+			if (Input.IsKeyDown(KEY_W))
+			{
+				m_Transform.Position += m_Transform.GetHeading() * m_Speed * Game.DeltaTime();
+			}
+			if (Input.IsKeyDown(KEY_S))
+			{
+				m_Transform.Position -= m_Transform.GetHeading() * m_Speed * Game.DeltaTime();
+			}
+			if (Input.IsKeyDown(KEY_D))
+			{
+				m_Transform.Position += m_Transform.GetSide() * m_Speed * Game.DeltaTime();
+			}
+			if (Input.IsKeyDown(KEY_A))
+			{
+				m_Transform.Position -= m_Transform.GetSide() * m_Speed * Game.DeltaTime();
+			}
+			if (Input.IsKeyDown(KEY_LEFT_SHIFT))
+			{
+				m_Transform.Position -= Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTime();
+			}
+			if (Input.IsKeyDown(KEY_SPACE))
+			{
+				m_Transform.Position += Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTime();
+			}
 
+			// Look Around
+			m_Pitch -= m_DeltaMousePosition.y * m_Sensitivity * Game.DeltaTime();
+			m_Yaw += m_DeltaMousePosition.x * m_Sensitivity * Game.DeltaTime();
+			m_Pitch = glm::clamp<float>(m_Pitch, -89, 89);
+		}
+		// Third-Person Pivoting
+		if (Mode == CameraMode::Pivot)
+		{
+			// Look Around
+			m_Pitch -= m_DeltaMousePosition.y * m_Sensitivity * Game.DeltaTime();
+			m_Yaw += m_DeltaMousePosition.x * m_Sensitivity * Game.DeltaTime();
+			m_Pitch = glm::clamp<float>(m_Pitch, -89, 89);
 
-		// Look Around
-		float deltaX = m_DeltaMousePosition.x;
-		float deltaY = m_DeltaMousePosition.y;
+			m_Transform.SetPitch(m_Pitch);
+			m_Transform.SetYaw(m_Yaw);
 
-		m_Pitch -= deltaY * m_Sensitivity * Game.DeltaTime();
-		m_Yaw += deltaX * m_Sensitivity * Game.DeltaTime();
-		m_Pitch = glm::clamp<float>(m_Pitch, -89, 89);
+			Vector3 pivotStick = m_PivotLength * -1 * m_Transform.GetHeading();
+			m_Transform.Position = m_PivotPosition + pivotStick;
+		}
 
 		m_Transform.SetPitch(m_Pitch);
 		m_Transform.SetYaw(m_Yaw);
-
 		// Reset Delta Movement
 		m_DeltaMousePosition = Vector2(0, 0);
-
-		// Invisible Cursor
-		Game.GetWindow().SetCursorEnabled(false);
 		
 		//LOG("Camera Pitch: {0} - Local: {1}", m_Transform.GetPitch(), m_Pitch);
 		//LOG("Camera Yaw: {0} - Local: {1}", m_Transform.GetYaw(), m_Yaw);
@@ -86,7 +99,7 @@ namespace Fed
 
 	Matrix4x4 Camera::GetProjectionMatrix()
 	{
-		float fov = 45.f;
+		float fov = 45;
 		float aspect = (float)Game.GetWindow().GetWidth() / (float) Game.GetWindow().GetHeight();
 		return glm::perspective(glm::radians(fov), aspect, 0.1f, 100.f);
 	}

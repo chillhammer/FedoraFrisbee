@@ -19,16 +19,18 @@ namespace Fed
 		Vector3 Rotation;
 		Vector3 Scale;
 
+		Transform() : Position(0, 0, 0), Rotation(0, 0, 0), Scale(1, 1, 1) {}
+
 		Matrix4x4 GetMatrix() const
 		{
 			Matrix4x4 posMat(1.f);
-			glm::translate(posMat, Position);
+			posMat = glm::translate(posMat, Position);
 
 			Matrix4x4 rotMat(1.f);
 			rotMat = glm::eulerAngleXYZ(Rotation.x, Rotation.y, Rotation.z);
 
 			Matrix4x4 scaleMat(1.f);
-			glm::scale(scaleMat, Scale);
+			scaleMat = glm::scale(scaleMat, Scale);
 			return posMat * rotMat * scaleMat;
 		}
 

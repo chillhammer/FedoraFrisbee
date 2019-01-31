@@ -26,18 +26,19 @@ namespace Fed
 		Creates State class declaration that is 
 		actually a singleton. 
 	**/
-	#define STATE_CLASS_SINGLETON(ownerClass, className)	\
-	class className : public State<ownerClass>				\
-	{														\
-	private:												\
-		className() {}										\
-	public:													\
-		static className* Instance() {						\
-			static className instance;						\
-			return &instance;								\
-		}													\
-		void Enter(ownerClass* owner);						\
-		void Execute(ownerClass* owner);					\
-		void Exit(ownerClass* owner);						\
+	#define STATE_CLASS_SINGLETON(ownerClass, className, variables)	\
+	class className : public State<ownerClass>							\
+	{																	\
+	private:															\
+		className() {}													\
+		variables														\
+	public:																\
+		static className* Instance() {									\
+			static className instance;									\
+			return &instance;											\
+		}																\
+		void Enter(ownerClass* owner);									\
+		void Execute(ownerClass* owner);								\
+		void Exit(ownerClass* owner);									\
 	};														
 }

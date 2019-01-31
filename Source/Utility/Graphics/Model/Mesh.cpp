@@ -40,21 +40,22 @@ namespace Fed
 	Mesh::~Mesh()
 	{
 	}
-	void Mesh::Draw(Shader & shader)
+	void Mesh::Draw(const ShaderPtr& shader, const Matrix4x4& model)
 	{
 		if (m_VertexBuffer.IsEmpty() || m_IndexBuffer.IsEmpty() || m_Texture.GetWidth() == 0)
 		{
 			ASSERT(false, "Mesh cannot draw. It is empty");
 		}
-		shader.Bind();
+		shader->Bind();
 		if (m_Texture.GetFilePath() != "") {
 			m_Texture.Bind();
-			shader.SetUniform1i("u_Texture", 0);
-			shader.SetUniform1i("u_UseTexture", 1);
+			shader->SetUniform1i("u_Texture", 0);
+			shader->SetUniform1i("u_UseTexture", 1);
 		} else {
-			shader.SetUniform3f("u_Color", m_Color.x, m_Color.y, m_Color.z);
-			shader.SetUniform1i("u_UseTexture", 0);
+			shader->SetUniform3f("u_Color", m_Color.x, m_Color.y, m_Color.z);
+			shader->SetUniform1i("u_UseTexture", 0);
 		}
+		shader->SetUniformMat4f("u_Model", model);
 		
 		Renderer renderer;
 		renderer.Draw(m_VertexArray, m_IndexBuffer, shader);

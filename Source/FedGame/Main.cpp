@@ -16,40 +16,25 @@
 #include <Graphics/Model/ImportedModel.h>
 #include <Graphics/Model/SingleMeshModel.h>
 #include <Resources/ResourceManager.h>
+#include <Objects/Agents/FedoraAgent.h>
 
 using namespace Fed;
 
 int main()
 {
+	// Setting Up Dependencies
 	Log::Init();
 	Input.Init();
-
 	Game.Init();
-
+	// Loads All Resources
 	Resources.Init();
 
-	//Loads in Shader
-
-	Vector3 lightPosition(1.f, 3.f, 1.f);
-
-	ShaderPtr shader = Resources.GetShader("Model");
-	shader->Bind();
-	shader->SetUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
-
-	ModelPtr robopadron = Resources.GetModel("RoboPadron");
-	ModelPtr suit = Resources.GetModel("Suit");
-
 	Renderer renderer;
-
+	Game.Start();
 	while (Game.IsRunning())
 	{
 		// App Render
 		renderer.Clear();
-
-		suit->Draw(*shader);
-		robopadron->Draw(*shader);
-
-		shader->SetUniformMat4f("u_MVP", Game.MainCamera.GetProjectionMatrix() * Game.MainCamera.GetViewMatrix());
 
 		Game.Run();
 

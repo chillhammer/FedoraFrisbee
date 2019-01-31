@@ -14,6 +14,7 @@ namespace Fed
 	public:
 		static GameManager& Instance();
 		void Init();
+		void Start();
 		void Run();
 		bool IsRunning() const;
 		void Shutdown();
@@ -31,8 +32,6 @@ namespace Fed
 
 		// Big Classes - in Initialized Order
 		Window m_Window;
-	public:
-		Camera MainCamera;
 	private:
 		StateMachine<GameManager> m_StateMachine;
 	};
