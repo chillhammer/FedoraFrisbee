@@ -17,6 +17,7 @@
 #include <Graphics/Model/SingleMeshModel.h>
 #include <Resources/ResourceManager.h>
 #include <Objects/Agents/FedoraAgent.h>
+#include <Objects/Box/WoodenBox.h>
 
 using namespace Fed;
 
@@ -35,6 +36,7 @@ int main()
 	{
 		// App Render
 		renderer.Clear();
+
 
 		Game.Run();
 

@@ -18,12 +18,18 @@ namespace Fed
 		m_Shader = Resources.GetShader("Model");
 		m_Shader->Bind();
 		m_Shader->SetUniform3f("u_LightPosition", m_Light.x, m_Light.y, m_Light.z);
+
+		m_Box.ObjectTransform.Scale = Vector3(12, 0.001f, 20);
+		m_Agent.SetInputType(AgentInputType::PLAYER);
+		m_Agent.SetCameraReference(&m_Camera);
 	}
 	void Test::Execute(GameManager* owner)
 	{
 		m_Camera.Update();
 
+		m_Agent.Update();
 		m_Agent.Draw();
+		m_Box.Draw();
 
 		if (Input.IsKeyDown(KEY_J))
 		{

@@ -33,4 +33,5 @@ namespace Fed
 		VertexBufferLayout m_BufferLayout;
 		VertexArray m_VertexArray;
 	};
+	typedef std::shared_ptr<Mesh> MeshPtr;
 }

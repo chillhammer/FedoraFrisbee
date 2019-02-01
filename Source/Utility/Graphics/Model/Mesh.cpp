@@ -74,6 +74,7 @@ namespace Fed
 	{
 		VertexBufferLayout layout;
 		layout.Push<float>(3); // Position
+		layout.Push<float>(3); // Normals
 		layout.Push<float>(2); // Texture Coords
 		return layout;
 	}

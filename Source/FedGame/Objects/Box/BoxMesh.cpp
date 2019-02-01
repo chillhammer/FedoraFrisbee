@@ -3,37 +3,37 @@
 
 namespace Fed
 {
-	//	Position(3) - Texture Coord(2)
+	//	Position(3) - Normal(3) - Texture Coord(2)
 	static float positions[] = {
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,	//Bottom Left
-		 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,	//Bottom Right
-		 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,	//Top Right
-		-0.5f,  0.5f, 0.0f, 0.0f, 1.0f,	//Top Left
+		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,	//Bottom Left
+		 0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f,	//Bottom Right
+		 0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,	//Top Right
+		-0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,	//Top Left
 
-		 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, //Side Bottom Left
-		 0.5f, -0.5f,-1.0f, 1.0f, 0.0f, //Side Bottom Right
-		 0.5f,  0.5f, 0.0f, 0.0f, 1.0f, //Side Top Left
-		 0.5f,  0.5f,-1.0f, 1.0f, 1.0f, //Side Top Right
+		 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f, //Side Bottom Left
+		 0.5f, -0.5f,-1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f, //Side Bottom Right
+		 0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 1.0f, //Side Top Left
+		 0.5f,  0.5f,-1.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f, //Side Top Right
 
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, //Side Bottom Right		8
-		-0.5f, -0.5f,-1.0f, 1.0f, 0.0f, //Side Bottom Left
-		-0.5f,  0.5f, 0.0f, 0.0f, 1.0f, //Side Top Right
-		-0.5f,  0.5f,-1.0f, 1.0f, 1.0f, //Side Top Left
+		-0.5f, -0.5f, 0.0f,  -1.0f, 0.0f, 0.0f,  0.0f, 0.0f, //Side Bottom Right		8
+		-0.5f, -0.5f,-1.0f,  -1.0f, 0.0f, 0.0f,  1.0f, 0.0f, //Side Bottom Left
+		-0.5f,  0.5f, 0.0f,  -1.0f, 0.0f, 0.0f,  0.0f, 1.0f, //Side Top Right
+		-0.5f,  0.5f,-1.0f,  -1.0f, 0.0f, 0.0f,  1.0f, 1.0f, //Side Top Left
 
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, //Bottom Bottom Left	12
-		 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, //Bottom Bottom Right
-		-0.5f, -0.5f,-1.0f, 0.0f, 1.0f, //Bottom Top Left
-		 0.5f, -0.5f,-1.0f, 1.0f, 1.0f, //Bottom Top Right
+		-0.5f, -0.5f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, 0.0f, //Bottom Bottom Left	12
+		 0.5f, -0.5f, 0.0f,  0.0f, -1.0f, 0.0f,  1.0f, 0.0f, //Bottom Bottom Right
+		-0.5f, -0.5f,-1.0f,  0.0f, -1.0f, 0.0f,  0.0f, 1.0f, //Bottom Top Left
+		 0.5f, -0.5f,-1.0f,  0.0f, -1.0f, 0.0f,  1.0f, 1.0f, //Bottom Top Right
 
-		-0.5f,  0.5f, 0.0f, 0.0f, 0.0f, //Top Bottom Left		16
-		 0.5f,  0.5f, 0.0f, 1.0f, 0.0f, //Top Bottom Right
-		-0.5f,  0.5f,-1.0f, 0.0f, 1.0f, //Top Top Left
-		 0.5f,  0.5f,-1.0f, 1.0f, 1.0f, //Top Top Right
+		-0.5f,  0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, //Top Bottom Left		16
+		 0.5f,  0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, //Top Bottom Right
+		-0.5f,  0.5f,-1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f, //Top Top Left
+		 0.5f,  0.5f,-1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f, //Top Top Right
 
-		-0.5f, -0.5f,-1.0f, 0.0f, 0.0f,	 //Back Bottom Left		20
-		 0.5f, -0.5f,-1.0f, 1.0f, 0.0f,	 //Back Bottom Right
-		 0.5f,  0.5f,-1.0f, 1.0f, 1.0f,	 //Back Top Right
-		-0.5f,  0.5f,-1.0f, 0.0f, 1.0f,	 //Back Top Left
+		-0.5f, -0.5f,-1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f,	 //Back Bottom Left		20
+		 0.5f, -0.5f,-1.0f,  0.0f, 0.0f, -1.0f,  1.0f, 0.0f,	 //Back Bottom Right
+		 0.5f,  0.5f,-1.0f,  0.0f, 0.0f, -1.0f,  1.0f, 1.0f,	 //Back Top Right
+		-0.5f,  0.5f,-1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 1.0f,	 //Back Top Left
 	};
 	static unsigned int indicies[] = {
 		0, 1, 2,	//Front
@@ -57,7 +57,7 @@ namespace Fed
 	static int sides = 6;
 
 	BoxMesh::BoxMesh(Texture& texture) 
-		: Mesh(positions, sizeof(float) * 5 * (4 * sides), indicies, (6 * sides), texture)
+		: Mesh(positions, sizeof(float) * 8 * (4 * sides), indicies, (6 * sides), texture)
 	{
 	}
 

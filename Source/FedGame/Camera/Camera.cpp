@@ -8,7 +8,8 @@ namespace Fed
 {
 	Camera::Camera()
 		:	m_Speed(3.4f), m_Sensitivity(40.f), m_Yaw(270), 
-			Mode(CameraMode::Pivot), m_PivotLength(4.6f), m_PivotPosition(0, 2.3f, 0.4f)
+			Mode(CameraMode::Pivot), m_PivotLength(4.6f), m_PivotOffset(0, 2.3f, 0.4f),
+			m_PivotPosition(0, 0, 0)
 	{
 		m_Transform.Position.z = 2.f;
 	}
@@ -24,6 +25,11 @@ namespace Fed
 
 	void Camera::Update()
 	{
+		if (Input.IsKeyDown(KEY_N))
+		{
+			Mode = (Mode == CameraMode::NoClip ? CameraMode::Pivot : CameraMode::NoClip);
+		}
+
 		// First Person Movement
 		if (Mode == CameraMode::NoClip)
 		{
@@ -69,7 +75,7 @@ namespace Fed
 			m_Transform.SetYaw(m_Yaw);
 
 			Vector3 pivotStick = m_PivotLength * -1 * m_Transform.GetHeading();
-			m_Transform.Position = m_PivotPosition + pivotStick;
+			m_Transform.Position = m_PivotPosition + m_PivotOffset + pivotStick;
 		}
 
 		m_Transform.SetPitch(m_Pitch);
@@ -102,6 +108,11 @@ namespace Fed
 		float fov = 45;
 		float aspect = (float)Game.GetWindow().GetWidth() / (float) Game.GetWindow().GetHeight();
 		return glm::perspective(glm::radians(fov), aspect, 0.1f, 100.f);
+	}
+
+	void Camera::SetPivotPosition(Vector3 newPosition)
+	{
+		m_PivotPosition = newPosition;
 	}
 
 	static int DELTA_CAP = 300;

@@ -28,4 +28,5 @@ namespace Fed
 		inline int GetHeight() const { return m_Height; }
 		inline std::string GetFilePath() const { return m_FilePath; }
 	};
+	typedef std::shared_ptr<Texture> TexturePtr;
 }

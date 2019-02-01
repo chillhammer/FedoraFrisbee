@@ -15,6 +15,7 @@ namespace Fed
 		void OnEvent(const Subject* subject, Event& e);
 		Matrix4x4 GetViewMatrix();
 		Matrix4x4 GetProjectionMatrix();
+		void SetPivotPosition(Vector3 newPosition);
 	public:
 		CameraMode Mode;
 	private:
@@ -26,6 +27,7 @@ namespace Fed
 		float m_Pitch;
 		float m_Yaw;
 		Vector3 m_PivotPosition;
+		Vector3 m_PivotOffset;
 		float m_PivotLength;
 	private:
 		bool OnMouseMoved(MouseMovedEvent& e);
