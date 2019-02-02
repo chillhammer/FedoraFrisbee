@@ -12,6 +12,7 @@ namespace Fed
 	Vector3 GetEulerAngles(const Quaternion& quat);
 	Quaternion ConvertEulerToQuaternion(const Vector3& eulerAngles);
 	float ProcessAngle(float angle);
+	float LerpAngle(float start, float end, float amount);
 
 	struct Transform
 	{
@@ -27,7 +28,7 @@ namespace Fed
 			posMat = glm::translate(posMat, Position);
 
 			Matrix4x4 rotMat(1.f);
-			rotMat = glm::eulerAngleXYZ(glm::radians(Rotation.x), glm::radians(-Rotation.y), glm::radians(Rotation.z));
+			rotMat = glm::eulerAngleYXZ(glm::radians(-Rotation.y), glm::radians(Rotation.x), glm::radians(Rotation.z));
 
 			Matrix4x4 scaleMat(1.f);
 			scaleMat = glm::scale(scaleMat, Scale);

@@ -25,7 +25,7 @@ namespace Fed
 			owner->m_Direction = glm::lerp(owner->m_Direction, moveDir, 0.5f);
 		}
 
-		float acceleration = (moved ? 8.5f : -15.f);
+		float acceleration = (moved ? 10.5f : -15.f);
 		float speed = owner->m_Speed;
 		speed = (speed < 3.f && forwardSign == 1 ? 3.f : (speed < 1.5f && moved ? 1.5f : speed));
 		float multiplier = (forwardSign == 1 ? (sideSign == 0 ? 1.95f : 1.95f) : 1);
@@ -42,13 +42,13 @@ namespace Fed
 		{
 			float cameraYaw = owner->m_Camera->ObjectTransform.GetYaw();
 			owner->ObjectTransform.SetYaw(cameraYaw);
-			float cameraPitch = owner->m_Camera->ObjectTransform.GetPitch();
-			//owner->ObjectTransform.SetPitch(cameraPitch);
-			// LOG("Camera Yaw: {0}", cameraYaw);
 		}
 
-		owner->ObjectTransform.SetPitch(forwardSign * 15.f);
-		owner->ObjectTransform.SetRoll(sideSign * 15.f);
+		float forwardLean = 2.f;
+		float sideLean = 0.9f;
+		float leanSpeed = 20.f;
+		owner->ObjectTransform.SetPitch(LerpAngle(owner->ObjectTransform.GetPitch(), forwardSign * owner->m_Speed * forwardLean, leanSpeed * Game.DeltaTime()));
+		owner->ObjectTransform.SetRoll(LerpAngle(owner->ObjectTransform.GetRoll(), sideSign * owner->m_Speed * sideLean, leanSpeed * Game.DeltaTime()));
 
 		// Update Camera Pivot
 		if (owner->m_Camera)

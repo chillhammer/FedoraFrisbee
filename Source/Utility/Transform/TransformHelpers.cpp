@@ -18,4 +18,12 @@ namespace Fed
 		if (angle < 0) angle += 360; // Fmod doesn't account for negative numbers
 		return angle;
 	}
+	// Lerps angle in degrees
+	float LerpAngle(float start, float end, float amount)
+	{
+		start = ProcessAngle(start);
+		end = ProcessAngle(end);
+		float shortest_angle = std::fmod( std::fmod(end - start, 360)  + 540, 360) - 180;
+		return ProcessAngle(start + shortest_angle * amount);
+	}
 }
