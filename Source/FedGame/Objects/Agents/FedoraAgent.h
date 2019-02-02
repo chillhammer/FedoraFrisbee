@@ -24,5 +24,8 @@ namespace Fed
 		AgentInputType m_InputType;
 		FedoraAgentInputComponent* m_InputComponent;
 		class Camera* m_Camera;
+		float m_Speed;
+		float m_MaxSpeed;
+		Vector3 m_Direction;
 	};
 }

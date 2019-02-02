@@ -26,17 +26,13 @@ namespace Fed
 	void Test::Execute(GameManager* owner)
 	{
 		m_Camera.Update();
-
 		m_Agent.Update();
-		m_Agent.Draw();
-		m_Box.Draw();
-
-		if (Input.IsKeyDown(KEY_J))
-		{
-			m_Agent.ObjectTransform.Position += Vector3(0.01f, 0, 0);
-		}
 
 		m_Shader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
+
+		m_Box.Draw();
+		m_Agent.Draw();
+
 	}
 	void Test::Exit(GameManager* owner)
 	{

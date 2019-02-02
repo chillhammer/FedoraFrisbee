@@ -53,6 +53,7 @@ namespace Fed
 	////////////////////////////////////////////////
 	namespace Evnt
 	{
+		// Dispatches given event to class method
 		template<typename T>
 		bool Dispatch(Event& event, std::function<bool(T&)> func)
 		{

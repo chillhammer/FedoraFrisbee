@@ -27,13 +27,15 @@ namespace Fed
 			posMat = glm::translate(posMat, Position);
 
 			Matrix4x4 rotMat(1.f);
-			rotMat = glm::eulerAngleXYZ(Rotation.x, Rotation.y, Rotation.z);
+			rotMat = glm::eulerAngleXYZ(glm::radians(Rotation.x), glm::radians(-Rotation.y), glm::radians(Rotation.z));
 
 			Matrix4x4 scaleMat(1.f);
 			scaleMat = glm::scale(scaleMat, Scale);
 			return posMat * rotMat * scaleMat;
 		}
 
+		// Returns Forward vector based on angle rotation properties
+		// [0, 0, 0] -> (0, 0, 1)
 		Vector3 GetHeading() const
 		{
 			Vector4 front(1.f, 0.f, 0.f, 0.f);
@@ -42,9 +44,9 @@ namespace Fed
 			Matrix4x4 rotMat(1.f);
 
 			Vector3 heading;
-			heading.x = cos(glm::radians(GetYaw())) * cos(glm::radians(GetPitch()));
+			heading.x = cos(glm::radians(GetYaw() + 90.f)) * cos(glm::radians(GetPitch()));
 			heading.y = sin(glm::radians(GetPitch()));
-			heading.z = sin(glm::radians(GetYaw())) * cos(glm::radians(GetPitch()));
+			heading.z = sin(glm::radians(GetYaw() + 90.f)) * cos(glm::radians(GetPitch()));
 			heading = glm::normalize(heading);
 			//LOG("Heading: {0}, {1}, {2}, {3}", heading.x, heading.y, heading.z, heading.w);
 			//LOG("Rotation: {0}, {1}, {2}, {3}", Rotation.x, Rotation.y, Rotation.z, Rotation.w);

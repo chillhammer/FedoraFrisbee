@@ -1,7 +1,9 @@
-#include "FedPCH.h"
-#include "GameManager.h"
+#include <FedPCH.h>
 #include "GameStates.h"
 #include <GLFW/glfw3.h>
+#include <EventSystem/Event.h>
+#include <Input/InputManager.h>
+#include <EventSystem/Events/KeyEvent.h>
 #include "GameManager.h"
 
 namespace Fed
@@ -15,6 +17,7 @@ namespace Fed
 	// Called to setup dependencies, namely GLFW
 	void GameManager::Init()
 	{
+		Input.KeyPressed.AddObserver(this);
 	}
 	// Called to enter first state
 	void GameManager::Start()
@@ -52,9 +55,51 @@ namespace Fed
 		m_Running = false;
 	}
 
+	void GameManager::OnEvent(const Subject * subject, Event & event)
+	{
+		Evnt::Dispatch<KeyPressedEvent>(event, EVENT_BIND_FN(GameManager, OnKeyPressed));
+	}
+
+
+	// Returns delta time with scale
+	// Will return 0 if paused
 	float GameManager::DeltaTime() const
 	{
+		return m_DeltaTime * m_TimeScale;
+	}
+
+	// Returns delta time ignoring time scale, eg. pause
+	// Useful for debug methods
+	float GameManager::DeltaTimeUnscaled() const
+	{
 		return m_DeltaTime;
+	}
+
+	float GameManager::TimeScale() const
+	{
+		return m_TimeScale;
+	}
+
+	void GameManager::SetTimeScale(float timeScale)
+	{
+		m_UnpausedTimeScale = timeScale;
+		m_TimeScale = timeScale;
+	}
+
+	void GameManager::TogglePause()
+	{
+		if (IsPaused())
+			m_TimeScale = m_UnpausedTimeScale;
+		else
+		{
+			m_UnpausedTimeScale = m_TimeScale;
+			m_TimeScale = 0;
+		}
+	}
+
+	bool GameManager::IsPaused() const
+	{
+		return m_TimeScale <= 0;
 	}
 
 	const Window& GameManager::GetWindow() const
@@ -68,6 +113,17 @@ namespace Fed
 		double currentTime = glfwGetTime();
 		m_DeltaTime = currentTime - m_LastUpdatedTime;
 		m_LastUpdatedTime = currentTime;
+	}
+
+	bool GameManager::OnKeyPressed(KeyPressedEvent& e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case KEY_X:
+			TogglePause();
+			break;
+		}
+		return false;
 	}
 
 }

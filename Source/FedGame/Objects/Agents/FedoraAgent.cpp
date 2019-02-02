@@ -27,6 +27,8 @@ namespace Fed
 			delete m_InputComponent;
 		}
 		m_InputType = inputType;
+
+		// Instatiates New Component
 		switch (inputType)
 		{
 		case AgentInputType::NONE:
@@ -37,12 +39,14 @@ namespace Fed
 		}
 		
 	}
+
 	// FedoraAgent keeps reference of camera for player input
 	// AI may also use camera reference to decide actions
 	void FedoraAgent::SetCameraReference(Camera * camera)
 	{
 		m_Camera = camera;
 	}
+
 	// Updates logic within Fedora Agent
 	// Virtually calls logic to either AI or Player Input
 	void FedoraAgent::Update()

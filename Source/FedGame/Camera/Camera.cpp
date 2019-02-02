@@ -1,5 +1,7 @@
 #include <FedPCH.h>
 #include <Input/InputManager.h>
+#include <EventSystem/Events/MouseEvent.h>
+#include <EventSystem/Events/KeyEvent.h>
 #include <Game/GameManager.h>
 #include <GLFW/glfw3.h>
 #include "Camera.h"
@@ -7,16 +9,17 @@
 namespace Fed
 {
 	Camera::Camera()
-		:	m_Speed(3.4f), m_Sensitivity(40.f), m_Yaw(270), 
-			Mode(CameraMode::Pivot), m_PivotLength(4.6f), m_PivotOffset(0, 2.3f, 0.4f),
+		:	m_Speed(3.4f), m_Sensitivity(40.f), m_Yaw(180), 
+			Mode(CameraMode::Pivot), m_PivotLength(4.9f), m_PivotOffset(0, 2.3f, 0.4f),
 			m_PivotPosition(0, 0, 0)
 	{
-		m_Transform.Position.z = 2.f;
+		ObjectTransform.Position.z = 2.f;
 	}
 	void Camera::Init()
 	{
 		LOG("Initialized Camera");
 		Input.MouseMoved.AddObserver(this);
+		Input.KeyPressed.AddObserver(this);
 		m_PrevMousePosition = Input.GetMousePosition();
 
 		// Invisible Cursor
@@ -25,43 +28,42 @@ namespace Fed
 
 	void Camera::Update()
 	{
-		if (Input.IsKeyDown(KEY_N))
-		{
-			Mode = (Mode == CameraMode::NoClip ? CameraMode::Pivot : CameraMode::NoClip);
-		}
 
 		// First Person Movement
 		if (Mode == CameraMode::NoClip)
 		{
 			if (Input.IsKeyDown(KEY_W))
 			{
-				m_Transform.Position += m_Transform.GetHeading() * m_Speed * Game.DeltaTime();
+				ObjectTransform.Position += ObjectTransform.GetHeading() * m_Speed * Game.DeltaTimeUnscaled();
 			}
 			if (Input.IsKeyDown(KEY_S))
 			{
-				m_Transform.Position -= m_Transform.GetHeading() * m_Speed * Game.DeltaTime();
+				ObjectTransform.Position -= ObjectTransform.GetHeading() * m_Speed * Game.DeltaTimeUnscaled();
 			}
 			if (Input.IsKeyDown(KEY_D))
 			{
-				m_Transform.Position += m_Transform.GetSide() * m_Speed * Game.DeltaTime();
+				ObjectTransform.Position += ObjectTransform.GetSide() * m_Speed * Game.DeltaTimeUnscaled();
 			}
 			if (Input.IsKeyDown(KEY_A))
 			{
-				m_Transform.Position -= m_Transform.GetSide() * m_Speed * Game.DeltaTime();
+				ObjectTransform.Position -= ObjectTransform.GetSide() * m_Speed * Game.DeltaTimeUnscaled();
 			}
 			if (Input.IsKeyDown(KEY_LEFT_SHIFT))
 			{
-				m_Transform.Position -= Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTime();
+				ObjectTransform.Position -= Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTimeUnscaled();
 			}
 			if (Input.IsKeyDown(KEY_SPACE))
 			{
-				m_Transform.Position += Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTime();
+				ObjectTransform.Position += Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTimeUnscaled();
 			}
 
 			// Look Around
-			m_Pitch -= m_DeltaMousePosition.y * m_Sensitivity * Game.DeltaTime();
-			m_Yaw += m_DeltaMousePosition.x * m_Sensitivity * Game.DeltaTime();
+			m_Pitch -= m_DeltaMousePosition.y * m_Sensitivity * Game.DeltaTimeUnscaled();
+			m_Yaw += m_DeltaMousePosition.x * m_Sensitivity * Game.DeltaTimeUnscaled();
 			m_Pitch = glm::clamp<float>(m_Pitch, -89, 89);
+
+			ObjectTransform.SetPitch(m_Pitch);
+			ObjectTransform.SetYaw(m_Yaw);
 		}
 		// Third-Person Pivoting
 		if (Mode == CameraMode::Pivot)
@@ -69,24 +71,24 @@ namespace Fed
 			// Look Around
 			m_Pitch -= m_DeltaMousePosition.y * m_Sensitivity * Game.DeltaTime();
 			m_Yaw += m_DeltaMousePosition.x * m_Sensitivity * Game.DeltaTime();
-			m_Pitch = glm::clamp<float>(m_Pitch, -89, 89);
+			m_Pitch = glm::clamp<float>(m_Pitch, -20, 20);
 
-			m_Transform.SetPitch(m_Pitch);
-			m_Transform.SetYaw(m_Yaw);
+			ObjectTransform.SetPitch(m_Pitch);
+			ObjectTransform.SetYaw(m_Yaw);
 
-			Vector3 pivotStick = m_PivotLength * -1 * m_Transform.GetHeading();
-			m_Transform.Position = m_PivotPosition + m_PivotOffset + pivotStick;
+			UpdatePivotPosition();
 		}
 
-		m_Transform.SetPitch(m_Pitch);
-		m_Transform.SetYaw(m_Yaw);
+
 		// Reset Delta Movement
 		m_DeltaMousePosition = Vector2(0, 0);
+
 		
 		//LOG("Camera Pitch: {0} - Local: {1}", m_Transform.GetPitch(), m_Pitch);
-		//LOG("Camera Yaw: {0} - Local: {1}", m_Transform.GetYaw(), m_Yaw);
+		//LOG("Camera Yaw: {0} - Local: {1}", ObjectTransform.GetYaw(), m_Yaw);
 
 		//LOG("Camera Position: {0}, {1}, {2}", m_Transform.Position.x, m_Transform.Position.y, m_Transform.Position.z);
+		//LOG("Camera Pivot Position: {0}, {1}, {2}", m_PivotPosition.x, m_PivotPosition.y, m_PivotPosition.z);
 		//LOG("Camera Heading: {0}, {1}, {2}", m_Transform.GetHeading().x, m_Transform.GetHeading().y, m_Transform.GetHeading().z);
 		//LOG("Camera Side: {0}, {1}, {2}", m_Transform.GetSide().x, m_Transform.GetSide().y, m_Transform.GetSide().z);
 		//LOG("Camera Up: {0}, {1}, {2}", m_Transform.GetUp().x, m_Transform.GetUp().y, m_Transform.GetUp().z);
@@ -96,11 +98,13 @@ namespace Fed
 	void Camera::OnEvent(const Subject * subject, Event & e)
 	{
 		Evnt::Dispatch<MouseMovedEvent>(e, EVENT_BIND_FN(Camera, OnMouseMoved));
+		Evnt::Dispatch<KeyPressedEvent>(e, EVENT_BIND_FN(Camera, OnKeyPressed));
+		
 	}
 
 	Matrix4x4 Camera::GetViewMatrix()
 	{
-		return glm::lookAt(m_Transform.Position, m_Transform.Position + m_Transform.GetHeading(), m_Transform.GetUp());
+		return glm::lookAt(ObjectTransform.Position, ObjectTransform.Position + ObjectTransform.GetHeading(), ObjectTransform.GetUp());
 	}
 
 	Matrix4x4 Camera::GetProjectionMatrix()
@@ -110,9 +114,21 @@ namespace Fed
 		return glm::perspective(glm::radians(fov), aspect, 0.1f, 100.f);
 	}
 
+	// Used to update position when pivoting
 	void Camera::SetPivotPosition(Vector3 newPosition)
 	{
 		m_PivotPosition = newPosition;
+		UpdatePivotPosition();
+	}
+	// Calculate new position when pivoting
+	void Camera::UpdatePivotPosition()
+	{
+		if (Mode != CameraMode::Pivot)
+			return;
+		Vector3 pivotStick = m_PivotLength * -1 * ObjectTransform.GetHeading();
+		Matrix4x4 rotMat = glm::eulerAngleXYZ(0.f, glm::radians(-ObjectTransform.GetYaw()), 0.f);
+		Vector3 rotatedPivotOffset = rotMat * Vector4(m_PivotOffset, 1);
+		ObjectTransform.Position = m_PivotPosition + rotatedPivotOffset + pivotStick;
 	}
 
 	static int DELTA_CAP = 300;
@@ -129,6 +145,17 @@ namespace Fed
 			LOG("Inital Camera Jump");
 		}
 		Game.GetWindow().SetCursorPosition(DELTA_CAP, DELTA_CAP);
+		return false;
+	}
+
+	bool Camera::OnKeyPressed(KeyPressedEvent & e)
+	{
+		switch (e.GetKeyCode())
+		{
+		case KEY_C:
+			Mode = (Mode == CameraMode::NoClip ? CameraMode::Pivot : CameraMode::NoClip);
+			break;
+		}
 		return false;
 	}
 

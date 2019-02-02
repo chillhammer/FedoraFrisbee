@@ -1,7 +1,6 @@
 #pragma once
 #include <Transform/Transform.h>
 #include <EventSystem/IObserver.h>
-#include <EventSystem/Events/MouseEvent.h>
 
 namespace Fed
 {
@@ -18,8 +17,8 @@ namespace Fed
 		void SetPivotPosition(Vector3 newPosition);
 	public:
 		CameraMode Mode;
+		Transform ObjectTransform;
 	private:
-		Transform m_Transform;
 		float m_Speed;
 		float m_Sensitivity;
 		Vector2 m_PrevMousePosition;
@@ -30,6 +29,8 @@ namespace Fed
 		Vector3 m_PivotOffset;
 		float m_PivotLength;
 	private:
-		bool OnMouseMoved(MouseMovedEvent& e);
+		bool OnMouseMoved(class MouseMovedEvent& e);
+		bool OnKeyPressed(class KeyPressedEvent& e);
+		void UpdatePivotPosition();
 	};
 }
