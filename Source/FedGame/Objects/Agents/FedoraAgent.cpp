@@ -5,11 +5,11 @@
 namespace Fed
 {
 	FedoraAgent::FedoraAgent()
-		: GameObject("RoboPadron")
+		: GameObject("FedoraAgent")
 	{
 	}
 	FedoraAgent::FedoraAgent(Vector3 position)
-		: GameObject("RoboPadron", position)
+		: GameObject("FedoraAgent", position)
 	{
 	}
 	FedoraAgent::~FedoraAgent()

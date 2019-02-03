@@ -71,7 +71,7 @@ namespace Fed
 			// Look Around
 			m_Pitch -= m_DeltaMousePosition.y * m_Sensitivity * Game.DeltaTime();
 			m_Yaw += m_DeltaMousePosition.x * m_Sensitivity * Game.DeltaTime();
-			m_Pitch = glm::clamp<float>(m_Pitch, -20, 20);
+			m_Pitch = glm::clamp<float>(m_Pitch, -10, -10);
 
 			ObjectTransform.SetPitch(m_Pitch);
 			ObjectTransform.SetYaw(m_Yaw);
@@ -154,6 +154,9 @@ namespace Fed
 		{
 		case KEY_C:
 			Mode = (Mode == CameraMode::NoClip ? CameraMode::Pivot : CameraMode::NoClip);
+			break;
+		case KEY_V:
+			Mode = CameraMode::Frozen;
 			break;
 		}
 		return false;

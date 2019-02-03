@@ -4,7 +4,7 @@
 
 namespace Fed
 {
-	enum CameraMode { NoClip, Pivot };
+	enum CameraMode { NoClip, Pivot, Frozen };
 	class Camera : IObserver
 	{
 	public:
