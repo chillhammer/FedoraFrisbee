@@ -1,0 +1,4 @@
+newmtl specular
+Ks 1.0 1.0 1.0
+Ns 200.0
+d 1.0

@@ -15,6 +15,7 @@ namespace Fed
 		GameObject(std::string modelName);
 		GameObject(std::string modelName, Vector3 position);
 		int GetID() const;
+		void AttachToParent(GameObject* parent);
 		void Draw();
 		void Draw(const ShaderPtr& shader);
 	public:

@@ -13,7 +13,7 @@ namespace Fed
 	{
 		LOG("Entering Test State in Game Object");
 		m_Camera.Init();
-		m_Light = Vector3(1.f, 3.f, 1.f);
+		m_Light = Vector3(0.f, 10.f, -5.f);
 
 		m_Shader = Resources.GetShader("Model");
 		m_Shader->Bind();
@@ -22,6 +22,10 @@ namespace Fed
 		m_Box.ObjectTransform.Scale = Vector3(12, 0.001f, 20);
 		m_Agent.SetInputType(AgentInputType::PLAYER);
 		m_Agent.SetCameraReference(&m_Camera);
+
+		//m_Fedora.ObjectTransform.Position = Vector3(-2, 1.92f, -2);
+		m_Fedora.ObjectTransform.Position = Vector3(0, 1.92f, 0);
+		m_Fedora.AttachToParent(&m_Agent);
 	}
 	void Test::Execute(GameManager* owner)
 	{
@@ -32,6 +36,7 @@ namespace Fed
 
 		m_Box.Draw();
 		m_Agent.Draw();
+		m_Fedora.Draw();
 
 	}
 	void Test::Exit(GameManager* owner)

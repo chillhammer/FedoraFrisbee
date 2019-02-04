@@ -20,6 +20,8 @@ namespace Fed
 		Vector3 Rotation;
 		Vector3 Scale;
 
+		Transform* Parent;
+
 		Transform() : Position(0, 0, 0), Rotation(0, 0, 0), Scale(1, 1, 1) {}
 
 		Matrix4x4 GetMatrix() const
@@ -32,7 +34,11 @@ namespace Fed
 
 			Matrix4x4 scaleMat(1.f);
 			scaleMat = glm::scale(scaleMat, Scale);
-			return posMat * rotMat * scaleMat;
+
+			Matrix4x4 modelMat = posMat * rotMat * scaleMat;
+			if (Parent) // Relative to Parent
+				modelMat = Parent->GetMatrix() * modelMat;
+			return modelMat;
 		}
 
 		// Returns Forward vector based on angle rotation properties

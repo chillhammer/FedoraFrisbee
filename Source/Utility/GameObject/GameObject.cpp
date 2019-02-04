@@ -24,6 +24,12 @@ namespace Fed
 	{
 		return m_ID;
 	}
+	// Sets transform relative to parameter's transform
+	void GameObject::AttachToParent(GameObject* parent)
+	{
+		ASSERT(parent, "Cannot attach transform to nullptr");
+		ObjectTransform.Parent = &(parent->ObjectTransform);
+	}
 	void GameObject::Draw()
 	{
 		ShaderPtr shader = Resources.GetShader("Model");

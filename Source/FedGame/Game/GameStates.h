@@ -2,6 +2,7 @@
 #include "GameManager.h"
 #include <Objects/Agents/FedoraAgent.h>
 #include <Objects/Box/WoodenBox.h>
+#include <Objects/Fedora/Fedora.h>
 namespace Fed
 {
 
@@ -12,5 +13,6 @@ namespace Fed
 		Vector3 m_Light;
 		ShaderPtr m_Shader;
 		WoodenBox m_Box;
+		Fedora m_Fedora;
 	);
 }

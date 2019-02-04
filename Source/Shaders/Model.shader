@@ -41,7 +41,7 @@ void main()
 	float intensity = dot(norm, lightDir);
 
 	// Cell-Shading
-	intensity = (intensity + 0.9f > 0.5f ? 0.8f : 0.2f);
+	intensity = (intensity + 0.3f > 0.5f ? 0.8f : 0.2f);
 	float baseline = 0.6f;
 
 	if (u_UseTexture)
