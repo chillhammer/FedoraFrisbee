@@ -18,6 +18,13 @@ namespace Fed
 		if (angle < 0) angle += 360; // Fmod doesn't account for negative numbers
 		return angle;
 	}
+	Vector3 ProcessAngleVector(Vector3 angles)
+	{
+		angles.x = ProcessAngle(angles.x);
+		angles.y = ProcessAngle(angles.y);
+		angles.z = ProcessAngle(angles.z);
+		return angles;
+	}
 	// Lerps angle in degrees
 	float LerpAngle(float start, float end, float amount)
 	{

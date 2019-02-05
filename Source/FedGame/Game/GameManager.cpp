@@ -22,7 +22,7 @@ namespace Fed
 	// Called to enter first state
 	void GameManager::Start()
 	{
-		m_StateMachine.ChangeState(Test::Instance());
+		m_StateMachine.ChangeState(GameStates::Test::Instance());
 	}
 	static WindowProps props;
 	GameManager::GameManager() : m_Window(props),
@@ -121,6 +121,9 @@ namespace Fed
 		{
 		case KEY_X:
 			TogglePause();
+			break;
+		case KEY_R:
+			m_StateMachine.ChangeState(GameStates::Test::Instance());
 			break;
 		}
 		return false;

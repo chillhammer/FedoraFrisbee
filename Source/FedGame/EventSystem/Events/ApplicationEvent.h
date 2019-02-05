@@ -28,8 +28,8 @@ namespace Fed
 		unsigned int m_Width, m_Height;
 	};
 
-	EVENT_CLASS_SIMPLE(WindowClose, EventCategoryApplication);
-	EVENT_CLASS_SIMPLE(AppTick, EventCategoryApplication);
-	EVENT_CLASS_SIMPLE(AppUpdate, EventCategoryApplication);
-	EVENT_CLASS_SIMPLE(AppRender, EventCategoryApplication);
+	EVENT_CLASS_SIMPLE(WindowClose, Application);
+	EVENT_CLASS_SIMPLE(AppTick, Application);
+	EVENT_CLASS_SIMPLE(AppUpdate, Application);
+	EVENT_CLASS_SIMPLE(AppRender, Application);
 }

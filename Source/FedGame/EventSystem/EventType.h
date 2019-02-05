@@ -11,7 +11,10 @@ enum class EventType
 	WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 	AppTick, AppUpdate, AppRender,
 	KeyPressed, KeyReleased, KeyTyped,
-	MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+	MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
+
+	// Frisbee Field Controller Events
+	FrisbeeThrown
 };
 
 enum EventCategory
@@ -21,5 +24,6 @@ enum EventCategory
 	EventCategoryInput = BIT(1),
 	EventCategoryKeyboard = BIT(2),
 	EventCategoryMouse = BIT(3),
-	EventCategoryMouseButton = BIT(4)
+	EventCategoryMouseButton = BIT(4),
+	EventCategoryFrisbeeField = BIT(5)
 };

@@ -6,7 +6,7 @@
 	Each state runs code that determines the course of the game.
 	Each state has local variables which can be seen in GameManager.h
 **/
-namespace Fed
+namespace Fed::GameStates
 {
 	// Test State
 	void Test::Enter(GameManager* owner)
@@ -22,15 +22,17 @@ namespace Fed
 		m_Box.ObjectTransform.Scale = Vector3(12, 0.001f, 20);
 		m_Agent.SetInputType(AgentInputType::PLAYER);
 		m_Agent.SetCameraReference(&m_Camera);
+		if (!m_Agent.GetFieldController())
+			m_Agent.SetFieldControllerReference(&m_FieldController);
 
-		//m_Fedora.ObjectTransform.Position = Vector3(-2, 1.92f, -2);
-		m_Fedora.ObjectTransform.Position = Vector3(0, 1.92f, 0);
-		m_Fedora.AttachToParent(&m_Agent);
+		m_Fedora.SetOwner(&m_Agent);
+		m_FieldController.FrisbeeThrown.AddObserver(&m_Fedora);
 	}
 	void Test::Execute(GameManager* owner)
 	{
 		m_Camera.Update();
 		m_Agent.Update();
+		m_Fedora.Update();
 
 		m_Shader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
 

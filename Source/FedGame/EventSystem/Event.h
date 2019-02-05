@@ -43,7 +43,7 @@ namespace Fed
 		{ \
 		public: \
 			EVENT_CLASS_TYPE(WindowClose) \
-			EVENT_CLASS_CATEGORY(EventCategoryApplication) \
+			EVENT_CLASS_CATEGORY(EventCategory##Application) \
 		}
 	// Allows binding functions with 1 argument. Usually used with Dispatch
 	// Example Usage: Dispatch<Event1>(event, EVENT_BIND_FN(Window, OnEvent1));

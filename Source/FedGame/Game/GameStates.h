@@ -3,7 +3,8 @@
 #include <Objects/Agents/FedoraAgent.h>
 #include <Objects/Box/WoodenBox.h>
 #include <Objects/Fedora/Fedora.h>
-namespace Fed
+#include <FrisbeeFieldController/FrisbeeFieldController.h>
+namespace Fed::GameStates
 {
 
 	// Simple Test State to Experiment
@@ -14,5 +15,6 @@ namespace Fed
 		ShaderPtr m_Shader;
 		WoodenBox m_Box;
 		Fedora m_Fedora;
+		FrisbeeFieldController m_FieldController;
 	);
 }

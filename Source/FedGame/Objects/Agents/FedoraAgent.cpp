@@ -1,15 +1,16 @@
 #include <FedPCH.h>
 #include <Resources/ResourceManager.h>
+#include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include "FedoraAgent.h"
 #include "Components/FedoraAgentInputPlayer.h"
 namespace Fed
 {
 	FedoraAgent::FedoraAgent()
-		: GameObject("FedoraAgent")
+		: GameObject("FedoraAgent"), m_FieldController(nullptr)
 	{
 	}
 	FedoraAgent::FedoraAgent(Vector3 position)
-		: GameObject("FedoraAgent", position)
+		: GameObject("FedoraAgent", position), m_FieldController(nullptr)
 	{
 	}
 	FedoraAgent::~FedoraAgent()
@@ -45,6 +46,34 @@ namespace Fed
 	void FedoraAgent::SetCameraReference(Camera * camera)
 	{
 		m_Camera = camera;
+	}
+
+	// Access field controller to query information or trigger events
+	void FedoraAgent::SetFieldControllerReference(FrisbeeFieldController * controller)
+	{
+		ASSERT(!m_FieldController, "Can only set Field Controller once, for now.");
+		m_FieldController = controller;
+		controller->FrisbeeThrown.AddObserver(this);
+	}
+	FrisbeeFieldController * FedoraAgent::GetFieldController() const
+	{
+		return m_FieldController;
+	}
+	// Has Fedora Accessors
+	bool FedoraAgent::GetHasFedora() const
+	{
+		return m_HasFedora;
+	}
+	void FedoraAgent::SetHasFedora(bool hasFedora)
+	{
+		m_HasFedora = hasFedora;
+	}
+
+	// Handles Events about the match for this agent
+	void FedoraAgent::OnEvent(const Subject * subject, Event & event)
+	{
+		// TODO: Handle Frisbee Thrown. Create OnFrisbeeThrown()
+		// Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FedoraAgent, OnFrisbeeThrown));
 	}
 
 	// Updates logic within Fedora Agent

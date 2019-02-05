@@ -12,6 +12,7 @@ namespace Fed
 	Vector3 GetEulerAngles(const Quaternion& quat);
 	Quaternion ConvertEulerToQuaternion(const Vector3& eulerAngles);
 	float ProcessAngle(float angle);
+	Vector3 ProcessAngleVector(Vector3 angles);
 	float LerpAngle(float start, float end, float amount);
 
 	struct Transform
@@ -39,6 +40,31 @@ namespace Fed
 			if (Parent) // Relative to Parent
 				modelMat = Parent->GetMatrix() * modelMat;
 			return modelMat;
+		}
+
+		// Taking into account parents and ancestors
+		Vector3 GetGlobalPosition()
+		{
+			Vector3 pos = Position;
+			Transform* parent = Parent;
+			while (parent)
+			{
+				pos += parent->Position;
+				parent = parent->Parent;
+			}
+			return pos;
+		}
+
+		Vector3 GetGlobalRotation()
+		{
+			Vector3 rot = Rotation;
+			Transform* parent = Parent;
+			while (parent)
+			{
+				rot += parent->Rotation;
+				parent = parent->Parent;
+			}
+			return ProcessAngleVector(rot);
 		}
 
 		// Returns Forward vector based on angle rotation properties

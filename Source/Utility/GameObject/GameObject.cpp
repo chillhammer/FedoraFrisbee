@@ -25,10 +25,28 @@ namespace Fed
 		return m_ID;
 	}
 	// Sets transform relative to parameter's transform
+	// Updates Position to be local to new parent
+	// Can set to nullptr, to have no parent
 	void GameObject::AttachToParent(GameObject* parent)
 	{
-		ASSERT(parent, "Cannot attach transform to nullptr");
-		ObjectTransform.Parent = &(parent->ObjectTransform);
+		if (ObjectTransform.Parent == &(parent->ObjectTransform))
+			return;
+		// Detach from current parent
+		if (ObjectTransform.Parent)
+		{
+			ObjectTransform.Position += ObjectTransform.Parent->GetGlobalPosition();
+			ObjectTransform.Rotation += ObjectTransform.Parent->GetGlobalRotation();
+			ObjectTransform.Parent = nullptr;
+		}
+		// Update to new parent
+		if (parent)
+		{
+			ObjectTransform.Parent = &(parent->ObjectTransform);
+			ObjectTransform.Position -= parent->ObjectTransform.GetGlobalPosition();
+			ObjectTransform.Rotation -= parent->ObjectTransform.GetGlobalRotation();
+		}
+		// Process Rotation
+		ObjectTransform.Rotation = ProcessAngleVector(ObjectTransform.Rotation);
 	}
 	void GameObject::Draw()
 	{

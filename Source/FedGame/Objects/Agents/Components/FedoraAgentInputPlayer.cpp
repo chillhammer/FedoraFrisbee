@@ -1,11 +1,24 @@
 #include <FedPCH.h>
 #include <Input/InputManager.h>
 #include <Game/GameManager.h>
+#include <EventSystem/Events/FrisbeeFieldEvent.h>
+#include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include "FedoraAgentInputPlayer.h"
 #include "../FedoraAgent.h"
 
 namespace Fed
 {
+	FedoraAgentInputPlayer::FedoraAgentInputPlayer()
+	{
+		Input.MouseClicked.AddObserver(this);
+		Input.KeyPressed.AddObserver(this);
+	}
+	// Handles events, primarily input
+	void FedoraAgentInputPlayer::OnEvent(const Subject * subject, Event & e)
+	{
+		Evnt::Dispatch<KeyPressedEvent>(e, EVENT_BIND_FN(FedoraAgentInputPlayer, OnKeyPressed));
+		Evnt::Dispatch<MouseButtonPressedEvent>(e, EVENT_BIND_FN(FedoraAgentInputPlayer, OnMousePressed));
+	}
 	void FedoraAgentInputPlayer::Update(FedoraAgent * owner)
 	{
 		// Setting Up Movement Variables
@@ -55,5 +68,40 @@ namespace Fed
 		{
 			owner->m_Camera->SetPivotPosition(owner->ObjectTransform.Position);
 		}
+
+		// Input Trigger Fedora Throwing Event
+		if (m_InputFedoraThrow)
+		{
+			if (owner->GetHasFedora())
+			{
+				FrisbeeFieldController* fieldController = owner->GetFieldController();
+				if (fieldController)
+				{
+					Vector3 throwDirection = owner->ObjectTransform.GetHeading();
+					throwDirection.y = 0;
+					throwDirection = glm::normalize(throwDirection);
+					FrisbeeThrownEvent e(throwDirection, owner->ObjectTransform.Position, *owner);
+					fieldController->FrisbeeThrown.Notify(e);
+				}
+			}
+			m_InputFedoraThrow = false;
+		}
+	}
+	bool FedoraAgentInputPlayer::OnKeyPressed(KeyPressedEvent & e)
+	{
+		switch (e.GetKeyCode())
+		{
+			// In case I decide to implement more actions
+		}
+		return false;
+	}
+	bool FedoraAgentInputPlayer::OnMousePressed(MouseButtonPressedEvent & e)
+	{
+		if (e.GetMouseButton() == 0)
+		{
+			LOG("Mouse Pressed. Throw frisbee");
+			m_InputFedoraThrow = true;
+		}
+		return false;
 	}
 }
