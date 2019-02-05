@@ -6,4 +6,4 @@
 2. Open FedoraFrisbee.sln <br>
 3. Click Run
 
-![early screenshot](https://i.imgur.com/B18T2go.png)
+![early screenshot](https://i.imgur.com/P9XtzHL.png)
