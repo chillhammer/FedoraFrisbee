@@ -26,6 +26,8 @@ namespace Fed
 		class FrisbeeFieldController* GetFieldController() const;
 		bool GetHasFedora() const;
 
+		// bool IsColliding(Fedora* fedora);
+
 		void OnEvent(const Subject* subject, Event& event) override;
 		void Update();
 	private:
