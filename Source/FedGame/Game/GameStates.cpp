@@ -20,6 +20,7 @@ namespace Fed::GameStates
 		m_Shader->SetUniform3f("u_LightPosition", m_Light.x, m_Light.y, m_Light.z);
 
 		m_Box.ObjectTransform.Scale = Vector3(12, 0.001f, 20);
+		m_Agent.ObjectTransform.Position = Vector3(0, 0, 0);
 		m_Agent.SetInputType(AgentInputType::PLAYER);
 		m_Agent.SetCameraReference(&m_Camera);
 		if (!m_Agent.GetFieldController())
