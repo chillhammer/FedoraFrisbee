@@ -1,5 +1,11 @@
 # FedoraFrisbee
-(WIP) 3D sports game made in C++, OpenGL, and a few minimalistic libraries
+(WIP) 3D sports game made in C++, OpenGL, and a few minimalistic libraries: GLM, Assimp, GLFW, GLEW, spdlog
+
+### Current Features: ###
+- Custom 3D Renderer w/ OpenGL & Assimp <br>
+- Event system driven logic <br>
+- Finite State Machine driven <br>
+- Third-person movement & hat throwing <br>
 
 ### To Compile and Play: ###
 1. Click on GenerateProject.bat <br>
