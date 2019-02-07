@@ -1,6 +1,7 @@
 #pragma once
 #include <Transform/Transform.h>
 #include <Graphics/Model/Model.h>
+#include "BoundingBox.h"
 
 namespace Fed
 {
@@ -18,11 +19,15 @@ namespace Fed
 		void AttachToParent(GameObject* parent);
 		void Draw();
 		void Draw(const ShaderPtr& shader);
+		void DrawBoundingBox();
 	public:
 		Transform ObjectTransform;
 	protected:
+		void SetBoundingBox(Vector3 center, Vector3 halfExtents);
+	protected:
 		ModelPtr m_Model;
 	private:
+		BoundingBox m_BoundingBox;
 		static int GetNextID();
 		int m_ID;
 	};

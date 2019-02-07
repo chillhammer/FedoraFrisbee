@@ -57,6 +57,17 @@ namespace Fed
 	{
 		m_Model->Draw(shader, ObjectTransform.GetMatrix());
 	}
+	// Debug method to draw bounding box
+	void GameObject::DrawBoundingBox()
+	{
+		if (!m_BoundingBox.IsEmpty())
+			m_BoundingBox.DebugDraw(ObjectTransform);
+	}
+	// Allows children to customize shape of bounding box
+	void GameObject::SetBoundingBox(Vector3 center, Vector3 halfExtents)
+	{
+		m_BoundingBox.SetParameters(center, halfExtents);
+	}
 	// Each object will have a unique identifier based on this static function
 	int GameObject::GetNextID()
 	{

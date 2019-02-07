@@ -8,6 +8,7 @@ namespace Fed
 	FedoraAgent::FedoraAgent()
 		: GameObject("FedoraAgent"), m_FieldController(nullptr)
 	{
+		SetBoundingBox(Vector3(0, 1, 0.5f), Vector3(0.5, 1, 0.5));
 	}
 	FedoraAgent::FedoraAgent(Vector3 position)
 		: GameObject("FedoraAgent", position), m_FieldController(nullptr)

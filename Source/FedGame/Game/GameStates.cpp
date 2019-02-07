@@ -39,6 +39,7 @@ namespace Fed::GameStates
 
 		m_Box.Draw();
 		m_Agent.Draw();
+		//m_Agent.DrawBoundingBox();
 		m_Fedora.Draw();
 
 	}
