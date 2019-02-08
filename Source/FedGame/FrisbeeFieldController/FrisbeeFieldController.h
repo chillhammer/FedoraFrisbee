@@ -12,7 +12,13 @@ namespace Fed
 	public:
 		FrisbeeFieldController();
 
+		bool IsAgentCollidingFedora(class FedoraAgent* agent);
+		bool IsFedoraFree() const;
+		void SetFedoraReference(class Fedora* fedora);
 	public:
 		Subject FrisbeeThrown;
+
+	private:
+		class Fedora* m_Fedora;
 	};
 }

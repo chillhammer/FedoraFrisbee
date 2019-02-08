@@ -8,6 +8,7 @@ out vec2 v_TexCoord;
 
 uniform mat4 u_MVP;
 
+// Shader without normals or lighting
 void main()
 {
 	gl_Position = u_MVP * position;

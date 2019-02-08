@@ -17,6 +17,7 @@ namespace Fed
 		GameObject(std::string modelName, Vector3 position);
 		int GetID() const;
 		void AttachToParent(GameObject* parent);
+		bool IsColliding(const GameObject& other);
 		void Draw();
 		void Draw(const ShaderPtr& shader);
 		void DrawBoundingBox();

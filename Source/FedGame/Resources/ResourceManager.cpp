@@ -61,5 +61,6 @@ namespace Fed
 	{
 		m_ShaderTable.emplace("Basic", new Shader("Shaders/Basic.shader"));
 		m_ShaderTable.emplace("Model", new Shader("Shaders/Model.shader"));
+		m_ShaderTable.emplace("Debug", new Shader("Shaders/Debug.shader"));
 	}
 }

@@ -13,6 +13,7 @@ namespace Fed::GameStates
 		FedoraAgent m_Agent;
 		Vector3 m_Light;
 		ShaderPtr m_Shader;
+		ShaderPtr m_DebugShader;
 		WoodenBox m_Box;
 		Fedora m_Fedora;
 		FrisbeeFieldController m_FieldController;

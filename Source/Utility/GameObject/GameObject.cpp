@@ -48,6 +48,11 @@ namespace Fed
 		// Process Rotation
 		ObjectTransform.Rotation = ProcessAngleVector(ObjectTransform.Rotation);
 	}
+	// Returns whether two bounding boxes intersect
+	bool GameObject::IsColliding(const GameObject & other)
+	{
+		return m_BoundingBox.IsIntersecting(ObjectTransform, other.ObjectTransform, other.m_BoundingBox);
+	}
 	void GameObject::Draw()
 	{
 		ShaderPtr shader = Resources.GetShader("Model");

@@ -8,9 +8,10 @@ namespace Fed
 {
 	Fedora::Fedora() 
 		:	GameObject("Fedora"), m_WearingOffset(0, 1.92f, 0), m_StateMachine(this, FedoraStates::Attached::Instance()),
-			m_LaunchSpeed(20.f), m_AirResistance(10.f), m_TimeTilSlowdown(0.5f), m_BaseSpinSpeed(60.f), m_DropSpeed(1.2f)
+			m_LaunchSpeed(20.f), m_AirResistance(10.f), m_TimeTilSlowdown(0.5f), m_BaseSpinSpeed(60.f), m_DropSpeed(1.2f), 
+			m_Owner(nullptr)
 	{
-
+		SetBoundingBox(Vector3(0, 0, 0.35f), Vector3(0.4, 0.25f, 0.4));
 	}
 	// Handles Events given to it by agents
 	void Fedora::OnEvent(const Subject * subject, Event & event)
@@ -21,12 +22,17 @@ namespace Fed
 	{
 		m_StateMachine.Update();
 	}
+	// Returns pointer to owner of fedora
+	const FedoraAgent * Fedora::GetOwner() const
+	{
+		return m_Owner;
+	}
 	// Reassigns to another owner
 	void Fedora::SetOwner(FedoraAgent * owner)
 	{
 		if (m_Owner == owner)
 			return;
-		if (m_Owner)
+		if (m_Owner != nullptr)
 		{
 			m_Owner->SetHasFedora(false);
 		}
@@ -34,7 +40,7 @@ namespace Fed
 		AttachToParent(owner); // Update transforms
 		
 		// Teleport Hat to Head
-		if (owner)
+		if (owner != nullptr)
 		{
 			owner->SetHasFedora(true);
 			this->ObjectTransform.Position = m_WearingOffset;

@@ -13,6 +13,7 @@ namespace Fed
 	FedoraAgent::FedoraAgent(Vector3 position)
 		: GameObject("FedoraAgent", position), m_FieldController(nullptr)
 	{
+		SetBoundingBox(Vector3(0, 1, 0.5f), Vector3(0.5, 1, 0.5));
 	}
 	FedoraAgent::~FedoraAgent()
 	{
@@ -84,6 +85,16 @@ namespace Fed
 		if (m_InputComponent)
 		{
 			m_InputComponent->Update(this);
+		}
+
+		// Grab Fedora
+		if (m_FieldController != nullptr && m_FieldController->IsFedoraFree())
+		{
+			if (m_FieldController->IsAgentCollidingFedora(this))
+			{
+				// TODO: Event Pickup Fedora
+				LOG("Fedora Picked up");
+			}
 		}
 	}
 }

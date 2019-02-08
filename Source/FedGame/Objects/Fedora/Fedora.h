@@ -15,6 +15,7 @@ namespace Fed
 		Fedora();
 		void OnEvent(const Subject* subject, Event& event);
 		void Update();
+		const class FedoraAgent* GetOwner() const;
 		void SetOwner(class FedoraAgent* owner);
 		void Move();
 	private:

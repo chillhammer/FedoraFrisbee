@@ -19,6 +19,8 @@ namespace Fed::GameStates
 		m_Shader->Bind();
 		m_Shader->SetUniform3f("u_LightPosition", m_Light.x, m_Light.y, m_Light.z);
 
+		m_DebugShader = Resources.GetShader("Debug");
+
 		m_Box.ObjectTransform.Scale = Vector3(12, 0.001f, 20);
 		m_Agent.ObjectTransform.Position = Vector3(0, 0, 0);
 		m_Agent.SetInputType(AgentInputType::PLAYER);
@@ -27,7 +29,7 @@ namespace Fed::GameStates
 			m_Agent.SetFieldControllerReference(&m_FieldController);
 
 		m_Fedora.SetOwner(&m_Agent);
-		m_FieldController.FrisbeeThrown.AddObserver(&m_Fedora);
+		m_FieldController.SetFedoraReference(&m_Fedora);
 	}
 	void Test::Execute(GameManager* owner)
 	{
@@ -35,15 +37,20 @@ namespace Fed::GameStates
 		m_Agent.Update();
 		m_Fedora.Update();
 
+		m_Shader->Bind();
 		m_Shader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
+		m_DebugShader->Bind();
+		m_DebugShader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
 
 		m_Box.Draw();
 		m_Agent.Draw();
 		//m_Agent.DrawBoundingBox();
 		m_Fedora.Draw();
+		//m_Fedora.DrawBoundingBox();
 
 	}
 	void Test::Exit(GameManager* owner)
 	{
+		m_FieldController.SetFedoraReference(nullptr);
 	}
 }

@@ -43,7 +43,7 @@ namespace Fed
 		}
 
 		// Taking into account parents and ancestors
-		Vector3 GetGlobalPosition()
+		Vector3 GetGlobalPosition() const
 		{
 			Vector3 pos = Position;
 			Transform* parent = Parent;
