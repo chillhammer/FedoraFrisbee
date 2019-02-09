@@ -23,6 +23,7 @@ namespace Fed
 
 		class FrisbeeFieldController* GetFieldController() const;
 		bool GetHasFedora() const;
+		bool InFedoraPath() const;
 
 		// bool IsColliding(Fedora* fedora);
 

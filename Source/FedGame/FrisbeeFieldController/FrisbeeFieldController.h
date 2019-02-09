@@ -20,6 +20,7 @@ namespace Fed
 		const FedoraAgent* FindAgentCollidingAgent(const FedoraAgent* agent);
 		bool AgentHasFedora(const FedoraAgent* agent);
 		void AddAgentReference(const FedoraAgent* agent);
+		bool IsAgentInFedoraPath(const FedoraAgent* agent);
 		bool IsFedoraFree() const;
 		Vector3 GetFedoraPosition() const;
 		void SetFedoraReference(Fedora* fedora);

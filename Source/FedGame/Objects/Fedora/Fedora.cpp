@@ -29,6 +29,26 @@ namespace Fed
 	{
 		return m_Owner;
 	}
+	// Last thrown position updates when it is thrown
+	const Vector3 Fedora::GetLastThrownPosition() const
+	{
+		return m_LastThrownPosition;
+	}
+	// Retursn units that the fedora will reach from throw range
+	const float Fedora::GetThrowRange() const
+	{
+		return 30.f;
+	}
+	// Returns unit length direction fedora is moving towards
+	const Vector3 Fedora::GetDirection() const
+	{
+		return m_Direction;
+	}
+	// Returns whether fedora has non-zero speed
+	const bool Fedora::IsMoving() const
+	{
+		return m_Speed >= 0.f;
+	}
 	// Reassigns to another owner
 	void Fedora::SetOwner(const FedoraAgent * owner)
 	{
@@ -60,6 +80,7 @@ namespace Fed
 	bool Fedora::OnFrisbeeThrown(FrisbeeThrownEvent & e)
 	{	
 		m_TimeSinceThrown = 0;
+		m_LastThrownPosition = e.GetPosition();
 		SetOwner(nullptr);
 		m_Speed = m_LaunchSpeed;
 		m_Direction = e.GetDirection();

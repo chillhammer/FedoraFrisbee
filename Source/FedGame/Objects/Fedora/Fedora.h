@@ -16,6 +16,10 @@ namespace Fed
 		void OnEvent(const Subject* subject, Event& event);
 		void Update();
 		const class FedoraAgent* GetOwner() const;
+		const Vector3 GetLastThrownPosition() const;
+		const float GetThrowRange() const;
+		const Vector3 GetDirection() const;
+		const bool IsMoving() const;
 		void SetOwner(const class FedoraAgent* owner);
 		void Move();
 	private:
@@ -34,5 +38,6 @@ namespace Fed
 		Vector3 m_Direction;
 
 		float m_TimeSinceThrown;
+		Vector3 m_LastThrownPosition;
 	};
 }

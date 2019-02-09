@@ -50,6 +50,33 @@ namespace Fed
 			m_Agents.emplace_back(agent);
 		}
 	}
+	// Returns whether agent is currently in fedora's path
+	bool FrisbeeFieldController::IsAgentInFedoraPath(const FedoraAgent * agent)
+	{
+		ASSERT(agent != nullptr, "Agent must not be nullptr");
+		if (IsFedoraFree() && m_Fedora->IsMoving())
+		{
+			Vector3 agentPos = agent->ObjectTransform.Position;
+			Vector3 fedoraPos = GetFedoraPosition(); fedoraPos.y = 0;
+			Vector3 toAgent = agentPos - fedoraPos;
+			Vector3 fedoraHeading = m_Fedora->GetDirection();
+			float toAgentDist = glm::length(toAgent);
+			toAgent = glm::normalize(toAgent);
+			float distFromLaunch = glm::length(agentPos - m_Fedora->GetLastThrownPosition());
+			// Within reachable range
+			if (distFromLaunch <= m_Fedora->GetThrowRange())
+			{
+				// Within colliding distance
+				Vector3 closestPosOnFedoraTrajectory = fedoraPos + fedoraHeading * toAgentDist;
+				float collidingDist = 0.7f;
+				if (glm::length(closestPosOnFedoraTrajectory - agentPos) <= collidingDist)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	Vector3 FrisbeeFieldController::GetFedoraPosition() const
 	{
 		ASSERT(m_Fedora != nullptr, "Fedora Position cannot be retrieved");

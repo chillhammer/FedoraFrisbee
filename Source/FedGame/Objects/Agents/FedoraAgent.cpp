@@ -5,6 +5,7 @@
 #include <EventSystem/Events/FrisbeeFieldEvent.h>
 #include "FedoraAgent.h"
 #include "Components/FedoraAgentInputPlayer.h"
+#include "Components/FedoraAgentInputAI.h"
 namespace Fed
 {
 	FedoraAgent::FedoraAgent()
@@ -36,6 +37,10 @@ namespace Fed
 			break;
 		case AgentInputType::PLAYER:
 			m_InputComponent = new FedoraAgentInputPlayer();
+			break;
+		case AgentInputType::AI:
+			m_InputComponent = new FedoraAgentInputAI();
+			break;
 		}
 		
 	}
@@ -66,6 +71,13 @@ namespace Fed
 		return m_FieldController->AgentHasFedora(this);
 	}
 
+	// Returns whether fedora is travelling towards this agent
+	bool FedoraAgent::InFedoraPath() const
+	{
+		ASSERT(m_FieldController != nullptr, "No field controller reference");
+		return m_FieldController->IsAgentInFedoraPath(this);
+	}
+
 	// Updates logic within Fedora Agent
 	// Virtually calls logic to either AI or Player Input
 	void FedoraAgent::Update()
@@ -76,8 +88,8 @@ namespace Fed
 		}
 
 		// Grab Fedora
-		if (m_CanGrabTimer <= Game.DeltaTime() && m_CanGrabTimer != 0.f)
-			LOG("Can grab now!");
+		//if (m_CanGrabTimer <= Game.DeltaTime() && m_CanGrabTimer != 0.f)
+			//LOG("Can grab now!");
 		m_CanGrabTimer = glm::max(0.f, m_CanGrabTimer - Game.DeltaTime());
 		if (m_FieldController != nullptr && m_FieldController->IsFedoraFree() && m_CanGrabTimer <= 0.f)
 		{
@@ -129,9 +141,9 @@ namespace Fed
 	// Reacts to when frisbee is picked up
 	bool FedoraAgent::OnFrisbeePickup(FrisbeePickupEvent & e)
 	{
-		LOG("Fedora Picked up");
 		if (e.GetAgent().GetID() == GetID())
 		{
+			LOG("Fedora Picked up");
 			m_CanGrabTimer = 1.f;
 		}
 		return false;

@@ -13,7 +13,9 @@ namespace Fed
 		FedoraAgentInputAI();
 		void OnEvent(const Subject* subject, Event& e);
 		void Update(FedoraAgent* owner) override;
+		FedoraAgent* GetOwner() const;
 	private:
-		
+		StateMachine<FedoraAgentInputAI> m_StateMachine;
+		FedoraAgent* m_Owner;
 	};
 }
