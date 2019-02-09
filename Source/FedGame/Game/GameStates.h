@@ -11,6 +11,7 @@ namespace Fed::GameStates
 	STATE_CLASS_SINGLETON(GameManager, Test,	
 		Camera m_Camera;
 		FedoraAgent m_Agent;
+		FedoraAgent m_Agent2;
 		Vector3 m_Light;
 		ShaderPtr m_Shader;
 		ShaderPtr m_DebugShader;

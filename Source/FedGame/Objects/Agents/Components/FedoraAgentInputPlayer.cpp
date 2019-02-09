@@ -36,8 +36,9 @@ namespace Fed
 		if (moved) {
 			moveDir = glm::normalize(moveDir);
 			owner->m_Direction = glm::lerp(owner->m_Direction, moveDir, 0.5f);
+			owner->m_PrevPosition = owner->ObjectTransform.Position;
 		}
-
+		// Accelerate / Friction - Speed
 		float acceleration = (moved ? 10.5f : -15.f);
 		float speed = owner->m_Speed;
 		speed = (speed < 3.f && forwardSign == 1 ? 3.f : (speed < 1.5f && moved ? 1.5f : speed));
@@ -72,18 +73,7 @@ namespace Fed
 		// Input Trigger Fedora Throwing Event
 		if (m_InputFedoraThrow)
 		{
-			if (owner->GetHasFedora())
-			{
-				FrisbeeFieldController* fieldController = owner->GetFieldController();
-				if (fieldController)
-				{
-					Vector3 throwDirection = owner->ObjectTransform.GetHeading();
-					throwDirection.y = 0;
-					throwDirection = glm::normalize(throwDirection);
-					FrisbeeThrownEvent e(throwDirection, owner->ObjectTransform.Position, *owner);
-					fieldController->FrisbeeThrown.Notify(e);
-				}
-			}
+			ThrowFrisbee(owner);
 			m_InputFedoraThrow = false;
 		}
 	}

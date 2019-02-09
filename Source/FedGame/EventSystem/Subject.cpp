@@ -6,7 +6,9 @@ namespace Fed
 {
 	void Subject::AddObserver(IObserver* const observer)
 	{
-		m_Observers.push_back(observer);
+		// No Duplicates, May Optimize This
+		if (std::find(m_Observers.begin(), m_Observers.end(), observer) == m_Observers.end())
+			m_Observers.push_back(observer);
 	}
 
 	void Subject::RemoveObserver(IObserver* const observer)

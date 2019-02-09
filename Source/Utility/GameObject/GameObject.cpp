@@ -27,7 +27,7 @@ namespace Fed
 	// Sets transform relative to parameter's transform
 	// Updates Position to be local to new parent
 	// Can set to nullptr, to have no parent
-	void GameObject::AttachToParent(GameObject* parent)
+	void GameObject::AttachToParent(const GameObject* parent)
 	{
 		if (ObjectTransform.Parent == &(parent->ObjectTransform))
 			return;
@@ -49,7 +49,7 @@ namespace Fed
 		ObjectTransform.Rotation = ProcessAngleVector(ObjectTransform.Rotation);
 	}
 	// Returns whether two bounding boxes intersect
-	bool GameObject::IsColliding(const GameObject & other)
+	bool GameObject::IsColliding(const GameObject & other) const
 	{
 		return m_BoundingBox.IsIntersecting(ObjectTransform, other.ObjectTransform, other.m_BoundingBox);
 	}

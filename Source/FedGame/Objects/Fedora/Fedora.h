@@ -16,14 +16,14 @@ namespace Fed
 		void OnEvent(const Subject* subject, Event& event);
 		void Update();
 		const class FedoraAgent* GetOwner() const;
-		void SetOwner(class FedoraAgent* owner);
+		void SetOwner(const class FedoraAgent* owner);
 		void Move();
 	private:
 		bool OnFrisbeeThrown(FrisbeeThrownEvent& e);
+		bool OnFrisbeePickup(FrisbeePickupEvent& e);
 
 		StateMachine<Fedora> m_StateMachine;
-		class FedoraAgent* m_Owner;
-		Vector3 m_WearingOffset;
+		const class FedoraAgent* m_Owner;
 		float m_LaunchSpeed;
 		float m_AirResistance;
 		float m_TimeTilSlowdown;

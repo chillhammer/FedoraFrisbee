@@ -21,7 +21,7 @@ namespace Fed
 		Vector3 Rotation;
 		Vector3 Scale;
 
-		Transform* Parent;
+		const Transform* Parent;
 
 		Transform() : Position(0, 0, 0), Rotation(0, 0, 0), Scale(1, 1, 1), Parent(nullptr) {}
 
@@ -46,7 +46,7 @@ namespace Fed
 		Vector3 GetGlobalPosition() const
 		{
 			Vector3 pos = Position;
-			Transform* parent = Parent;
+			const Transform* parent = Parent;
 			while (parent)
 			{
 				pos += parent->Position;
@@ -55,10 +55,10 @@ namespace Fed
 			return pos;
 		}
 
-		Vector3 GetGlobalRotation()
+		Vector3 GetGlobalRotation() const
 		{
 			Vector3 rot = Rotation;
-			Transform* parent = Parent;
+			const Transform* parent = Parent;
 			while (parent)
 			{
 				rot += parent->Rotation;

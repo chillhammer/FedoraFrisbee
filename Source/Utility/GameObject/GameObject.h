@@ -16,8 +16,8 @@ namespace Fed
 		GameObject(std::string modelName);
 		GameObject(std::string modelName, Vector3 position);
 		int GetID() const;
-		void AttachToParent(GameObject* parent);
-		bool IsColliding(const GameObject& other);
+		void AttachToParent(const GameObject* parent);
+		bool IsColliding(const GameObject& other) const;
 		void Draw();
 		void Draw(const ShaderPtr& shader);
 		void DrawBoundingBox();
@@ -27,8 +27,8 @@ namespace Fed
 		void SetBoundingBox(Vector3 center, Vector3 halfExtents);
 	protected:
 		ModelPtr m_Model;
-	private:
 		BoundingBox m_BoundingBox;
+	private:
 		static int GetNextID();
 		int m_ID;
 	};

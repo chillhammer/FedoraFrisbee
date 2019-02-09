@@ -1,17 +1,14 @@
 #include <FedPCH.h>
 #include <Resources/ResourceManager.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
+#include <Game/GameManager.h>
+#include <EventSystem/Events/FrisbeeFieldEvent.h>
 #include "FedoraAgent.h"
 #include "Components/FedoraAgentInputPlayer.h"
 namespace Fed
 {
 	FedoraAgent::FedoraAgent()
-		: GameObject("FedoraAgent"), m_FieldController(nullptr)
-	{
-		SetBoundingBox(Vector3(0, 1, 0.5f), Vector3(0.5, 1, 0.5));
-	}
-	FedoraAgent::FedoraAgent(Vector3 position)
-		: GameObject("FedoraAgent", position), m_FieldController(nullptr)
+		: GameObject("FedoraAgent"), m_FieldController(nullptr), m_CanGrabTimer(0.f)
 	{
 		SetBoundingBox(Vector3(0, 1, 0.5f), Vector3(0.5, 1, 0.5));
 	}
@@ -56,6 +53,7 @@ namespace Fed
 		ASSERT(!m_FieldController, "Can only set Field Controller once, for now.");
 		m_FieldController = controller;
 		controller->FrisbeeThrown.AddObserver(this);
+		controller->FrisbeePickup.AddObserver(this);
 	}
 	FrisbeeFieldController * FedoraAgent::GetFieldController() const
 	{
@@ -64,18 +62,8 @@ namespace Fed
 	// Has Fedora Accessors
 	bool FedoraAgent::GetHasFedora() const
 	{
-		return m_HasFedora;
-	}
-	void FedoraAgent::SetHasFedora(bool hasFedora)
-	{
-		m_HasFedora = hasFedora;
-	}
-
-	// Handles Events about the match for this agent
-	void FedoraAgent::OnEvent(const Subject * subject, Event & event)
-	{
-		// TODO: Handle Frisbee Thrown. Create OnFrisbeeThrown()
-		// Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FedoraAgent, OnFrisbeeThrown));
+		ASSERT(m_FieldController != nullptr, "Must have field controller reference");
+		return m_FieldController->AgentHasFedora(this);
 	}
 
 	// Updates logic within Fedora Agent
@@ -88,13 +76,65 @@ namespace Fed
 		}
 
 		// Grab Fedora
-		if (m_FieldController != nullptr && m_FieldController->IsFedoraFree())
+		if (m_CanGrabTimer <= Game.DeltaTime() && m_CanGrabTimer != 0.f)
+			LOG("Can grab now!");
+		m_CanGrabTimer = glm::max(0.f, m_CanGrabTimer - Game.DeltaTime());
+		if (m_FieldController != nullptr && m_FieldController->IsFedoraFree() && m_CanGrabTimer <= 0.f)
 		{
 			if (m_FieldController->IsAgentCollidingFedora(this))
 			{
-				// TODO: Event Pickup Fedora
-				LOG("Fedora Picked up");
+				// Send Frisbee Pickup Event
+				FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
+				m_FieldController->FrisbeePickup.Notify(event);
+			}
+		}
+
+		// Agent collision
+		if (m_FieldController != nullptr)
+		{
+			const FedoraAgent* other = m_FieldController->FindAgentCollidingAgent(this);
+			if (other)
+			{
+				ObjectTransform.Position = m_PrevPosition;
+				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, m_Direction);
+				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
+				
+				//Steal Fedora
+				if (other->GetHasFedora())
+				{
+					// Send Frisbee Pickup Event
+					FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
+					m_FieldController->FrisbeePickup.Notify(event);
+				}
 			}
 		}
 	}
+	#pragma region Event Handling
+	// Handles Events about the match for this agent
+	void FedoraAgent::OnEvent(const Subject * subject, Event & event)
+	{
+		// TODO: Handle Frisbee Thrown. Create OnFrisbeeThrown()
+		Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FedoraAgent, OnFrisbeeThrown));
+		Evnt::Dispatch<FrisbeePickupEvent>(event, EVENT_BIND_FN(FedoraAgent, OnFrisbeePickup));
+	}
+	// Reacts to when frisbee is thrown
+	bool FedoraAgent::OnFrisbeeThrown(FrisbeeThrownEvent & e)
+	{
+		if (e.GetAgent().GetID() == GetID())
+		{
+			m_CanGrabTimer = 1.f;
+		}
+		return false;
+	}
+	// Reacts to when frisbee is picked up
+	bool FedoraAgent::OnFrisbeePickup(FrisbeePickupEvent & e)
+	{
+		LOG("Fedora Picked up");
+		if (e.GetAgent().GetID() == GetID())
+		{
+			m_CanGrabTimer = 1.f;
+		}
+		return false;
+	}
+	#pragma endregion
 }

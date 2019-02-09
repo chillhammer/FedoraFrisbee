@@ -7,7 +7,7 @@
 namespace Fed
 {
 	Fedora::Fedora() 
-		:	GameObject("Fedora"), m_WearingOffset(0, 1.92f, 0), m_StateMachine(this, FedoraStates::Attached::Instance()),
+		:	GameObject("Fedora"), m_StateMachine(this, FedoraStates::Attached::Instance()),
 			m_LaunchSpeed(20.f), m_AirResistance(10.f), m_TimeTilSlowdown(0.5f), m_BaseSpinSpeed(60.f), m_DropSpeed(1.2f), 
 			m_Owner(nullptr)
 	{
@@ -17,7 +17,9 @@ namespace Fed
 	void Fedora::OnEvent(const Subject * subject, Event & event)
 	{
 		Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(Fedora, OnFrisbeeThrown));
+		Evnt::Dispatch<FrisbeePickupEvent>(event, EVENT_BIND_FN(Fedora, OnFrisbeePickup));
 	}
+
 	void Fedora::Update()
 	{
 		m_StateMachine.Update();
@@ -28,23 +30,14 @@ namespace Fed
 		return m_Owner;
 	}
 	// Reassigns to another owner
-	void Fedora::SetOwner(FedoraAgent * owner)
+	void Fedora::SetOwner(const FedoraAgent * owner)
 	{
 		if (m_Owner == owner)
 			return;
-		if (m_Owner != nullptr)
-		{
-			m_Owner->SetHasFedora(false);
-		}
 		m_Owner = owner;
-		AttachToParent(owner); // Update transforms
-		
-		// Teleport Hat to Head
+		AttachToParent(nullptr);
 		if (owner != nullptr)
-		{
-			owner->SetHasFedora(true);
-			this->ObjectTransform.Position = m_WearingOffset;
-		}
+			m_StateMachine.ChangeState(FedoraStates::Attached::Instance());
 	}
 	// Flying movement
 	void Fedora::Move()
@@ -71,6 +64,12 @@ namespace Fed
 		m_Speed = m_LaunchSpeed;
 		m_Direction = e.GetDirection();
 		m_StateMachine.ChangeState(FedoraStates::Flying::Instance());
+		return false;
+	}
+	bool Fedora::OnFrisbeePickup(FrisbeePickupEvent & e)
+	{
+		SetOwner(&(e.GetAgent()));
+		m_StateMachine.ChangeState(FedoraStates::Attached::Instance());
 		return false;
 	}
 }

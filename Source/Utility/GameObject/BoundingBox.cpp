@@ -34,6 +34,27 @@ namespace Fed
 		}
 		return false;
 	}
+	// Get direction to other bounding box, north, west, south, east. Must not be intersecting
+	// Made for collision sliding
+	Vector3 BoundingBox::GetSlidingDirection(const Transform & myTrans, const Transform & otherTrans, 
+		const BoundingBox & other, const Vector3& dir) const
+	{
+		ASSERT(!IsIntersecting(myTrans, otherTrans, other), "Sliding must not be intersecting");
+		Vector3 mins1 = myTrans.GetGlobalPosition() + m_Center - m_HalfExtents * myTrans.Scale;
+		Vector3 maxs1 = myTrans.GetGlobalPosition() + m_Center + m_HalfExtents * myTrans.Scale;
+		Vector3 mins2 = otherTrans.GetGlobalPosition() + other.m_Center - other.m_HalfExtents * otherTrans.Scale;
+		Vector3 maxs2 = otherTrans.GetGlobalPosition() + other.m_Center + other.m_HalfExtents * otherTrans.Scale;
+		Vector3 newDir = dir;
+		if (mins1.x > maxs2.x || mins2.x > maxs1.x)
+		{
+			newDir.x = 0;
+		}
+		else if (mins1.z > maxs2.z || mins2.z > maxs1.z)
+		{
+			newDir.z = 0;
+		}
+		return newDir;
+	}
 	// Can change size and position to customize bounding boxes
 	void BoundingBox::SetParameters(Vector3 center, Vector3 halfExtents)
 	{

@@ -2,6 +2,7 @@
 #include <StateMachine/StateMachine.h>
 #include <Camera/Camera.h>
 #include <Window/Window.h>
+
 #define Game GameManager::Instance()
 namespace Fed
 {
@@ -27,7 +28,7 @@ namespace Fed
 		void TogglePause();
 		bool IsPaused() const;
 
-		const Window& GetWindow() const;
+		const class Window& GetWindow() const;
 		~GameManager();
 	private:
 		GameManager();

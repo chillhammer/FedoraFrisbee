@@ -14,7 +14,7 @@ enum class EventType
 	MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 
 	// Frisbee Field Controller Events
-	FrisbeeThrown
+	FrisbeeThrown, FrisbeePickup
 };
 
 enum EventCategory
