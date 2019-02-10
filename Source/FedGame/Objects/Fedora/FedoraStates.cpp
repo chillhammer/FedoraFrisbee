@@ -52,7 +52,7 @@ namespace Fed::FedoraStates
 	void Flying::Execute(Fedora* owner)
 	{
 		owner->Move();
-			
+		owner->GetFuturePosition(0.5f);
 	}
 	void Flying::Exit(Fedora* owner)
 	{

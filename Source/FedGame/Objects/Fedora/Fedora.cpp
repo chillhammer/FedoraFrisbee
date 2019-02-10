@@ -1,6 +1,7 @@
 #include <FedPCH.h>
 #include <Objects/Agents/FedoraAgent.h>
 #include <Game/GameManager.h>
+#include <Resources/ResourceManager.h>
 #include "FedoraStates.h"
 #include "Fedora.h"
 
@@ -48,6 +49,29 @@ namespace Fed
 	const bool Fedora::IsMoving() const
 	{
 		return m_Speed >= 0.f;
+	}
+	// Calculates future position. Only when moving & considers max range
+	const Vector3 Fedora::GetFuturePosition(float time) const
+	{
+		if (!IsMoving())
+			return ObjectTransform.GetGlobalPosition();
+		Vector3 futurePos = ObjectTransform.Position + m_Speed * m_Direction * time;
+		// Caps at throw range
+		if (glm::length(futurePos - GetLastThrownPosition()) > GetThrowRange())
+		{
+			futurePos = GetLastThrownPosition() + GetThrowRange() * m_Direction;
+			futurePos.y = ObjectTransform.Position.y;
+		}
+
+		// Debug Draw ////
+		Matrix4x4 mat(1.f);
+		mat = glm::translate(mat, futurePos - ObjectTransform.Position);
+		Matrix4x4 current = ObjectTransform.GetMatrix();
+		mat = mat * current;
+		m_Model->Draw(Resources.GetShader("Debug"), mat);
+		//////////////////
+
+		return futurePos;
 	}
 	// Reassigns to another owner
 	void Fedora::SetOwner(const FedoraAgent * owner)
