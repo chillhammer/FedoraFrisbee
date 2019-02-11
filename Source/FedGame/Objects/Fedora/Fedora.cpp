@@ -10,7 +10,7 @@ namespace Fed
 	Fedora::Fedora() 
 		:	GameObject("Fedora"), m_StateMachine(this, FedoraStates::Attached::Instance()),
 			m_LaunchSpeed(20.f), m_AirResistance(10.f), m_TimeTilSlowdown(0.5f), m_BaseSpinSpeed(60.f), m_DropSpeed(1.2f), 
-			m_Owner(nullptr)
+			m_Owner(nullptr), m_Speed(0.f)
 	{
 		SetBoundingBox(Vector3(0, 0, 0.35f), Vector3(0.4, 0.25f, 0.4));
 	}
@@ -45,13 +45,17 @@ namespace Fed
 	{
 		return m_Direction;
 	}
+	const float Fedora::GetSpeed() const
+	{
+		return m_Speed;
+	}
 	// Returns whether fedora has non-zero speed
 	const bool Fedora::IsMoving() const
 	{
-		return m_Speed >= 0.f;
+		return m_Speed > 0.f;
 	}
 	// Calculates future position. Only when moving & considers max range
-	const Vector3 Fedora::GetFuturePosition(float time) const
+	const Vector3 Fedora::GetFuturePosition(float time, bool debugDraw) const
 	{
 		if (!IsMoving())
 			return ObjectTransform.GetGlobalPosition();
@@ -64,11 +68,14 @@ namespace Fed
 		}
 
 		// Debug Draw ////
-		Matrix4x4 mat(1.f);
-		mat = glm::translate(mat, futurePos - ObjectTransform.Position);
-		Matrix4x4 current = ObjectTransform.GetMatrix();
-		mat = mat * current;
-		m_Model->Draw(Resources.GetShader("Debug"), mat);
+		if (debugDraw)
+		{
+			Matrix4x4 mat(1.f);
+			mat = glm::translate(mat, futurePos - ObjectTransform.Position);
+			Matrix4x4 current = ObjectTransform.GetMatrix();
+			mat = mat * current;
+			m_Model->Draw(Resources.GetShader("Debug"), mat);
+		}
 		//////////////////
 
 		return futurePos;
@@ -81,7 +88,10 @@ namespace Fed
 		m_Owner = owner;
 		AttachToParent(nullptr);
 		if (owner != nullptr)
+		{
+			m_Speed = 0.f;
 			m_StateMachine.ChangeState(FedoraStates::Attached::Instance());
+		}
 	}
 	// Flying movement
 	void Fedora::Move()

@@ -21,6 +21,7 @@ namespace Fed
 		bool AgentHasFedora(const FedoraAgent* agent);
 		void AddAgentReference(const FedoraAgent* agent);
 		bool IsAgentInFedoraPath(const FedoraAgent* agent);
+		bool CanAgentInterceptFedora(const FedoraAgent* agent, Vector3* outInterceptPos);
 		bool IsFedoraFree() const;
 		Vector3 GetFedoraPosition() const;
 		void SetFedoraReference(Fedora* fedora);

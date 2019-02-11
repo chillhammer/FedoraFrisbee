@@ -1,4 +1,6 @@
 #include <FedPCH.h>
+#include <Objects/Agents/FedoraAgent.h>
+#include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include "FedoraAgentInputAIStates.h"
 #include "FedoraAgentInputAI.h"
 
@@ -23,5 +25,23 @@ namespace Fed
 	FedoraAgent * FedoraAgentInputAI::GetOwner() const
 	{
 		return m_Owner;
+	}
+	// Returns whether one can intercept fedora.
+	// Also updates intercept position variable
+	bool FedoraAgentInputAI::CanInterceptFedora()
+	{
+		return GetOwner()->GetFieldController()->CanAgentInterceptFedora(GetOwner(), &m_InterceptPosition);
+	}
+	// Get Intercept Position for Agent to Travel to. Flatten the Y
+	Vector3 FedoraAgentInputAI::GetInterceptPosition() const
+	{
+		Vector3 pos = m_InterceptPosition;
+		pos.y = 0;
+		return pos;
+	}
+	// Provides access to state machine. Used from within state machine
+	StateMachine<FedoraAgentInputAI>& FedoraAgentInputAI::GetFSM()
+	{
+		return m_StateMachine;
 	}
 }

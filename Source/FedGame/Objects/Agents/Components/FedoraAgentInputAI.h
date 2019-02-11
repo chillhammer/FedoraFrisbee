@@ -14,8 +14,12 @@ namespace Fed
 		void OnEvent(const Subject* subject, Event& e);
 		void Update(FedoraAgent* owner) override;
 		FedoraAgent* GetOwner() const;
+		bool CanInterceptFedora();
+		Vector3 GetInterceptPosition() const;
+		StateMachine<FedoraAgentInputAI>& GetFSM();
 	private:
 		StateMachine<FedoraAgentInputAI> m_StateMachine;
 		FedoraAgent* m_Owner;
+		Vector3 m_InterceptPosition;
 	};
 }

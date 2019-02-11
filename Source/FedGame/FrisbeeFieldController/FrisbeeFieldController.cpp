@@ -77,6 +77,37 @@ namespace Fed
 		}
 		return false;
 	}
+	// Returns whether an agent can reach a moving fedora. Also returns intercept position if given a pointer
+	bool FrisbeeFieldController::CanAgentInterceptFedora(const FedoraAgent * agent, Vector3 * outInterceptPos)
+	{
+		ASSERT(agent != nullptr && m_Fedora != nullptr, "Agent or fedora has nullptr");
+		if (m_Fedora->IsMoving())
+		{
+			Vector3 dirToFedora = GetFedoraPosition() - agent->ObjectTransform.Position;
+			if (glm::dot(dirToFedora, m_Fedora->GetDirection()) > 0.f)
+			{
+				return false;
+			}
+			float distToFedora = glm::length(dirToFedora);
+			float timeAhead = distToFedora / m_Fedora->GetSpeed();
+
+			Vector3 interceptPoint = m_Fedora->GetFuturePosition(timeAhead);
+			float distToIntercept = glm::length(agent->ObjectTransform.Position - interceptPoint);
+			float timeToIntercept = distToIntercept / agent->GetMaxSpeed();
+			if (timeToIntercept <= timeAhead)
+			{
+				m_Fedora->GetFuturePosition(timeAhead, true); // Draw Debug
+				//LOG("Can intercept. Fedora Speed: {0}", m_Fedora->GetSpeed());
+				if (outInterceptPos != nullptr)
+					*outInterceptPos = interceptPoint;
+				return true;
+			}
+			//LOG("Cannot intercept. Time Ahead: {0}   -   Time To Intercept: {1}", timeAhead, timeToIntercept);
+			//LOG("Cannot intercept. Intecept Point: ({0}, {1}, {2})", interceptPoint.x, interceptPoint.y, interceptPoint.z);
+			//LOG("Cannot intercept. Dist to Intercept: {0}   --   Agent Max Speed: {1}", distToIntercept, agent->GetMaxSpeed());
+		}
+		return false;
+	}
 	Vector3 FrisbeeFieldController::GetFedoraPosition() const
 	{
 		ASSERT(m_Fedora != nullptr, "Fedora Position cannot be retrieved");

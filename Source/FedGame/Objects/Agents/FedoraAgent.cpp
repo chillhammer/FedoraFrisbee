@@ -9,7 +9,7 @@
 namespace Fed
 {
 	FedoraAgent::FedoraAgent()
-		: GameObject("FedoraAgent"), m_FieldController(nullptr), m_CanGrabTimer(0.f)
+		: GameObject("FedoraAgent"), m_FieldController(nullptr), m_CanGrabTimer(0.f), m_MaxSpeed(10.75f)
 	{
 		SetBoundingBox(Vector3(0, 1, 0.5f), Vector3(0.5, 1, 0.5));
 	}
@@ -69,6 +69,11 @@ namespace Fed
 	{
 		ASSERT(m_FieldController != nullptr, "Must have field controller reference");
 		return m_FieldController->AgentHasFedora(this);
+	}
+
+	float FedoraAgent::GetMaxSpeed() const
+	{
+		return m_MaxSpeed;
 	}
 
 	// Returns whether fedora is travelling towards this agent

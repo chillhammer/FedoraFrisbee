@@ -23,7 +23,6 @@ namespace Fed
 	{
 		// Setting Up Movement Variables
 		Vector3 moveDir(0, 0, 0);
-		owner->m_MaxSpeed = 5.5f;
 		float maxMoveSpeed = owner->m_MaxSpeed;
 
 		float forwardSign	= (Input.IsKeyDown(KEY_W) ? 1 : 0) - (Input.IsKeyDown(KEY_S) ? 1 : 0);
@@ -39,10 +38,10 @@ namespace Fed
 			owner->m_PrevPosition = owner->ObjectTransform.Position;
 		}
 		// Accelerate / Friction - Speed
-		float acceleration = (moved ? 10.5f : -15.f);
+		float acceleration = (moved ? 12.5f : -15.f);
 		float speed = owner->m_Speed;
 		speed = (speed < 3.f && forwardSign == 1 ? 3.f : (speed < 1.5f && moved ? 1.5f : speed));
-		float multiplier = (forwardSign == 1 ? (sideSign == 0 ? 1.95f : 1.95f) : 1);
+		float multiplier = (forwardSign == 1.f ? (sideSign == 0 ? 1.f : 1.f) : 0.51f);
 		speed = glm::min(speed + acceleration * Game.DeltaTime(), maxMoveSpeed * multiplier);
 		speed = (speed < 0 ? 0 : speed);
 		owner->m_Speed = speed;
