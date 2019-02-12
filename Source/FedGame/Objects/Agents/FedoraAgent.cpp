@@ -83,6 +83,12 @@ namespace Fed
 		return m_FieldController->IsAgentInFedoraPath(this);
 	}
 
+	// Returns whether agent is player controlled
+	bool FedoraAgent::IsPlayerControlled() const
+	{
+		return m_InputType == AgentInputType::PLAYER;
+	}
+
 	// Updates logic within Fedora Agent
 	// Virtually calls logic to either AI or Player Input
 	void FedoraAgent::Update()

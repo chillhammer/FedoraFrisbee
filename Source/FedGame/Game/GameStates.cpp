@@ -34,7 +34,8 @@ namespace Fed::GameStates
 			m_Agent2.SetFieldControllerReference(&m_FieldController);
 		}
 
-		m_Fedora.SetOwner(&m_Agent);
+		m_Fedora.ObjectTransform.Position = Vector3(0, 0, 0);
+		//m_Fedora.SetOwner(&m_Agent);
 		m_FieldController.SetFedoraReference(&m_Fedora);
 		m_FieldController.AddAgentReference(&m_Agent);
 		m_FieldController.AddAgentReference(&m_Agent2);

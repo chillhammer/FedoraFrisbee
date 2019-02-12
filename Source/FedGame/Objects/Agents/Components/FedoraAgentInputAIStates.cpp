@@ -15,6 +15,11 @@ namespace Fed::AgentAIStates
 	void Wait::Execute(FedoraAgentInputAI* owner)
 	{
 		FedoraAgent* agent = owner->GetOwner();
+
+		// Stare at player
+		const FedoraAgent* player = agent->GetFieldController()->FindPlayerAgent();
+		owner->FaceTowards(player->ObjectTransform.Position, 4.5f); 
+
 		if (agent->InFedoraPath())
 		{
 			//LOG("Agent {0} is in fedora path", agent->GetID());
@@ -45,21 +50,27 @@ namespace Fed::AgentAIStates
 		}
 		else*/
 		{
-			Vector3 dir = owner->GetInterceptPosition() - agent->ObjectTransform.Position;
-			if (glm::length(dir) < agent->GetMaxSpeed() * Game.DeltaTime())
+			owner->FaceTowards(owner->GetInterceptPosition(), 6.5f);
+			if (owner->MoveTowards(owner->GetInterceptPosition()))
 			{
-				agent->ObjectTransform.Position = owner->GetInterceptPosition();
 				owner->GetFSM().ChangeState(AgentAIStates::Wait::Instance());
-			}
-			else
-			{
-				dir = glm::normalize(dir);
-				agent->ObjectTransform.Position += dir * agent->GetMaxSpeed() * Game.DeltaTime();
 			}
 			
 		}
 	}
 	void Intercept::Exit(FedoraAgentInputAI* owner)
+	{
+	}
+
+	// Regular movement - global state
+	void GlobalMovement::Enter(FedoraAgentInputAI* owner)
+	{
+	}
+	void GlobalMovement::Execute(FedoraAgentInputAI* owner)
+	{
+		owner->MoveBasedOnVelocity();
+	}
+	void GlobalMovement::Exit(FedoraAgentInputAI* owner)
 	{
 	}
 }

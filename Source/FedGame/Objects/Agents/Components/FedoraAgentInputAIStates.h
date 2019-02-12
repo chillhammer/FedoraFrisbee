@@ -3,7 +3,7 @@
 namespace Fed::AgentAIStates
 {
 	// Fedora being worn
-	STATE_CLASS_SINGLETON(FedoraAgentInputAI, Wait,
-	);
+	STATE_CLASS_SINGLETON(FedoraAgentInputAI, GlobalMovement, );
+	STATE_CLASS_SINGLETON(FedoraAgentInputAI, Wait, );
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, Intercept, );
 }

@@ -28,6 +28,16 @@ namespace Fed
 		}
 		return nullptr;
 	}
+	// Returns agent that is controlled by player. Nullptr if there is none
+	const FedoraAgent * FrisbeeFieldController::FindPlayerAgent()
+	{
+		for (const FedoraAgent* agent : m_Agents)
+		{
+			if (agent->IsPlayerControlled())
+				return agent;
+		}
+		return nullptr;
+	}
 	// Can agent pickup fedora. Fedora has no owner
 	bool FrisbeeFieldController::IsFedoraFree() const
 	{
@@ -96,7 +106,7 @@ namespace Fed
 			float timeToIntercept = distToIntercept / agent->GetMaxSpeed();
 			if (timeToIntercept <= timeAhead)
 			{
-				m_Fedora->GetFuturePosition(timeAhead, true); // Draw Debug
+				m_Fedora->GetFuturePosition(timeAhead, false); // Draw Debug - false
 				//LOG("Can intercept. Fedora Speed: {0}", m_Fedora->GetSpeed());
 				if (outInterceptPos != nullptr)
 					*outInterceptPos = interceptPoint;

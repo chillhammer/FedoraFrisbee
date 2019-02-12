@@ -8,7 +8,7 @@
 namespace Fed
 {
 	Fedora::Fedora() 
-		:	GameObject("Fedora"), m_StateMachine(this, FedoraStates::Attached::Instance()),
+		:	GameObject("Fedora"), m_StateMachine(this, FedoraStates::Flying::Instance()),
 			m_LaunchSpeed(20.f), m_AirResistance(10.f), m_TimeTilSlowdown(0.5f), m_BaseSpinSpeed(60.f), m_DropSpeed(1.2f), 
 			m_Owner(nullptr), m_Speed(0.f)
 	{

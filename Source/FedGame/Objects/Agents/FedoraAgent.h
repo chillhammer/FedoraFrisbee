@@ -14,6 +14,7 @@ namespace Fed
 		: public GameObject, public IObserver
 	{
 		friend class FedoraAgentInputPlayer;
+		friend class FedoraAgentInputAI;
 	public:
 		FedoraAgent();
 		virtual ~FedoraAgent();
@@ -22,11 +23,11 @@ namespace Fed
 		void SetFieldControllerReference(class FrisbeeFieldController* controller);
 
 		class FrisbeeFieldController* GetFieldController() const;
-		bool GetHasFedora() const;
-		float GetMaxSpeed() const;
-		bool InFedoraPath() const;
+		bool	GetHasFedora() const;
+		float	GetMaxSpeed() const;
+		bool	InFedoraPath() const;
+		bool	IsPlayerControlled() const;
 
-		// bool IsColliding(Fedora* fedora);
 
 		void OnEvent(const Subject* subject, Event& event) override;
 		void Update();
