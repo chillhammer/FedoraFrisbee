@@ -145,7 +145,7 @@ namespace Fed
 	{
 		if (e.GetAgent().GetID() == GetID())
 		{
-			m_CanGrabTimer = 1.f;
+			m_CanGrabTimer = 0.5f;
 		}
 		return false;
 	}
@@ -155,7 +155,7 @@ namespace Fed
 		if (e.GetAgent().GetID() == GetID())
 		{
 			LOG("Fedora Picked up");
-			m_CanGrabTimer = 1.f;
+			m_CanGrabTimer = 0.1f;
 		}
 		return false;
 	}

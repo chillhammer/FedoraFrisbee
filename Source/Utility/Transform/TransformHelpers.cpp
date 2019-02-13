@@ -33,4 +33,12 @@ namespace Fed
 		float shortest_angle = std::fmod( std::fmod(end - start, 360)  + 540, 360) - 180;
 		return ProcessAngle(start + shortest_angle * amount);
 	}
+	// Returns difference between the two angles
+	float AngleDiff(float angle1, float angle2)
+	{
+		angle1 = ProcessAngle(angle1);
+		angle2 = ProcessAngle(angle2);
+		float shortest_angle = std::fmod(std::fmod(angle2 - angle1, 360) + 540, 360) - 180;
+		return shortest_angle;
+	}
 }

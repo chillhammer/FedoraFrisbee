@@ -61,7 +61,7 @@ namespace Fed
 		owner->ObjectTransform.SetYaw(LerpAngle(owner->ObjectTransform.GetYaw(), targetYaw, speed * Game.DeltaTime()));
 
 		// Snap if within neglible range
-		if (glm::abs(owner->ObjectTransform.GetYaw() - targetYaw) < 0.1f)
+		if (glm::abs(AngleDiff(owner->ObjectTransform.GetYaw(), targetYaw)) < 3.f)
 		{
 			owner->ObjectTransform.SetYaw(targetYaw);
 			return true;

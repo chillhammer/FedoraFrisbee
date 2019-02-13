@@ -18,7 +18,7 @@ namespace Fed::AgentAIStates
 
 		// Stare at player
 		const FedoraAgent* player = agent->GetFieldController()->FindPlayerAgent();
-		owner->FaceTowards(player->ObjectTransform.Position, 4.5f); 
+		bool facingPlayer = owner->FaceTowards(player->ObjectTransform.Position, 5.5f); 
 
 		if (agent->InFedoraPath())
 		{
@@ -30,6 +30,12 @@ namespace Fed::AgentAIStates
 			{
 				owner->GetFSM().ChangeState(AgentAIStates::Intercept::Instance());
 			}
+		}
+
+		// Throw if possible
+		if (facingPlayer)
+		{
+			owner->ThrowFrisbee(owner->GetOwner());
 		}
 	}
 	void Wait::Exit(FedoraAgentInputAI* owner)

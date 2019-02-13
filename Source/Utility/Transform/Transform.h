@@ -14,6 +14,7 @@ namespace Fed
 	float ProcessAngle(float angle);
 	Vector3 ProcessAngleVector(Vector3 angles);
 	float LerpAngle(float start, float end, float amount);
+	float AngleDiff(float angle1, float angle2);
 
 	struct Transform
 	{
