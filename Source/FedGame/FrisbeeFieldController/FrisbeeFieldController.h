@@ -11,7 +11,7 @@ namespace Fed
 		Handles events between players, and also with frisbee
 		An API for agents to query information about the field, agents, fedora
 	**/
-	class FrisbeeFieldController
+	class FrisbeeFieldController : IObserver
 	{
 	public:
 		FrisbeeFieldController();
@@ -24,14 +24,20 @@ namespace Fed
 		bool IsAgentInFedoraPath(const FedoraAgent* agent);
 		bool CanAgentInterceptFedora(const FedoraAgent* agent, Vector3* outInterceptPos);
 		bool IsFedoraFree() const;
+		float GetFedoraLaunchSpeed() const;
 		Vector3 GetFedoraPosition() const;
 		void SetFedoraReference(Fedora* fedora);
+		const int GetLastThrownAgentID() const;
+		void OnEvent(const Subject* subject, Event& event);
 	public:
 		Subject FrisbeeThrown;
 		Subject FrisbeePickup;
 
 	private:
+		bool OnFedoraThrown(FrisbeeThrownEvent& e);
+	private:
 		class Fedora* m_Fedora;
 		std::vector<const FedoraAgent*> m_Agents;
+		int m_LastThrownAgentID;
 	};
 }

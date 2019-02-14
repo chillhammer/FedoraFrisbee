@@ -89,6 +89,12 @@ namespace Fed
 		return m_InputType == AgentInputType::PLAYER;
 	}
 
+	const Vector3 FedoraAgent::GetFuturePosition(float time) const
+	{
+		Vector3 futurePos = ObjectTransform.Position + m_Speed * m_Direction * time;
+		return futurePos;
+	}
+
 	// Updates logic within Fedora Agent
 	// Virtually calls logic to either AI or Player Input
 	void FedoraAgent::Update()
@@ -136,7 +142,6 @@ namespace Fed
 	// Handles Events about the match for this agent
 	void FedoraAgent::OnEvent(const Subject * subject, Event & event)
 	{
-		// TODO: Handle Frisbee Thrown. Create OnFrisbeeThrown()
 		Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FedoraAgent, OnFrisbeeThrown));
 		Evnt::Dispatch<FrisbeePickupEvent>(event, EVENT_BIND_FN(FedoraAgent, OnFrisbeePickup));
 	}

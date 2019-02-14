@@ -27,6 +27,7 @@ namespace Fed
 		float	GetMaxSpeed() const;
 		bool	InFedoraPath() const;
 		bool	IsPlayerControlled() const;
+		const Vector3 GetFuturePosition(float time) const;
 
 
 		void OnEvent(const Subject* subject, Event& event) override;

@@ -20,6 +20,7 @@ namespace Fed
 		const float GetThrowRange() const;
 		const Vector3 GetDirection() const;
 		const float GetSpeed() const;
+		const float GetLaunchSpeed() const;
 		const bool IsMoving() const;
 		const Vector3 GetFuturePosition(float time, bool debugDraw = false) const;
 		void SetOwner(const class FedoraAgent* owner);

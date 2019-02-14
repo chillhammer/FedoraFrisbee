@@ -49,6 +49,10 @@ namespace Fed
 	{
 		return m_Speed;
 	}
+	const float Fedora::GetLaunchSpeed() const
+	{
+		return m_LaunchSpeed;
+	}
 	// Returns whether fedora has non-zero speed
 	const bool Fedora::IsMoving() const
 	{

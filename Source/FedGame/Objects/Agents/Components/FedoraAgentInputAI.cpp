@@ -76,13 +76,24 @@ namespace Fed
 		float acceleration = (m_Accelerate ? m_Acceleration : m_Friction) * Game.DeltaTime();
 		m_Owner->m_Speed = glm::clamp(m_Owner->m_Speed + acceleration, 0.f, m_Owner->GetMaxSpeed());
 
+		m_Owner->m_PrevPosition = m_Owner->ObjectTransform.Position;
 		m_Owner->ObjectTransform.Position += m_Owner->m_Direction * m_Owner->m_Speed * Game.DeltaTime();
+		
 		// Reset Accelertion
 		m_Accelerate = false;
 
 		// Lean based on speed
 		float leanAmount = m_Owner->m_Speed / m_Owner->GetMaxSpeed();
 		m_Owner->ObjectTransform.SetPitch(LerpAngle(m_Owner->ObjectTransform.GetPitch(), leanAmount * 20.f, 5.0f * Game.DeltaTime()));
+	}
+	// Throws fedora to agent with predicted future movement
+	Vector3 FedoraAgentInputAI::GetAgentPredictedPosition(const FedoraAgent * agent) const
+	{
+		ASSERT(agent != nullptr, "Agent cannot be nullptr");
+		float dist = glm::length(GetOwner()->ObjectTransform.Position - agent->ObjectTransform.Position);
+		float timeForFedora = dist / GetOwner()->GetFieldController()->GetFedoraLaunchSpeed();
+		Vector3 predictedAgentPos = agent->GetFuturePosition(timeForFedora);
+		return predictedAgentPos;
 	}
 	// Returns owner of this component. Used within FSM
 	FedoraAgent * FedoraAgentInputAI::GetOwner() const

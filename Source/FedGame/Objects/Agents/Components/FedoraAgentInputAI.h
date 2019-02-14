@@ -16,6 +16,7 @@ namespace Fed
 		bool MoveTowards(const Vector3& point);
 		bool FaceTowards(const Vector3& point, float speed);
 		void MoveBasedOnVelocity();
+		Vector3 GetAgentPredictedPosition(const FedoraAgent* agent) const;
 		FedoraAgent* GetOwner() const;
 		bool	CanInterceptFedora();
 		Vector3 GetInterceptPosition() const;

@@ -7,4 +7,5 @@ namespace Fed::FedoraStates
 		float m_TimeSinceAttached;
 	);
 	STATE_CLASS_SINGLETON(Fedora, Flying, );
+
 }

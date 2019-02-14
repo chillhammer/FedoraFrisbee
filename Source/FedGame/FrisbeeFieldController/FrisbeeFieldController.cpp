@@ -5,8 +5,9 @@
 
 namespace Fed
 {
-	FrisbeeFieldController::FrisbeeFieldController() : m_Fedora(nullptr)
+	FrisbeeFieldController::FrisbeeFieldController() : m_Fedora(nullptr), m_LastThrownAgentID(0)
 	{
+		FrisbeeThrown.AddObserver(this);
 	}
 	// Returns whether given agent is touching fedora
 	bool FrisbeeFieldController::IsAgentCollidingFedora(FedoraAgent * agent)
@@ -43,6 +44,11 @@ namespace Fed
 	{
 		ASSERT(m_Fedora != nullptr, "FedoraPtr is null");
 		return m_Fedora->GetOwner() == nullptr;
+	}
+	float FrisbeeFieldController::GetFedoraLaunchSpeed() const
+	{
+		ASSERT(m_Fedora != nullptr, "Must have fedora reference");
+		return m_Fedora->GetLaunchSpeed();
 	}
 	// Queries to check if certain agent has fedora
 	bool FrisbeeFieldController::AgentHasFedora(const FedoraAgent * agent)
@@ -139,5 +145,18 @@ namespace Fed
 			FrisbeePickup.AddObserver(fedora);
 		}
 		m_Fedora = fedora;
+	}
+	const int FrisbeeFieldController::GetLastThrownAgentID() const
+	{
+		return m_LastThrownAgentID;
+	}
+	void FrisbeeFieldController::OnEvent(const Subject * subject, Event & event)
+	{
+		Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FrisbeeFieldController, OnFedoraThrown));
+	}
+	bool FrisbeeFieldController::OnFedoraThrown(FrisbeeThrownEvent & e)
+	{
+		m_LastThrownAgentID = e.GetAgent().GetID();
+		return false;
 	}
 }

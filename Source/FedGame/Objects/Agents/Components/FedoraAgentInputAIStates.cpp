@@ -18,7 +18,14 @@ namespace Fed::AgentAIStates
 
 		// Stare at player
 		const FedoraAgent* player = agent->GetFieldController()->FindPlayerAgent();
-		bool facingPlayer = owner->FaceTowards(player->ObjectTransform.Position, 5.5f); 
+		
+		// Face Player
+		Vector3 pointToFace = player->ObjectTransform.Position;
+		if (agent->GetHasFedora())
+		{
+			pointToFace = owner->GetAgentPredictedPosition(player);
+		}
+		bool facingPlayer = owner->FaceTowards(pointToFace, 55.5f);
 
 		if (agent->InFedoraPath())
 		{
@@ -29,6 +36,11 @@ namespace Fed::AgentAIStates
 			if (owner->CanInterceptFedora())
 			{
 				owner->GetFSM().ChangeState(AgentAIStates::Intercept::Instance());
+			}
+			else if (owner->GetOwner()->GetFieldController()->IsFedoraFree()
+				&& owner->GetOwner()->GetFieldController()->GetLastThrownAgentID() != owner->GetOwner()->GetID())
+			{
+				owner->GetFSM().ChangeState(AgentAIStates::ChaseFrisbee::Instance());
 			}
 		}
 
@@ -41,8 +53,9 @@ namespace Fed::AgentAIStates
 	void Wait::Exit(FedoraAgentInputAI* owner)
 	{
 	}
-
+	//////////////////////////////////////////////////////////////
 	// Trying to intercept fedora
+	/////////////////////////////////////////////////////////////
 	void Intercept::Enter(FedoraAgentInputAI* owner)
 	{
 
@@ -50,21 +63,38 @@ namespace Fed::AgentAIStates
 	void Intercept::Execute(FedoraAgentInputAI* owner)
 	{
 		FedoraAgent* agent = owner->GetOwner();
-		/*if (agent->InFedoraPath())
+		owner->FaceTowards(owner->GetInterceptPosition(), 6.5f);
+		if (owner->MoveTowards(owner->GetInterceptPosition()))
 		{
 			owner->GetFSM().ChangeState(AgentAIStates::Wait::Instance());
 		}
-		else*/
-		{
-			owner->FaceTowards(owner->GetInterceptPosition(), 6.5f);
-			if (owner->MoveTowards(owner->GetInterceptPosition()))
-			{
-				owner->GetFSM().ChangeState(AgentAIStates::Wait::Instance());
-			}
-			
-		}
 	}
 	void Intercept::Exit(FedoraAgentInputAI* owner)
+	{
+	}
+
+	////////////////////////////////////////////////////////////////
+	// Trying to run at fedora
+	////////////////////////////////////////////////////////////////
+	void ChaseFrisbee::Enter(FedoraAgentInputAI* owner)
+	{
+
+	}
+	void ChaseFrisbee::Execute(FedoraAgentInputAI* owner)
+	{
+		FrisbeeFieldController* controller = owner->GetOwner()->GetFieldController();
+		Vector3 frisbeePos = controller->GetFedoraPosition();
+		frisbeePos.y = 0;
+		owner->FaceTowards(frisbeePos, 6.5f);
+		owner->MoveTowards(frisbeePos);
+
+		// Stop chasing if it is picked up
+		if (!controller->IsFedoraFree())
+		{
+			owner->GetFSM().ChangeState(AgentAIStates::Wait::Instance());
+		}
+	}
+	void ChaseFrisbee::Exit(FedoraAgentInputAI* owner)
 	{
 	}
 
