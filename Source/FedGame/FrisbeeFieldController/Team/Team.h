@@ -3,6 +3,7 @@
 
 namespace Fed
 {
+	enum TeamColor {Red, Blue};
 	// Team controller. Overwatch AI that controls players
 	class Team
 	{
