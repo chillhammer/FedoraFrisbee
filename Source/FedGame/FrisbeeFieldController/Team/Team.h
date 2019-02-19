@@ -10,8 +10,10 @@ namespace Fed
 	public:
 		Team();
 		TeamColor GetColor() const;
+		bool HasAgent(int agentID) const;
 	private:
 		std::vector<class FedoraAgent*> m_Agents;
 		TeamColor m_Color;
+		class FedoraAgent* m_ControllingAgent;
 	};
 }
