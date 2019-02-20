@@ -1,6 +1,7 @@
 #pragma once
 #include <GameObject/GameObject.h>
 #include <EventSystem/IObserver.h>
+#include <FrisbeeFieldController/Team/Team.h>
 #include "Components/FedoraAgentInputComponent.h"
 
 namespace Fed
@@ -38,6 +39,7 @@ namespace Fed
 	private:
 		AgentInputType m_InputType;
 		FedoraAgentInputComponent* m_InputComponent;
+		Team* m_Team;
 		class Camera* m_Camera;
 		class FrisbeeFieldController* m_FieldController;
 		float m_Speed;

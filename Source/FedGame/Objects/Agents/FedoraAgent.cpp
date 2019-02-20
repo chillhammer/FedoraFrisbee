@@ -60,6 +60,10 @@ namespace Fed
 		controller->FrisbeeThrown.AddObserver(this);
 		controller->FrisbeePickup.AddObserver(this);
 	}
+	void FedoraAgent::SetTeamReference(Team * team)
+	{
+		m_Team = team;
+	}
 	FrisbeeFieldController * FedoraAgent::GetFieldController() const
 	{
 		return m_FieldController;
