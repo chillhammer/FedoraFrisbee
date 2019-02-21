@@ -4,6 +4,9 @@
 
 namespace Fed
 {
+	Team::Team()
+	{
+	}
 	TeamColor Team::GetColor() const
 	{
 		return m_Color;

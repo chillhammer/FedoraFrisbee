@@ -150,6 +150,10 @@ namespace Fed
 	{
 		return m_LastThrownAgentID;
 	}
+	const Team * FrisbeeFieldController::GetTeam(TeamColor color) const
+	{
+		return (TeamColor::Blue ? &m_BlueTeam : &m_RedTeam);
+	}
 	void FrisbeeFieldController::OnEvent(const Subject * subject, Event & event)
 	{
 		Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FrisbeeFieldController, OnFedoraThrown));

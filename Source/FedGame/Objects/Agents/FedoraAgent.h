@@ -22,6 +22,7 @@ namespace Fed
 		void SetInputType(AgentInputType inputType);
 		void SetCameraReference(class Camera* camera);
 		void SetFieldControllerReference(class FrisbeeFieldController* controller);
+		void SetTeamReference(const Team* team);
 
 		class FrisbeeFieldController* GetFieldController() const;
 		bool	GetHasFedora() const;
@@ -39,7 +40,7 @@ namespace Fed
 	private:
 		AgentInputType m_InputType;
 		FedoraAgentInputComponent* m_InputComponent;
-		Team* m_Team;
+		const Team* m_Team;
 		class Camera* m_Camera;
 		class FrisbeeFieldController* m_FieldController;
 		float m_Speed;

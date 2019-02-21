@@ -3,6 +3,7 @@
 #include <EventSystem/Subject.h>
 #include <Objects/Agents/FedoraAgent.h>
 #include <Objects/Fedora/Fedora.h>
+#include "Team/Team.h"
 #include <vector>
 namespace Fed
 {
@@ -24,10 +25,11 @@ namespace Fed
 		bool IsAgentInFedoraPath(const FedoraAgent* agent);
 		bool CanAgentInterceptFedora(const FedoraAgent* agent, Vector3* outInterceptPos);
 		bool IsFedoraFree() const;
-		float GetFedoraLaunchSpeed() const;
-		Vector3 GetFedoraPosition() const;
-		void SetFedoraReference(Fedora* fedora);
-		const int GetLastThrownAgentID() const;
+		float		GetFedoraLaunchSpeed() const;
+		Vector3		GetFedoraPosition() const;
+		void		SetFedoraReference(Fedora* fedora);
+		const int	GetLastThrownAgentID() const;
+		const Team*		GetTeam(TeamColor color) const;
 		void OnEvent(const Subject* subject, Event& event);
 	public:
 		Subject FrisbeeThrown;
@@ -39,5 +41,7 @@ namespace Fed
 		class Fedora* m_Fedora;
 		std::vector<const FedoraAgent*> m_Agents;
 		int m_LastThrownAgentID;
+		Team m_BlueTeam;
+		Team m_RedTeam;
 	};
 }

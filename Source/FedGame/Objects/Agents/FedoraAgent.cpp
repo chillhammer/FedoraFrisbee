@@ -60,7 +60,7 @@ namespace Fed
 		controller->FrisbeeThrown.AddObserver(this);
 		controller->FrisbeePickup.AddObserver(this);
 	}
-	void FedoraAgent::SetTeamReference(Team * team)
+	void FedoraAgent::SetTeamReference(const Team * team)
 	{
 		m_Team = team;
 	}
