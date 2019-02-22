@@ -22,7 +22,7 @@ namespace Fed
 		void SetInputType(AgentInputType inputType);
 		void SetCameraReference(class Camera* camera);
 		void SetFieldControllerReference(class FrisbeeFieldController* controller);
-		void SetTeamReference(const Team* team);
+		void SetTeamColor(TeamColor color);
 
 		class FrisbeeFieldController* GetFieldController() const;
 		bool	GetHasFedora() const;

@@ -55,14 +55,15 @@ namespace Fed
 	// Access field controller to query information or trigger events
 	void FedoraAgent::SetFieldControllerReference(FrisbeeFieldController * controller)
 	{
-		ASSERT(!m_FieldController, "Can only set Field Controller once, for now.");
 		m_FieldController = controller;
 		controller->FrisbeeThrown.AddObserver(this);
 		controller->FrisbeePickup.AddObserver(this);
 	}
-	void FedoraAgent::SetTeamReference(const Team * team)
+	// Uses field controller to set team reference
+	void FedoraAgent::SetTeamColor(TeamColor color)
 	{
-		m_Team = team;
+		ASSERT(m_FieldController, "Must have field controller to set team");
+		m_Team = m_FieldController->GetTeam(color);
 	}
 	FrisbeeFieldController * FedoraAgent::GetFieldController() const
 	{

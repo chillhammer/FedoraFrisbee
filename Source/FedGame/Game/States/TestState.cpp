@@ -22,17 +22,26 @@ namespace Fed::GameStates
 		m_DebugShader = Resources.GetShader("Debug");
 
 		m_Box.ObjectTransform.Scale = Vector3(15, 0.001f, 30);
+		// Player
 		m_Agent.ObjectTransform.Position = Vector3(0, 0, 0);
 		m_Agent.SetInputType(AgentInputType::PLAYER);
 		m_Agent.SetCameraReference(&m_Camera);
+		m_Agent.SetFieldControllerReference(&m_FieldController);
+		m_Agent.SetTeamColor(TeamColor::Blue);
+
+		// Enemy
 		m_Agent2.ObjectTransform.Position = Vector3(0, 0, -10.f);
 		m_Agent2.SetInputType(AgentInputType::AI);
 		m_Agent2.SetCameraReference(&m_Camera);
-		if (!m_Agent.GetFieldController())
-		{
-			m_Agent.SetFieldControllerReference(&m_FieldController);
-			m_Agent2.SetFieldControllerReference(&m_FieldController);
-		}
+		m_Agent2.SetFieldControllerReference(&m_FieldController);
+		m_Agent2.SetTeamColor(TeamColor::Red);
+
+		// Ally
+		m_Agent3.ObjectTransform.Position = Vector3(10.f, 0, -10.f);
+		m_Agent3.SetInputType(AgentInputType::AI);
+		m_Agent3.SetCameraReference(&m_Camera);
+		m_Agent3.SetFieldControllerReference(&m_FieldController);
+		m_Agent3.SetTeamColor(TeamColor::Blue);
 
 		m_Fedora.ObjectTransform.Position = Vector3(0, 0, 0);
 		//m_Fedora.SetOwner(&m_Agent);

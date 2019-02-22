@@ -1,5 +1,5 @@
 #pragma once
-#include "GameManager.h"
+#include "../GameManager.h"
 #include <Objects/Agents/FedoraAgent.h>
 #include <Objects/Box/WoodenBox.h>
 #include <Objects/Fedora/Fedora.h>
@@ -12,6 +12,7 @@ namespace Fed::GameStates
 		Camera m_Camera;
 		FedoraAgent m_Agent;
 		FedoraAgent m_Agent2;
+		FedoraAgent m_Agent3;
 		Vector3 m_Light;
 		ShaderPtr m_Shader;
 		ShaderPtr m_DebugShader;
