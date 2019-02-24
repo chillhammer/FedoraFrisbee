@@ -48,12 +48,14 @@ namespace Fed::GameStates
 		m_FieldController.SetFedoraReference(&m_Fedora);
 		m_FieldController.AddAgentReference(&m_Agent);
 		m_FieldController.AddAgentReference(&m_Agent2);
+		m_FieldController.AddAgentReference(&m_Agent3);
 	}
 	void Test::Execute(GameManager* owner)
 	{
 		m_Camera.Update();
 		m_Agent.Update();
 		m_Agent2.Update();
+		m_Agent3.Update();
 		m_Fedora.Update();
 
 		m_Shader->Bind();
@@ -64,7 +66,9 @@ namespace Fed::GameStates
 		m_Box.Draw();
 		m_Agent.Draw();
 		m_Agent2.Draw();
-		//m_Agent.DrawBoundingBox();
+		m_Agent3.Draw();
+		//m_Agent2.DrawBoundingBox();
+		//m_Agent3.DrawBoundingBox();
 		m_Fedora.Draw();
 		//m_Fedora.DrawBoundingBox();
 
