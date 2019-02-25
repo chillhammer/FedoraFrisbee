@@ -1,10 +1,11 @@
 #include <FedPCH.h>
 #include <Objects/Agents/FedoraAgent.h>
+#include "TeamStates/TeamStates.h"
 #include "Team.h"
 
 namespace Fed
 {
-	Team::Team()
+	Team::Team() : m_StateMachine(this, TeamStates::Standoff::Instance())
 	{
 	}
 	TeamColor Team::GetColor() const
