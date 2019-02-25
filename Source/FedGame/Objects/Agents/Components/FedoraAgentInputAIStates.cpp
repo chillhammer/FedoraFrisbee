@@ -15,8 +15,9 @@ namespace Fed::AgentAIStates
 	void Wait::Execute(FedoraAgentInputAI* owner)
 	{
 		FedoraAgent* agent = owner->GetOwner();
+		FrisbeeFieldController* fieldController = agent->GetFieldController();
 
-		// Stare at player
+		// Get Player Object
 		const FedoraAgent* player = agent->GetFieldController()->FindPlayerAgent();
 		
 		// Face Player
@@ -27,18 +28,16 @@ namespace Fed::AgentAIStates
 		}
 		bool facingPlayer = owner->FaceTowards(pointToFace, 55.5f);
 
-		if (agent->InFedoraPath())
+		if (!agent->InFedoraPath())
 		{
-			//LOG("Agent {0} is in fedora path", agent->GetID());
-		}
-		else
-		{
+			// Try to intercept
 			if (owner->CanInterceptFedora())
 			{
 				owner->GetFSM().ChangeState(AgentAIStates::Intercept::Instance());
 			}
+			// Otherwise chase
 			else if (owner->GetOwner()->GetFieldController()->IsFedoraFree()
-				&& owner->GetOwner()->GetFieldController()->GetLastThrownAgentID() != owner->GetOwner()->GetID())
+				&& fieldController->GetAgentFromID(fieldController->GetLastThrownAgentID())->GetTeam() != agent->GetTeam())
 			{
 				owner->GetFSM().ChangeState(AgentAIStates::ChaseFrisbee::Instance());
 			}

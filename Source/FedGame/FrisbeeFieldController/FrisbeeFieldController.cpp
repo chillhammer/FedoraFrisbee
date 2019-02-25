@@ -39,6 +39,14 @@ namespace Fed
 		}
 		return nullptr;
 	}
+	// Uses lookup table to find agent in O(1)
+	const FedoraAgent * FrisbeeFieldController::GetAgentFromID(int id) const
+	{
+		auto it = m_AgentLookup.find(id);
+		if (it != m_AgentLookup.end())
+			return (*it).second;
+		return nullptr;
+	}
 	// Can agent pickup fedora. Fedora has no owner
 	bool FrisbeeFieldController::IsFedoraFree() const
 	{
@@ -64,6 +72,7 @@ namespace Fed
 		if (std::find(m_Agents.begin(), m_Agents.end(), agent) == m_Agents.end())
 		{
 			m_Agents.emplace_back(agent);
+			m_AgentLookup[agent->GetID()] = agent;
 		}
 	}
 	// Returns whether agent is currently in fedora's path

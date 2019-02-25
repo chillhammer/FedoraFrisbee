@@ -30,6 +30,7 @@ namespace Fed
 		bool	InFedoraPath() const;
 		bool	IsPlayerControlled() const;
 		const Vector3 GetFuturePosition(float time) const;
+		const Team* GetTeam() const;
 
 
 		void OnEvent(const Subject* subject, Event& event) override;

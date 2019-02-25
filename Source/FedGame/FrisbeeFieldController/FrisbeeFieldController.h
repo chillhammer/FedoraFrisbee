@@ -7,6 +7,7 @@
 #include <vector>
 namespace Fed
 {
+
 	/**
 		Controls the field and logic of a Fedora Frisbee match.
 		Handles events between players, and also with frisbee
@@ -20,6 +21,7 @@ namespace Fed
 		bool IsAgentCollidingFedora(FedoraAgent* agent);
 		const FedoraAgent* FindAgentCollidingAgent(const FedoraAgent* agent);
 		const FedoraAgent* FindPlayerAgent();
+		const FedoraAgent* GetAgentFromID(int id) const;
 		bool AgentHasFedora(const FedoraAgent* agent);
 		void AddAgentReference(const FedoraAgent* agent);
 		bool IsAgentInFedoraPath(const FedoraAgent* agent);
@@ -40,6 +42,7 @@ namespace Fed
 	private:
 		class Fedora* m_Fedora;
 		std::vector<const FedoraAgent*> m_Agents;
+		std::unordered_map<int, const FedoraAgent*> m_AgentLookup;
 		int m_LastThrownAgentID;
 		Team m_BlueTeam;
 		Team m_RedTeam;

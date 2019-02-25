@@ -100,6 +100,11 @@ namespace Fed
 		return futurePos;
 	}
 
+	const Team * FedoraAgent::GetTeam() const
+	{
+		return m_Team;
+	}
+
 	// Updates logic within Fedora Agent
 	// Virtually calls logic to either AI or Player Input
 	void FedoraAgent::Update()
