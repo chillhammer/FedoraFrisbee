@@ -20,4 +20,8 @@ namespace Fed::GameStates
 		Fedora m_Fedora;
 		FrisbeeFieldController m_FieldController;
 	);
+
+	STATE_CLASS_SINGLETON(GameManager, TeamMatch,
+
+	);
 }
