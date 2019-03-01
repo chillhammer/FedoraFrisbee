@@ -22,6 +22,6 @@ namespace Fed::GameStates
 	);
 
 	STATE_CLASS_SINGLETON(GameManager, TeamMatch,
-
+		std::vector<FedoraAgent> m_Agents;
 	);
 }
