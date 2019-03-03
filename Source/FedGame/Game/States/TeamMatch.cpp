@@ -11,6 +11,17 @@ namespace Fed::GameStates
 		m_Agents.emplace_back();
 		m_Agents.emplace_back();
 		m_Agents.emplace_back();
+
+
+		LOG("Entering TeamMatch State");
+		m_Camera.Init();
+		m_Light = Vector3(0.f, 10.f, -5.f);
+
+		m_Shader = Resources.GetShader("Model");
+		m_Shader->Bind();
+		m_Shader->SetUniform3f("u_LightPosition", m_Light.x, m_Light.y, m_Light.z);
+
+		m_DebugShader = Resources.GetShader("Debug");
 	}
 
 	void TeamMatch::Execute(GameManager* owner)
