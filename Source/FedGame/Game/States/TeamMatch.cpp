@@ -22,11 +22,23 @@ namespace Fed::GameStates
 		m_Shader->SetUniform3f("u_LightPosition", m_Light.x, m_Light.y, m_Light.z);
 
 		m_DebugShader = Resources.GetShader("Debug");
+
+		m_Box.ObjectTransform.Scale = Vector3(15, 0.001f, 30);
+		SetupAgent(m_Agents[0], &m_Camera, &m_FieldController, Vector3(0, 0, 0), TeamColor::Blue, AgentInputType::PLAYER);
 	}
 
 	void TeamMatch::Execute(GameManager* owner)
 	{
+		m_Camera.Update();
+		m_Agents[0].Update();
 
+		m_Shader->Bind();
+		m_Shader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
+		m_DebugShader->Bind();
+		m_DebugShader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
+
+		m_Box.Draw();
+		m_Agents[0].Draw();
 	}
 
 	void TeamMatch::Exit(GameManager* owner)
