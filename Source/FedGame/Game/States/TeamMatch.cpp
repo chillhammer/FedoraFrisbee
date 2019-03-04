@@ -25,12 +25,16 @@ namespace Fed::GameStates
 
 		m_Box.ObjectTransform.Scale = Vector3(15, 0.001f, 30);
 		SetupAgent(m_Agents[0], &m_Camera, &m_FieldController, Vector3(0, 0, 0), TeamColor::Blue, AgentInputType::PLAYER);
+		SetupAgent(m_Agents[1], &m_Camera, &m_FieldController, Vector3(0, 0, -10.f), TeamColor::Red);
+		SetupAgent(m_Agents[2], &m_Camera, &m_FieldController, Vector3(10.f, 0, -10.f), TeamColor::Blue);
 	}
 
 	void TeamMatch::Execute(GameManager* owner)
 	{
 		m_Camera.Update();
 		m_Agents[0].Update();
+		m_Agents[1].Update();
+		m_Agents[2].Update();
 
 		m_Shader->Bind();
 		m_Shader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
@@ -39,6 +43,8 @@ namespace Fed::GameStates
 
 		m_Box.Draw();
 		m_Agents[0].Draw();
+		m_Agents[1].Draw();
+		m_Agents[2].Draw();
 	}
 
 	void TeamMatch::Exit(GameManager* owner)
