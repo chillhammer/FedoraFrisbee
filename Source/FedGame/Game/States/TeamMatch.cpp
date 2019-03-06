@@ -27,6 +27,9 @@ namespace Fed::GameStates
 		SetupAgent(m_Agents[0], &m_Camera, &m_FieldController, Vector3(0, 0, 0), TeamColor::Blue, AgentInputType::PLAYER);
 		SetupAgent(m_Agents[1], &m_Camera, &m_FieldController, Vector3(0, 0, -10.f), TeamColor::Red);
 		SetupAgent(m_Agents[2], &m_Camera, &m_FieldController, Vector3(10.f, 0, -10.f), TeamColor::Blue);
+
+		m_Fedora.ObjectTransform.Position = Vector3(0, 0, 0);
+		m_FieldController.SetFedoraReference(&m_Fedora);
 	}
 
 	void TeamMatch::Execute(GameManager* owner)
@@ -49,7 +52,7 @@ namespace Fed::GameStates
 
 	void TeamMatch::Exit(GameManager* owner)
 	{
-
+		m_FieldController.SetFedoraReference(nullptr);
 	}
 
 	// Sets up agent initial settings
