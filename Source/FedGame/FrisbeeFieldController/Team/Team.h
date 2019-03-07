@@ -12,6 +12,8 @@ namespace Fed
 		Team();
 		TeamColor GetColor() const;
 		bool HasAgent(int agentID) const;
+		void AddAgent(class FedoraAgent* agent);
+		void RemoveAgent(class FedoraAgent* agent);
 	private:
 		StateMachine<Team> m_StateMachine;
 		std::vector<class FedoraAgent*> m_Agents;

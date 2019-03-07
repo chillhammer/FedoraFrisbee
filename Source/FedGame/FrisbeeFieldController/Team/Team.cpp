@@ -21,4 +21,14 @@ namespace Fed
 		}
 		return false;
 	}
+	void Team::AddAgent(FedoraAgent * agent)
+	{
+		ASSERT(!HasAgent(agent->GetID()), "Can't add agent that exists");
+		m_Agents.push_back(agent);
+	}
+	void Team::RemoveAgent(FedoraAgent * agent)
+	{
+		ASSERT(HasAgent(agent->GetID()), "Can't remove agent that doesn't exists");
+		m_Agents.erase(std::remove(m_Agents.begin(), m_Agents.end(), agent), m_Agents.end());
+	}
 }
