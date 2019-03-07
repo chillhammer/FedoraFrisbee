@@ -63,7 +63,10 @@ namespace Fed
 	void FedoraAgent::SetTeamColor(TeamColor color)
 	{
 		ASSERT(m_FieldController, "Must have field controller to set team");
+		if (m_Team != nullptr)
+			m_Team->RemoveAgent(this);
 		m_Team = m_FieldController->GetTeam(color);
+		m_Team->AddAgent(this);
 	}
 	FrisbeeFieldController * FedoraAgent::GetFieldController() const
 	{
@@ -100,7 +103,7 @@ namespace Fed
 		return futurePos;
 	}
 
-	const Team * FedoraAgent::GetTeam() const
+	Team * FedoraAgent::GetTeam() const
 	{
 		return m_Team;
 	}

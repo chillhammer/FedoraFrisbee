@@ -30,7 +30,7 @@ namespace Fed
 		bool	InFedoraPath() const;
 		bool	IsPlayerControlled() const;
 		const Vector3 GetFuturePosition(float time) const;
-		const Team* GetTeam() const;
+		Team* GetTeam() const;
 
 
 		void OnEvent(const Subject* subject, Event& event) override;
@@ -41,7 +41,7 @@ namespace Fed
 	private:
 		AgentInputType m_InputType;
 		FedoraAgentInputComponent* m_InputComponent;
-		const Team* m_Team;
+		Team* m_Team;
 		class Camera* m_Camera;
 		class FrisbeeFieldController* m_FieldController;
 		float m_Speed;

@@ -31,7 +31,7 @@ namespace Fed
 		Vector3		GetFedoraPosition() const;
 		void		SetFedoraReference(Fedora* fedora);
 		const int	GetLastThrownAgentID() const;
-		const Team*		GetTeam(TeamColor color) const;
+		Team*		GetTeam(TeamColor color) const;
 		void OnEvent(const Subject* subject, Event& event);
 	public:
 		Subject FrisbeeThrown;
