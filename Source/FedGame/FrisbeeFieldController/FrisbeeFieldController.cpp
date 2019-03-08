@@ -159,7 +159,7 @@ namespace Fed
 	{
 		return m_LastThrownAgentID;
 	}
-	Team * FrisbeeFieldController::GetTeam(TeamColor color) const
+	Team * FrisbeeFieldController::GetTeam(TeamColor color)
 	{
 		return (TeamColor::Blue ? &m_BlueTeam : &m_RedTeam);
 	}

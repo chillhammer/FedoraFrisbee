@@ -12,8 +12,8 @@ namespace Fed
 		void Init();
 		void Update();
 		void OnEvent(const Subject* subject, Event& e);
-		Matrix4x4 GetViewMatrix();
-		Matrix4x4 GetProjectionMatrix();
+		Matrix4x4 GetViewMatrix() const;
+		Matrix4x4 GetProjectionMatrix() const;
 		void SetPivotPosition(Vector3 newPosition);
 	public:
 		CameraMode Mode;

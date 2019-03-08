@@ -115,6 +115,12 @@ namespace Fed
 			ObjectTransform.Position.y = glm::max(0.23f, ObjectTransform.Position.y - m_DropSpeed * timeSinceSlow * Game.DeltaTime());
 		}
 	}
+	// Stop movement. Collision or game reset
+	void Fedora::Stop()
+	{
+		m_TimeSinceThrown = m_TimeTilSlowdown;
+		m_Speed = 0;
+	}
 	bool Fedora::OnFrisbeeThrown(FrisbeeThrownEvent & e)
 	{	
 		m_TimeSinceThrown = 0;

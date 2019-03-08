@@ -35,6 +35,7 @@ namespace Fed
 
 		void OnEvent(const Subject* subject, Event& event) override;
 		void Update();
+		void Reset();
 	private:
 		bool OnFrisbeeThrown(class FrisbeeThrownEvent& e);
 		bool OnFrisbeePickup(class FrisbeePickupEvent& e);

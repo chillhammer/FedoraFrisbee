@@ -5,6 +5,7 @@
 namespace Fed::GameStates
 {
 	static void SetupAgent(FedoraAgent& agent, Camera* camera, FrisbeeFieldController* field, Vector3 position, TeamColor teamColor, AgentInputType input = AgentInputType::AI);
+	static void UpdateShaders(ShaderPtr shader, ShaderPtr debugShader, const Camera& camera);
 	// Team Match State
 	void TeamMatch::Enter(GameManager* owner)
 	{
@@ -39,10 +40,7 @@ namespace Fed::GameStates
 		m_Agents[1].Update();
 		m_Agents[2].Update();
 
-		m_Shader->Bind();
-		m_Shader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
-		m_DebugShader->Bind();
-		m_DebugShader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
+		UpdateShaders(m_Shader, m_DebugShader, m_Camera);
 
 		m_Box.Draw();
 		m_Agents[0].Draw();
@@ -56,12 +54,20 @@ namespace Fed::GameStates
 	}
 
 	// Sets up agent initial settings
-	static void SetupAgent(FedoraAgent& agent, Camera* camera, FrisbeeFieldController* field, Vector3 position, TeamColor teamColor, AgentInputType input = AgentInputType::AI)
+	static void SetupAgent(FedoraAgent& agent, Camera* camera, FrisbeeFieldController* field, Vector3 position, TeamColor teamColor, AgentInputType input)
 	{
+		agent.Reset();
 		agent.ObjectTransform.Position = position;
 		agent.SetInputType(input);
 		agent.SetCameraReference(camera);
 		agent.SetFieldControllerReference(field);
 		agent.SetTeamColor(teamColor);
+	}
+	void UpdateShaders(ShaderPtr shader, ShaderPtr debugShader, const Camera& camera)
+	{
+		shader->Bind();
+		shader->SetUniformMat4f("u_ViewProjection", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+		debugShader->Bind();
+		debugShader->SetUniformMat4f("u_ViewProjection", camera.GetProjectionMatrix() * camera.GetViewMatrix());
 	}
 }

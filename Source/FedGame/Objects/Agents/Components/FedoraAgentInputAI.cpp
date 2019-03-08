@@ -2,7 +2,7 @@
 #include <Objects/Agents/FedoraAgent.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include <Game/GameManager.h>
-#include "FedoraAgentInputAIStates.h"
+#include "TestStates/FedoraAgentInputAIStates.h"
 #include "FedoraAgentInputAI.h"
 
 namespace Fed

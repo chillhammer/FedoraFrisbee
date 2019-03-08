@@ -102,12 +102,12 @@ namespace Fed
 		
 	}
 
-	Matrix4x4 Camera::GetViewMatrix()
+	Matrix4x4 Camera::GetViewMatrix() const
 	{
 		return glm::lookAt(ObjectTransform.Position, ObjectTransform.Position + ObjectTransform.GetHeading(), ObjectTransform.GetUp());
 	}
 
-	Matrix4x4 Camera::GetProjectionMatrix()
+	Matrix4x4 Camera::GetProjectionMatrix() const
 	{
 		float fov = 45;
 		float aspect = (float)Game.GetWindow().GetWidth() / (float) Game.GetWindow().GetHeight();

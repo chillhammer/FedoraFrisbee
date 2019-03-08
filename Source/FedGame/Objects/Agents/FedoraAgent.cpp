@@ -151,6 +151,11 @@ namespace Fed
 			}
 		}
 	}
+	// Upon game match reset
+	void FedoraAgent::Reset()
+	{
+		m_CanGrabTimer = 0.f;
+	}
 	#pragma region Event Handling
 	// Handles Events about the match for this agent
 	void FedoraAgent::OnEvent(const Subject * subject, Event & event)

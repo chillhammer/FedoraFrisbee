@@ -1,8 +1,10 @@
 #pragma once
-#include "FedoraAgentInputAI.h"
+#include "../FedoraAgentInputAI.h"
+/**
+	These states are primarily used for testing
+**/
 namespace Fed::AgentAIStates
 {
-	// Fedora being worn
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, GlobalMovement, );
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, Wait, );
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, Intercept, );

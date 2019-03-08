@@ -25,6 +25,7 @@ namespace Fed
 		const Vector3 GetFuturePosition(float time, bool debugDraw = false) const;
 		void SetOwner(const class FedoraAgent* owner);
 		void Move();
+		void Stop();
 	private:
 		bool OnFrisbeeThrown(FrisbeeThrownEvent& e);
 		bool OnFrisbeePickup(FrisbeePickupEvent& e);
