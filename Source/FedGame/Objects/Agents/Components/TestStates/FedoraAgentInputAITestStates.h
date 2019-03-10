@@ -3,7 +3,7 @@
 /**
 	These states are primarily used for testing
 **/
-namespace Fed::AgentAIStates
+namespace Fed::AgentAITestStates
 {
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, GlobalMovement, );
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, Wait, );

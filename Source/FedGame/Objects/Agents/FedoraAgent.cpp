@@ -9,7 +9,8 @@
 namespace Fed
 {
 	FedoraAgent::FedoraAgent()
-		: GameObject("FedoraAgent"), m_FieldController(nullptr), m_CanGrabTimer(0.f), m_MaxSpeed(10.75f)
+		: GameObject("FedoraAgent"), m_FieldController(nullptr), m_CanGrabTimer(0.f), m_MaxSpeed(10.75f), 
+			m_SuitModel(Resources.GetModel("SuitBlue"))
 	{
 		SetBoundingBox(Vector3(0, 1, 0.5f), Vector3(0.5, 1, 0.5));
 	}
@@ -66,6 +67,7 @@ namespace Fed
 		if (m_Team != nullptr)
 			m_Team->RemoveAgent(this);
 		m_Team = m_FieldController->GetTeam(color);
+		m_SuitModel = Resources.GetModel((color == TeamColor::Blue ? "SuitBlue" : "SuitRed"));
 		m_Team->AddAgent(this);
 	}
 	FrisbeeFieldController * FedoraAgent::GetFieldController() const
@@ -148,6 +150,7 @@ namespace Fed
 					FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
 					m_FieldController->FrisbeePickup.Notify(event);
 				}
+
 			}
 		}
 	}
@@ -156,6 +159,14 @@ namespace Fed
 	{
 		m_CanGrabTimer = 0.f;
 	}
+
+	// Draws suit ontop of agent
+	void FedoraAgent::DrawSuit() const
+	{
+		ShaderPtr shader = Resources.GetShader("Model");
+		m_SuitModel->Draw(shader, this->ObjectTransform.GetMatrix());
+	}
+
 	#pragma region Event Handling
 	// Handles Events about the match for this agent
 	void FedoraAgent::OnEvent(const Subject * subject, Event & event)

@@ -8,6 +8,9 @@ namespace Fed
 	FrisbeeFieldController::FrisbeeFieldController() : m_Fedora(nullptr), m_LastThrownAgentID(0)
 	{
 		FrisbeeThrown.AddObserver(this);
+		m_BlueTeam.SetColor(TeamColor::Blue);
+		m_RedTeam.SetColor(TeamColor::Red);
+
 	}
 	// Returns whether given agent is touching fedora
 	bool FrisbeeFieldController::IsAgentCollidingFedora(FedoraAgent * agent)
@@ -161,7 +164,7 @@ namespace Fed
 	}
 	Team * FrisbeeFieldController::GetTeam(TeamColor color)
 	{
-		return (TeamColor::Blue ? &m_BlueTeam : &m_RedTeam);
+		return (color == TeamColor::Blue ? &m_BlueTeam : &m_RedTeam);
 	}
 	void FrisbeeFieldController::OnEvent(const Subject * subject, Event & event)
 	{

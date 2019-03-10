@@ -2,11 +2,11 @@
 #include <Game/GameManager.h>
 #include <Objects/Agents/FedoraAgent.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
-#include "FedoraAgentInputAIStates.h"
+#include "FedoraAgentInputAITestStates.h"
 /**
 	Each state runs code that determines Fedora, the hat, behavior
 **/
-namespace Fed::AgentAIStates
+namespace Fed::AgentAITestStates
 {
 	// Doing nothing
 	void Wait::Enter(FedoraAgentInputAI* owner)
@@ -33,13 +33,13 @@ namespace Fed::AgentAIStates
 			// Try to intercept
 			if (owner->CanInterceptFedora())
 			{
-				owner->GetFSM().ChangeState(AgentAIStates::Intercept::Instance());
+				owner->GetFSM().ChangeState(Intercept::Instance());
 			}
 			// Otherwise chase
-			else if (owner->GetOwner()->GetFieldController()->IsFedoraFree()
+			else if (fieldController->IsFedoraFree()
 				&& fieldController->GetAgentFromID(fieldController->GetLastThrownAgentID())->GetTeam() != agent->GetTeam())
 			{
-				owner->GetFSM().ChangeState(AgentAIStates::ChaseFrisbee::Instance());
+				owner->GetFSM().ChangeState(ChaseFrisbee::Instance());
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace Fed::AgentAIStates
 		owner->FaceTowards(owner->GetInterceptPosition(), 6.5f);
 		if (owner->MoveTowards(owner->GetInterceptPosition()))
 		{
-			owner->GetFSM().ChangeState(AgentAIStates::Wait::Instance());
+			owner->GetFSM().ChangeState(Wait::Instance());
 		}
 	}
 	void Intercept::Exit(FedoraAgentInputAI* owner)
@@ -90,7 +90,7 @@ namespace Fed::AgentAIStates
 		// Stop chasing if it is picked up
 		if (!controller->IsFedoraFree())
 		{
-			owner->GetFSM().ChangeState(AgentAIStates::Wait::Instance());
+			owner->GetFSM().ChangeState(Wait::Instance());
 		}
 	}
 	void ChaseFrisbee::Exit(FedoraAgentInputAI* owner)

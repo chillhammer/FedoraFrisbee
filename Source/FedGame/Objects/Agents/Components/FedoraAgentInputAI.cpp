@@ -2,15 +2,15 @@
 #include <Objects/Agents/FedoraAgent.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include <Game/GameManager.h>
-#include "TestStates/FedoraAgentInputAIStates.h"
+#include "TestStates/FedoraAgentInputAITestStates.h"
 #include "FedoraAgentInputAI.h"
 
 namespace Fed
 {
-	Fed::FedoraAgentInputAI::FedoraAgentInputAI() : m_StateMachine(this, AgentAIStates::Wait::Instance()),
+	FedoraAgentInputAI::FedoraAgentInputAI() : m_StateMachine(this, AgentAITestStates::Wait::Instance()),
 		m_Acceleration(12.f), m_Friction(-30.f)
 	{
-		m_StateMachine.SetGlobalState(AgentAIStates::GlobalMovement::Instance());
+		m_StateMachine.SetGlobalState(AgentAITestStates::GlobalMovement::Instance());
 	}
 	// Handles Events
 	void FedoraAgentInputAI::OnEvent(const Subject * subject, Event & e)
@@ -24,6 +24,11 @@ namespace Fed
 
 		m_StateMachine.Update();
 	}
+
+	////////////////////////////////////
+	// Functions to use with AI States
+	/////////////////////////////////////
+
 	// Approaches point. Unit movement command for AI
 	bool FedoraAgentInputAI::MoveTowards(const Vector3 & point)
 	{

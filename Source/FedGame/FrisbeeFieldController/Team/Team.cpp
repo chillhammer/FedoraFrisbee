@@ -12,6 +12,10 @@ namespace Fed
 	{
 		return m_Color;
 	}
+	void Team::SetColor(TeamColor color)
+	{
+		m_Color = color;
+	}
 	bool Team::HasAgent(int agentID) const
 	{
 		for (auto it : m_Agents)

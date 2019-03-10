@@ -39,7 +39,11 @@ namespace Fed
 	Vector3 BoundingBox::GetSlidingDirection(const Transform & myTrans, const Transform & otherTrans, 
 		const BoundingBox & other, const Vector3& dir) const
 	{
-		ASSERT(!IsIntersecting(myTrans, otherTrans, other), "Sliding must not be intersecting");
+		if (IsIntersecting(myTrans, otherTrans, other))
+		{
+			return Vector3(0, 0, 0);
+		}
+		//ASSERT(!IsIntersecting(myTrans, otherTrans, other), "Sliding must not be intersecting");
 		Vector3 mins1 = myTrans.GetGlobalPosition() + m_Center - m_HalfExtents * myTrans.Scale;
 		Vector3 maxs1 = myTrans.GetGlobalPosition() + m_Center + m_HalfExtents * myTrans.Scale;
 		Vector3 mins2 = otherTrans.GetGlobalPosition() + other.m_Center - other.m_HalfExtents * otherTrans.Scale;

@@ -32,7 +32,7 @@ namespace Fed
 		const Vector3 GetFuturePosition(float time) const;
 		Team* GetTeam() const;
 
-
+		void DrawSuit() const;
 		void OnEvent(const Subject* subject, Event& event) override;
 		void Update();
 		void Reset();
@@ -43,6 +43,7 @@ namespace Fed
 		AgentInputType m_InputType;
 		FedoraAgentInputComponent* m_InputComponent;
 		Team* m_Team;
+		ModelPtr m_SuitModel;
 		class Camera* m_Camera;
 		class FrisbeeFieldController* m_FieldController;
 		float m_Speed;

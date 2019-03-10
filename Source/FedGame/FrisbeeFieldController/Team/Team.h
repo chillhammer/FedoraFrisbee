@@ -10,7 +10,8 @@ namespace Fed
 	{
 	public:
 		Team();
-		TeamColor GetColor() const;
+		TeamColor	GetColor() const;
+		void		SetColor(TeamColor color);
 		bool HasAgent(int agentID) const;
 		void AddAgent(class FedoraAgent* agent);
 		void RemoveAgent(class FedoraAgent* agent);

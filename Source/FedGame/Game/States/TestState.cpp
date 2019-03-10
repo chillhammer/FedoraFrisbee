@@ -70,8 +70,11 @@ namespace Fed::GameStates
 
 		m_Box.Draw();
 		m_Agent.Draw();
+		m_Agent.DrawSuit();
 		m_Agent2.Draw();
+		m_Agent2.DrawSuit();
 		m_Agent3.Draw();
+		m_Agent3.DrawSuit();
 		//m_Agent2.DrawBoundingBox();
 		//m_Agent3.DrawBoundingBox();
 		m_Fedora.Draw();
