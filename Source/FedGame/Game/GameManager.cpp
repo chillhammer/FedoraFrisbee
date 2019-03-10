@@ -65,6 +65,8 @@ namespace Fed
 	// Will return 0 if paused
 	float GameManager::DeltaTime() const
 	{
+		// Pause / Glitch
+		if (m_DeltaTime > 1) return m_TimeScale;
 		return m_DeltaTime * m_TimeScale;
 	}
 

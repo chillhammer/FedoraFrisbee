@@ -3,6 +3,7 @@
 #include <Objects/Agents/FedoraAgent.h>
 #include <Objects/Box/WoodenBox.h>
 #include <Objects/Fedora/Fedora.h>
+#include <Objects/Court/Court.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
 namespace Fed::GameStates
 {
@@ -18,6 +19,7 @@ namespace Fed::GameStates
 		ShaderPtr m_DebugShader;
 		WoodenBox m_Box;
 		Fedora m_Fedora;
+		Court m_Court;
 		FrisbeeFieldController m_FieldController;
 	);
 

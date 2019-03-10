@@ -51,6 +51,7 @@ namespace Fed
 	}
 	void ResourceManager::LoadModels()
 	{
+		m_ModelTable.emplace("Court",	new ImportedModel("../Assets/Models/Court/court.obj"));
 		m_ModelTable.emplace("SuitBlue",	new ImportedModel("../Assets/Models/Suit/suit-blue.obj"));
 		m_ModelTable.emplace("SuitRed",	new ImportedModel("../Assets/Models/Suit/suit-red.obj"));
 		m_ModelTable.emplace("FedoraAgent",	new ImportedModel("../Assets/Models/FedoraAgent/fedora-agent.obj"));

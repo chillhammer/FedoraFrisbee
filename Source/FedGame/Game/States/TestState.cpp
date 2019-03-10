@@ -68,18 +68,19 @@ namespace Fed::GameStates
 		m_DebugShader->Bind();
 		m_DebugShader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
 
-		m_Box.Draw();
+		//m_Box.Draw();
 		m_Agent.Draw();
 		m_Agent.DrawSuit();
 		m_Agent2.Draw();
 		m_Agent2.DrawSuit();
 		m_Agent3.Draw();
 		m_Agent3.DrawSuit();
+		ASSERT(m_Fedora.ObjectTransform.Position.x > -1000, "Agent 2 has valid position");
 		//m_Agent2.DrawBoundingBox();
 		//m_Agent3.DrawBoundingBox();
 		m_Fedora.Draw();
 		//m_Fedora.DrawBoundingBox();
-
+		m_Court.Draw();
 	}
 	void Test::Exit(GameManager* owner)
 	{
