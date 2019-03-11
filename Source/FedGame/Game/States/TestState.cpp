@@ -69,7 +69,7 @@ namespace Fed::GameStates
 		m_DebugShader->SetUniformMat4f("u_ViewProjection", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
 
 		//m_Box.Draw();
-		m_Agent.Draw();
+		//m_Agent.Draw();
 		m_Agent.DrawSuit();
 		m_Agent2.Draw();
 		m_Agent2.DrawSuit();
