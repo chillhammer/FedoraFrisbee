@@ -6,6 +6,7 @@ namespace Fed
 	ImportedModel::ImportedModel(char* path)
 	{
 		LoadModel(path);
+		LOG("Imported Model: {0}", path);
 	}
 
 	// Loops Through All Meshes, Then Draws

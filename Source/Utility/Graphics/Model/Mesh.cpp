@@ -13,7 +13,7 @@ namespace Fed
 			m_IndexBuffer(indexData, indexSize),
 			m_Texture(texture)
 	{
-		m_Texture.LoadTexture();
+		// m_Texture.LoadTexture(); Assume texture is already loaded
 		SetBufferLayout(GetBufferLayout());
 		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
 	}
