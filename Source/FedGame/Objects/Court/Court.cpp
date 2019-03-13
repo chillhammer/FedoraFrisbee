@@ -6,6 +6,7 @@
 
 namespace Fed
 {
+
 	Court::Court() 
 		:	GameObject("Court")
 	{

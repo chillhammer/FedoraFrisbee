@@ -13,5 +13,9 @@ namespace Fed
 	{
 	public:
 		Court();
+		static const int NUM_BOUNDING_BOXES = 6;
+	private:
+		BoundingBox m_BoundingBoxes[NUM_BOUNDING_BOXES];
+		
 	};
 }
