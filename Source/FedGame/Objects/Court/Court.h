@@ -13,6 +13,7 @@ namespace Fed
 	{
 	public:
 		Court();
+		bool IsColliding(const GameObject& other) const override;
 		static const int NUM_BOUNDING_BOXES = 6;
 	private:
 		BoundingBox m_BoundingBoxes[NUM_BOUNDING_BOXES];
