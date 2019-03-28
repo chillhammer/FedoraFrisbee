@@ -27,6 +27,7 @@ namespace Fed
 		void SetBoundingBox(Vector3 center, Vector3 halfExtents);
 	protected:
 		ModelPtr m_Model;
+		std::vector<BoundingBox> m_BoundingBoxes;
 		BoundingBox m_BoundingBox;
 	private:
 		static int GetNextID();
