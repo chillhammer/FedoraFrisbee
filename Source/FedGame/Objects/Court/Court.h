@@ -13,8 +13,7 @@ namespace Fed
 	{
 	public:
 		Court();
-		bool IsColliding(const GameObject& other) const override;
 	private:
-		
+		// TODO: Group of wall objects for collision
 	};
 }
