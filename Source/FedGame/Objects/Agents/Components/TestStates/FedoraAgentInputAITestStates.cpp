@@ -20,6 +20,8 @@ namespace Fed::AgentAITestStates
 		// Get Player Object
 		const FedoraAgent* player = agent->GetFieldController()->FindPlayerAgent();
 		
+		ASSERT(player != nullptr, "Player does not exist");
+
 		// Face Player
 		Vector3 pointToFace = player->ObjectTransform.Position;
 		if (agent->GetHasFedora())

@@ -22,7 +22,7 @@ namespace Fed
 	// Called to enter first state
 	void GameManager::Start()
 	{
-		m_StateMachine.ChangeState(GameStates::Test::Instance());
+		m_StateMachine.ChangeState(GameStates::TeamMatch::Instance());
 	}
 	static WindowProps props;
 	GameManager::GameManager() : m_Window(props),

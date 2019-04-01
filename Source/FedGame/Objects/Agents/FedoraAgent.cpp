@@ -8,9 +8,9 @@
 #include "Components/FedoraAgentInputAI.h"
 namespace Fed
 {
-	FedoraAgent::FedoraAgent()
+	FedoraAgent::FedoraAgent() 
 		: GameObject("FedoraAgent"), m_FieldController(nullptr), m_CanGrabTimer(0.f), m_MaxSpeed(10.75f), 
-			m_SuitModel(Resources.GetModel("SuitBlue"))
+			m_SuitModel(Resources.GetModel("SuitBlue")), m_InputType(AgentInputType::NONE), m_InputComponent(nullptr), m_Team(nullptr)
 	{
 		SetBoundingBox(Vector3(0, 1, 0.5f), Vector3(0.5, 1, 0.5));
 	}
