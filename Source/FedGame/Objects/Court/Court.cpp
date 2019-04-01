@@ -10,15 +10,36 @@ namespace Fed
 	Court::Court() 
 		:	GameObject("Court")
 	{
+		for (int i = 0; i < 6; i++)
+			m_Walls.emplace_back();
+		m_Walls[0].SetBoundingBox(Vector3(10.0f, -5.0f, 10.f), Vector3(10.0f, 10.f, 5.0f));
 	}
 
-	bool Court::IsColliding(const GameObject & other) const
+	// Get walls vector
+	const std::vector<GameObject>& Court::GetWalls() const
 	{
-		for (int i = 0; i < NUM_BOUNDING_BOXES; ++i)
+		return m_Walls;
+	}
+
+	// Get Wall that an object is colliding with
+	// May cause dangling pointer, do not store this pointer
+	GameObject* Court::GetCollidingWall(const GameObject& other) const
+	{
+		for (GameObject wall : m_Walls)
 		{
-			// TODO: Replace all bounding boxes with an array
+			if (wall.IsColliding(other))
+				return &wall;
 		}
-		return false;
+		return nullptr;
+	}
+
+	// Draws walls' debug box
+	void Court::DrawDebugWalls() const
+	{
+		for (GameObject wall : m_Walls)
+		{
+			wall.DrawBoundingBox();
+		}
 	}
 	
 }

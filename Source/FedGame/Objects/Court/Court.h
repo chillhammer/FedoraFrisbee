@@ -13,7 +13,12 @@ namespace Fed
 	{
 	public:
 		Court();
+
+		const std::vector<GameObject>& GetWalls() const;
+		GameObject* GetCollidingWall(const GameObject& other) const;
+		void DrawDebugWalls() const;
 	private:
 		// TODO: Group of wall objects for collision
+		std::vector<GameObject> m_Walls;
 	};
 }

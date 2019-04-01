@@ -6,7 +6,8 @@ namespace Fed
 {
 	GameObject::GameObject()
 	{
-		ASSERT(false, "GameObject must have model");
+		//ASSERT(false, "GameObject must have model");
+		m_ID = GetNextID();
 	}
 	GameObject::GameObject(std::string modelName) 
 		: m_Model(Resources.GetModel(modelName))
@@ -55,11 +56,15 @@ namespace Fed
 	}
 	void GameObject::Draw()
 	{
+		if (m_Model == nullptr)
+			return;
 		ShaderPtr shader = Resources.GetShader("Model");
 		Draw(shader);
 	}
 	void GameObject::Draw(const ShaderPtr & shader)
 	{
+		if (m_Model == nullptr)
+			return;
 		m_Model->Draw(shader, ObjectTransform.GetMatrix());
 	}
 	// Debug method to draw bounding box

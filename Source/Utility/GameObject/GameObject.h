@@ -23,7 +23,6 @@ namespace Fed
 		void DrawBoundingBox();
 	public:
 		Transform ObjectTransform;
-	protected:
 		void SetBoundingBox(Vector3 center, Vector3 halfExtents);
 	protected:
 		ModelPtr m_Model;
