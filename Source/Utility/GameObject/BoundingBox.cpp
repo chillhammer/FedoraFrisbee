@@ -74,8 +74,10 @@ namespace Fed
 	// Draws box covering space for debug pursposes
 	void BoundingBox::DebugDraw(const Transform & transform) const
 	{
-		Vector3 center = transform.GetGlobalPosition() + m_Center;
 		Vector3 scale = transform.Scale * (2.f * m_HalfExtents);
+		Vector3 center = transform.GetGlobalPosition() + m_Center;
+		center.z += scale.z * 0.5f;
+		
 		Transform debugTransform;
 		debugTransform.Position = center;
 		debugTransform.Scale = scale;

@@ -14,9 +14,9 @@ namespace Fed
 		for (int i = 0; i < 6; i++)
 			m_Walls.emplace_back();
 
-		m_Walls[0].SetBoundingBox(Vector3(15.f, 1.0f, 41.f), Vector3(6.f, 1.0f, 5.f));	// Blue left wall
-		m_Walls[1].SetBoundingBox(Vector3(-15.f, 1.0f, 41.f), Vector3(6.f, 1.0f, 5.f));	// Blue right wall
-		m_Walls[2].SetBoundingBox(Vector3( 0.f, 1.0f, 46.5f), Vector3(8.f, 1.0f, 5.f));	// Blue black wall
+		m_Walls[0].SetBoundingBox(Vector3(15.f, 1.0f, 36.f), Vector3(6.f, 1.0f, 5.f));	// Blue left wall
+		m_Walls[1].SetBoundingBox(Vector3(-15.f, 1.0f, 36.f), Vector3(6.f, 1.0f, 5.f));	// Blue right wall
+		m_Walls[2].SetBoundingBox(Vector3( 0.f, 1.0f, 41.5f), Vector3(8.f, 1.0f, 5.f));	// Blue black wall
 	}
 
 	// Get walls vector

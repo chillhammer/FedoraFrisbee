@@ -44,6 +44,7 @@ namespace Fed::GameStates
 
 		m_Court.Draw();
 		m_Court.DrawDebugWalls();
+		//m_Agents[0].DrawBoundingBox();
 		m_Fedora.Draw();
 		DrawAgents(m_Agents, NUM_AGENTS);
 	}
