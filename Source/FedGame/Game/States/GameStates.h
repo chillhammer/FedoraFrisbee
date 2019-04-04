@@ -23,6 +23,8 @@ namespace Fed::GameStates
 		FrisbeeFieldController m_FieldController;
 	);
 
+	
+
 	STATE_CLASS_SINGLETON(GameManager, TeamMatch,
 		Camera m_Camera;
 		static const int NUM_AGENTS = 3;

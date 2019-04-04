@@ -31,6 +31,7 @@ namespace Fed
 	{																	\
 	private:															\
 		className() {}													\
+		~className() {}													\
 		variables														\
 	public:																\
 		static className* Instance() {									\

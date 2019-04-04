@@ -18,6 +18,7 @@ namespace Fed
 		friend class FedoraAgentInputAI;
 	public:
 		FedoraAgent();
+		FedoraAgent(const FedoraAgent& other);
 		virtual ~FedoraAgent();
 		void SetInputType(AgentInputType inputType);
 		void SetCameraReference(class Camera* camera);

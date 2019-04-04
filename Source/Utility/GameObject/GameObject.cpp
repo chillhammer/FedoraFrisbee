@@ -78,6 +78,10 @@ namespace Fed
 	{
 		m_BoundingBox.SetParameters(center, halfExtents);
 	}
+	const BoundingBox & GameObject::GetBoundingBox() const
+	{
+		return m_BoundingBox;
+	}
 	// Each object will have a unique identifier based on this static function
 	int GameObject::GetNextID()
 	{

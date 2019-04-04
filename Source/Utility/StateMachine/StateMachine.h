@@ -47,6 +47,7 @@ namespace Fed
 
 			// Execute Current State
 			if (m_pCurrentState) m_pCurrentState->Execute(m_pOwner);
+			int x = 1;
 		}
 		void ChangeState(State<Owner>* pNewState)
 		{

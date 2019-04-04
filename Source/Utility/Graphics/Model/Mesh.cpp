@@ -42,7 +42,7 @@ namespace Fed
 	}
 	void Mesh::Draw(const ShaderPtr& shader, const Matrix4x4& model)
 	{
-		if (m_VertexBuffer.IsEmpty() || m_IndexBuffer.IsEmpty() || m_Texture.GetWidth() == 0)
+		if (m_VertexBuffer.IsEmpty() || m_IndexBuffer.IsEmpty())
 		{
 			ASSERT(false, "Mesh cannot draw. It is empty");
 		}

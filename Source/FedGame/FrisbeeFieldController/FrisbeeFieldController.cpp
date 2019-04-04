@@ -158,6 +158,11 @@ namespace Fed
 		}
 		m_Fedora = fedora;
 	}
+	// Sets pointer to court
+	void FrisbeeFieldController::SetCourtReference(Court * court)
+	{
+		m_Court = court;
+	}
 	const int FrisbeeFieldController::GetLastThrownAgentID() const
 	{
 		return m_LastThrownAgentID;
@@ -165,6 +170,10 @@ namespace Fed
 	Team * FrisbeeFieldController::GetTeam(TeamColor color)
 	{
 		return (color == TeamColor::Blue ? &m_BlueTeam : &m_RedTeam);
+	}
+	Court * FrisbeeFieldController::GetCourt() const
+	{
+		return m_Court;
 	}
 	void FrisbeeFieldController::OnEvent(const Subject * subject, Event & event)
 	{

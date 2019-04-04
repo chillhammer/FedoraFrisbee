@@ -18,7 +18,6 @@ namespace Fed
 		GameObject* GetCollidingWall(const GameObject& other) const;
 		void DrawDebugWalls() const;
 	private:
-		// TODO: Group of wall objects for collision
 		std::vector<GameObject> m_Walls;
 	};
 }

@@ -24,6 +24,7 @@ namespace Fed
 	public:
 		Transform ObjectTransform;
 		void SetBoundingBox(Vector3 center, Vector3 halfExtents);
+		const BoundingBox& GetBoundingBox() const;
 	protected:
 		ModelPtr m_Model;
 		BoundingBox m_BoundingBox;

@@ -125,7 +125,7 @@ namespace Fed
 			TogglePause();
 			break;
 		case KEY_R:
-			m_StateMachine.ChangeState(GameStates::Test::Instance());
+			m_StateMachine.ChangeState(GameStates::TeamMatch::Instance());
 			break;
 		}
 		return false;

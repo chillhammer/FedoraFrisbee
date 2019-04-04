@@ -30,20 +30,21 @@ namespace Fed::GameStates
 		m_Fedora.SetOwner(nullptr);
 		m_Fedora.Stop();
 		m_FieldController.SetFedoraReference(&m_Fedora);
+		m_FieldController.SetCourtReference(&m_Court);
 	}
 
 	void TeamMatch::Execute(GameManager* owner)
 	{
-		// Why do arrays cause destructors to happen?
 		m_Camera.Update();
-		m_Agents[0].Update();
-		m_Agents[1].Update();
-		m_Agents[2].Update();
+		for (FedoraAgent& agent : m_Agents)
+			agent.Update();
 		m_Fedora.Update();
 
 		UpdateShaders(m_Shader, m_DebugShader, m_Camera);
 
 		m_Court.Draw();
+		m_Court.DrawDebugWalls();
+		m_Fedora.Draw();
 		DrawAgents(m_Agents, NUM_AGENTS);
 	}
 
@@ -74,7 +75,7 @@ namespace Fed::GameStates
 	{
 		for (int i = 0; i < size; i++)
 		{
-			FedoraAgent agent = agents[i];
+			FedoraAgent& agent = agents[i];
 			agent.Draw();
 			agent.DrawSuit();
 		}

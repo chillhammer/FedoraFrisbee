@@ -14,6 +14,10 @@ namespace Fed
 	{
 		SetBoundingBox(Vector3(0, 1, 0.5f), Vector3(0.5, 1, 0.5));
 	}
+	FedoraAgent::FedoraAgent(const FedoraAgent & other)
+	{
+		ASSERT(false, "Cannot copy construct Fedora Agent");
+	}
 	FedoraAgent::~FedoraAgent()
 	{
 		if (m_InputComponent)
@@ -151,6 +155,13 @@ namespace Fed
 					m_FieldController->FrisbeePickup.Notify(event);
 				}
 
+			}
+			const GameObject* wall = m_FieldController->GetCourt()->GetCollidingWall(*this);
+			if (wall)
+			{
+				ObjectTransform.Position = m_PrevPosition;
+				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wall->ObjectTransform, wall->m_BoundingBox, m_Direction);
+				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
 			}
 		}
 	}
