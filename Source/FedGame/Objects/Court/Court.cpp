@@ -10,6 +10,7 @@ namespace Fed
 	Court::Court() 
 		:	GameObject("Court")
 	{
+		m_Walls.reserve(6);
 		for (int i = 0; i < 6; i++)
 			m_Walls.emplace_back();
 
@@ -26,12 +27,17 @@ namespace Fed
 
 	// Get Wall that an object is colliding with
 	// May cause dangling pointer, do not store this pointer
-	GameObject* Court::GetCollidingWall(const GameObject& other) const
+	const GameObject* Court::GetCollidingWall(const GameObject& other) const
 	{
-		for (GameObject wall : m_Walls)
+		int i = 0;
+		for (const GameObject& wall : m_Walls)
 		{
 			if (wall.IsColliding(other))
-				return &wall;
+			{
+				std::vector<GameObject>::const_iterator it = m_Walls.begin() + i;
+				return &(*it);
+			}
+			++i;
 		}
 		return nullptr;
 	}
@@ -39,7 +45,7 @@ namespace Fed
 	// Draws walls' debug box
 	void Court::DrawDebugWalls() const
 	{
-		for (GameObject wall : m_Walls)
+		for (const GameObject& wall : m_Walls)
 		{
 			wall.DrawBoundingBox();
 		}

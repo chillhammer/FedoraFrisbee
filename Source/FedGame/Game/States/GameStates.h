@@ -29,7 +29,6 @@ namespace Fed::GameStates
 		Camera m_Camera;
 		static const int NUM_AGENTS = 3;
 		FedoraAgent m_Agents[NUM_AGENTS];
-		FedoraAgent m_TestAgent;
 		Vector3 m_Light;
 		ShaderPtr m_Shader;
 		ShaderPtr m_DebugShader;

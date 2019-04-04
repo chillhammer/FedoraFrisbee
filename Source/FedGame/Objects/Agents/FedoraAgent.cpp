@@ -160,7 +160,9 @@ namespace Fed
 			if (wall)
 			{
 				ObjectTransform.Position = m_PrevPosition;
-				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wall->ObjectTransform, wall->m_BoundingBox, m_Direction);
+				Transform wallTransform = wall->ObjectTransform;
+				BoundingBox& wallBounding = wall->GetBoundingBox();
+				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wallTransform, wall->GetBoundingBox(), m_Direction);
 				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
 			}
 		}

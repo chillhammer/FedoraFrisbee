@@ -31,6 +31,7 @@ namespace Fed
 	{																	\
 	private:															\
 		className() {}													\
+		className(const className& o) {ASSERT(false, "Singleton")}		\
 		~className() {}													\
 		variables														\
 	public:																\

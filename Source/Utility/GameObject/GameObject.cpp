@@ -20,6 +20,10 @@ namespace Fed
 		ObjectTransform.Position = position;
 		m_ID = GetNextID();
 	}
+	GameObject::GameObject(const GameObject & other)
+	{
+		ASSERT(false, "Cannot copy construct game object");
+	}
 	// Returns unique identifier for this object
 	int GameObject::GetID() const
 	{
@@ -68,7 +72,7 @@ namespace Fed
 		m_Model->Draw(shader, ObjectTransform.GetMatrix());
 	}
 	// Debug method to draw bounding box
-	void GameObject::DrawBoundingBox()
+	void GameObject::DrawBoundingBox() const
 	{
 		if (!m_BoundingBox.IsEmpty())
 			m_BoundingBox.DebugDraw(ObjectTransform);
@@ -78,7 +82,7 @@ namespace Fed
 	{
 		m_BoundingBox.SetParameters(center, halfExtents);
 	}
-	const BoundingBox & GameObject::GetBoundingBox() const
+	BoundingBox GameObject::GetBoundingBox() const
 	{
 		return m_BoundingBox;
 	}

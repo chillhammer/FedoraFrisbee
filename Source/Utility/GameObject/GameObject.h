@@ -15,16 +15,17 @@ namespace Fed
 		GameObject();
 		GameObject(std::string modelName);
 		GameObject(std::string modelName, Vector3 position);
+		GameObject(const GameObject& other);
 		int GetID() const;
 		void AttachToParent(const GameObject* parent);
 		bool IsColliding(const GameObject& other) const;
 		void Draw();
 		void Draw(const ShaderPtr& shader);
-		void DrawBoundingBox();
+		void DrawBoundingBox() const;
 	public:
 		Transform ObjectTransform;
 		void SetBoundingBox(Vector3 center, Vector3 halfExtents);
-		const BoundingBox& GetBoundingBox() const;
+		BoundingBox GetBoundingBox() const;
 	protected:
 		ModelPtr m_Model;
 		BoundingBox m_BoundingBox;

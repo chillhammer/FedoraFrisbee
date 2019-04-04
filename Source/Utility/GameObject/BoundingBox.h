@@ -11,6 +11,7 @@ namespace Fed
 	{
 	public:
 		BoundingBox();
+		BoundingBox(const BoundingBox& other);
 
 		bool IsEmpty() const;
 		bool IsIntersecting(const Transform& myTrans, const Transform& otherTrans, const BoundingBox& other) const;

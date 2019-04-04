@@ -11,6 +11,12 @@ namespace Fed
 	{
 
 	}
+	BoundingBox::BoundingBox(const BoundingBox & other)
+	{
+		m_Center = other.m_Center;
+		m_HalfExtents = other.m_HalfExtents;
+		//m_DebugBox = other.m_DebugBox;	Can't Draw Clones
+	}
 	// Returns if bounding box is non-existent
 	bool BoundingBox::IsEmpty() const
 	{
