@@ -15,7 +15,7 @@ namespace Fed
 		Court();
 
 		const std::vector<GameObject>& GetWalls() const;
-		const GameObject* GetCollidingWall(const GameObject& other) const;
+		std::vector<const GameObject*> GetCollidingWalls(const GameObject& other) const;
 		void DrawDebugWalls() const;
 	private:
 		std::vector<GameObject> m_Walls;

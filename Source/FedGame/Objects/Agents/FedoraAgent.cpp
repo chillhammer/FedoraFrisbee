@@ -137,7 +137,8 @@ namespace Fed
 			}
 		}
 
-		// Agent collision
+		// Collision! - Could use refactor. Currently doing manual checks
+		#pragma region Collision
 		if (m_FieldController != nullptr)
 		{
 			const FedoraAgent* other = m_FieldController->FindAgentCollidingAgent(this);
@@ -154,18 +155,34 @@ namespace Fed
 					FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
 					m_FieldController->FrisbeePickup.Notify(event);
 				}
-
+				// Move out of other agents
+				other = m_FieldController->FindAgentCollidingAgent(this);
+				int i = 0;
+				while (other && ++i < 1000)
+				{
+					Vector3 moveDir = glm::normalize(slidingDir);
+					ObjectTransform.Position -= moveDir * 0.01f;
+					other = m_FieldController->FindAgentCollidingAgent(this);
+				}
 			}
-			const GameObject* wall = m_FieldController->GetCourt()->GetCollidingWall(*this);
-			if (wall)
+			std::vector<const GameObject*> walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
+			if (!walls.empty())
 			{
+				const GameObject* wall = walls[0];
 				ObjectTransform.Position = m_PrevPosition;
-				Transform wallTransform = wall->ObjectTransform;
-				BoundingBox& wallBounding = wall->GetBoundingBox();
-				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wallTransform, wall->GetBoundingBox(), m_Direction);
+				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), m_Direction);
 				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
+				walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
+				int i = 0;
+				while (!walls.empty() && ++i < 1000)
+				{
+					Vector3 moveDir = glm::normalize(slidingDir);
+					ObjectTransform.Position -= moveDir * 0.01f;
+					walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
+				}
 			}
 		}
+		#pragma endregion
 	}
 	// Upon game match reset
 	void FedoraAgent::Reset()

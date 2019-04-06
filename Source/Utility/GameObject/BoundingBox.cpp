@@ -65,6 +65,28 @@ namespace Fed
 		}
 		return newDir;
 	}
+	// Gets overlap distance, assuming is in collision, and before was not in collision.
+	// Distance is multiplied by 'movement' vector
+	// Function needs to be redone, using math
+	float BoundingBox::GetOverlapDistance(const Transform & myTrans, const Transform & otherTrans, const BoundingBox & other, const Vector3 & movement) const
+	{
+		ASSERT(IsIntersecting(myTrans, otherTrans, other), "Must be intersecting object post-movement");
+		Transform oldTrans = myTrans; 
+		oldTrans.Position -= movement;
+		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object pre-movement");
+		float dist = 0;
+		Vector3 dir = glm::normalize(movement);
+		float step = 0.0001f;
+		while (!IsIntersecting(oldTrans, otherTrans, other))
+		{
+			dist += step;
+			oldTrans.Position += dir * step;
+		}
+		dist -= step;
+		oldTrans.Position -= dir * step;
+		
+		return dist;
+	}
 	// Can change size and position to customize bounding boxes
 	void BoundingBox::SetParameters(Vector3 center, Vector3 halfExtents)
 	{

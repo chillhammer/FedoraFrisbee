@@ -122,10 +122,12 @@ namespace Fed
 		// Collision
 		
 		if (m_FieldController) {
-			const GameObject* wall = m_FieldController->GetCourt()->GetCollidingWall(*this);
-			if (wall)
+			std::vector<const GameObject*> walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
+			if (!walls.empty())
 			{
+				ObjectTransform.Position -= m_Direction * m_Speed * Game.DeltaTime();
 				Stop();
+				m_TimeSinceThrown += 1;
 			}
 		}
 	}

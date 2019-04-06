@@ -56,6 +56,11 @@ namespace Fed
 		ASSERT(m_Fedora != nullptr, "FedoraPtr is null");
 		return m_Fedora->GetOwner() == nullptr;
 	}
+	bool FrisbeeFieldController::IsFedoraMoving() const
+	{
+		ASSERT(m_Fedora != nullptr, "Must have fedora reference");
+		return m_Fedora->IsMoving();
+	}
 	float FrisbeeFieldController::GetFedoraLaunchSpeed() const
 	{
 		ASSERT(m_Fedora != nullptr, "Must have fedora reference");

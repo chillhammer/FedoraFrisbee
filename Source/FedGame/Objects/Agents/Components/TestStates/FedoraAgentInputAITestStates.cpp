@@ -69,6 +69,10 @@ namespace Fed::AgentAITestStates
 		{
 			owner->GetFSM().ChangeState(Wait::Instance());
 		}
+		if (!agent->GetFieldController()->IsFedoraMoving())
+		{
+			owner->GetFSM().ChangeState(ChaseFrisbee::Instance());
+		}
 	}
 	void Intercept::Exit(FedoraAgentInputAI* owner)
 	{

@@ -44,8 +44,7 @@ namespace Fed::GameStates
 		UpdateShaders(m_Shader, m_DebugShader, m_Camera);
 
 		m_Court.Draw();
-		m_Court.DrawDebugWalls();
-		//m_Agents[0].DrawBoundingBox();
+		//m_Court.DrawDebugWalls();
 		m_Fedora.Draw();
 		DrawAgents(m_Agents, NUM_AGENTS);
 	}
