@@ -21,6 +21,7 @@ namespace Fed
 		const Vector3 GetDirection() const;
 		const float GetSpeed() const;
 		const float GetLaunchSpeed() const;
+		void SetFieldControllerReference(class FrisbeeFieldController* fieldController);
 		const bool IsMoving() const;
 		const Vector3 GetFuturePosition(float time, bool debugDraw = false) const;
 		void SetOwner(const class FedoraAgent* owner);
@@ -32,6 +33,7 @@ namespace Fed
 
 		StateMachine<Fedora> m_StateMachine;
 		const class FedoraAgent* m_Owner;
+		const class FrisbeeFieldController* m_FieldController;
 		float m_LaunchSpeed;
 		float m_AirResistance;
 		float m_TimeTilSlowdown;

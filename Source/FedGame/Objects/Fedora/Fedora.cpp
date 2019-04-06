@@ -2,6 +2,7 @@
 #include <Objects/Agents/FedoraAgent.h>
 #include <Game/GameManager.h>
 #include <Resources/ResourceManager.h>
+#include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include "FedoraStates.h"
 #include "Fedora.h"
 
@@ -52,6 +53,10 @@ namespace Fed
 	const float Fedora::GetLaunchSpeed() const
 	{
 		return m_LaunchSpeed;
+	}
+	void Fedora::SetFieldControllerReference(FrisbeeFieldController * fieldController)
+	{
+		m_FieldController = fieldController;
 	}
 	// Returns whether fedora has non-zero speed
 	const bool Fedora::IsMoving() const
@@ -113,6 +118,15 @@ namespace Fed
 			float timeSinceSlow = (m_TimeSinceThrown - m_TimeTilSlowdown);
 			m_Speed = glm::max(0.f, m_Speed - m_AirResistance * Game.DeltaTime());
 			ObjectTransform.Position.y = glm::max(0.23f, ObjectTransform.Position.y - m_DropSpeed * timeSinceSlow * Game.DeltaTime());
+		}
+		// Collision
+		
+		if (m_FieldController) {
+			const GameObject* wall = m_FieldController->GetCourt()->GetCollidingWall(*this);
+			if (wall)
+			{
+				Stop();
+			}
 		}
 	}
 	// Stop movement. Collision or game reset

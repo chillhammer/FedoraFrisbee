@@ -29,6 +29,7 @@ namespace Fed::GameStates
 		m_Fedora.ObjectTransform.Position = Vector3(0, 0, 0);
 		m_Fedora.SetOwner(nullptr);
 		m_Fedora.Stop();
+		m_Fedora.SetFieldControllerReference(&m_FieldController);
 		m_FieldController.SetFedoraReference(&m_Fedora);
 		m_FieldController.SetCourtReference(&m_Court);
 	}
