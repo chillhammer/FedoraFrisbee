@@ -6,6 +6,11 @@
 
 namespace Fed
 {
+	struct GoalTrigger
+	{
+		Team* TeamOwner;
+		GameObject Object;
+	};
 	/**
 		Court scenery. Background
 	**/
@@ -19,5 +24,6 @@ namespace Fed
 		void DrawDebugWalls() const;
 	private:
 		std::vector<GameObject> m_Walls;
+		std::vector<GoalTrigger> m_Goals;
 	};
 }
