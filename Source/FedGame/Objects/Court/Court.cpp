@@ -24,12 +24,25 @@ namespace Fed
 		m_Walls[5].SetBoundingBox(Vector3(15.f, 1.0f, -36.f), Vector3(6.f, 1.0f, 5.f));	// Red left wall
 		m_Walls[6].SetBoundingBox(Vector3(-15.f, 1.0f, -36.f), Vector3(6.f, 1.0f, 5.f));	// Red right wall
 		m_Walls[7].SetBoundingBox(Vector3(0.f, 1.0f, -42.5f), Vector3(9.f, 1.0f, 5.f));	// Red black wall
+
+		m_Goals.reserve(2);
+		for (int i = 0; i < 2; i++)
+			m_Goals.emplace_back();
+		m_Goals[0].Color = TeamColor::Blue;
+		m_Goals[0].Object.SetBoundingBox(Vector3(0.f, 1.0f, 35.5f), Vector3(9.f, 1.0f, 3.f));
+		m_Goals[1].Color = TeamColor::Red;
+		m_Goals[1].Object.SetBoundingBox(Vector3(0.f, 1.0f, -35.5f), Vector3(9.f, 1.0f, 3.f));
 	}
 
 	// Get walls vector
 	const std::vector<GameObject>& Court::GetWalls() const
 	{
 		return m_Walls;
+	}
+
+	const std::vector<GoalTrigger>& Court::GetGoals() const
+	{
+		return m_Goals;
 	}
 
 	// Get Wall that an object is colliding with
@@ -51,12 +64,36 @@ namespace Fed
 		return walls;
 	}
 
+	// Get Goal that an object is colliding with
+	const GoalTrigger* Court::GetCollidingGoal(const GameObject & other) const
+	{
+		int i = 0;
+		for (const GoalTrigger& goal : m_Goals)
+		{
+			if (goal.Object.IsColliding(other))
+			{
+				std::vector<GoalTrigger>::const_iterator it = m_Goals.begin() + i;
+				return &(*it);
+			}
+			++i;
+		}
+		return nullptr;
+	}
+
 	// Draws walls' debug box
 	void Court::DrawDebugWalls() const
 	{
 		for (const GameObject& wall : m_Walls)
 		{
 			wall.DrawBoundingBox();
+		}
+	}
+
+	void Court::DrawDebugGoals() const
+	{
+		for (const GoalTrigger& goal : m_Goals)
+		{
+			goal.Object.DrawBoundingBox();
 		}
 	}
 	

@@ -14,6 +14,7 @@ namespace Fed
 			m_Owner(nullptr), m_Speed(0.f)
 	{
 		SetBoundingBox(Vector3(0, 0, 0.35f), Vector3(0.4, 0.25f, 0.4));
+		m_StateMachine.SetGlobalState(FedoraStates::GlobalState::Instance());
 	}
 	// Handles Events given to it by agents
 	void Fedora::OnEvent(const Subject * subject, Event & event)

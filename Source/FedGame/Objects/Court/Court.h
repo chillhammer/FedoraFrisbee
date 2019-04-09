@@ -8,7 +8,7 @@ namespace Fed
 {
 	struct GoalTrigger
 	{
-		Team* TeamOwner;
+		TeamColor Color;
 		GameObject Object;
 	};
 	/**
@@ -20,8 +20,11 @@ namespace Fed
 		Court();
 
 		const std::vector<GameObject>& GetWalls() const;
+		const std::vector<GoalTrigger>& GetGoals() const;
 		std::vector<const GameObject*> GetCollidingWalls(const GameObject& other) const;
+		const GoalTrigger* GetCollidingGoal(const GameObject& other) const;
 		void DrawDebugWalls() const;
+		void DrawDebugGoals() const;
 	private:
 		std::vector<GameObject> m_Walls;
 		std::vector<GoalTrigger> m_Goals;

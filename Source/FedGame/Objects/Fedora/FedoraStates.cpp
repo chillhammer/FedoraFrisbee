@@ -57,4 +57,18 @@ namespace Fed::FedoraStates
 	void Flying::Exit(Fedora* owner)
 	{
 	}
+
+
+	// Global State, Check if hit Goal
+	void GlobalState::Enter(Fedora* owner)
+	{
+
+	}
+	void GlobalState::Execute(Fedora* owner)
+	{
+		
+	}
+	void GlobalState::Exit(Fedora* owner)
+	{
+	}
 }
