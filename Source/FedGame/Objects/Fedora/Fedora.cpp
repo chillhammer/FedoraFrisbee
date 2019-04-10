@@ -90,6 +90,11 @@ namespace Fed
 
 		return futurePos;
 	}
+	const GoalTrigger* Fedora::GetCollidingGoal() const
+	{
+		ASSERT(m_FieldController, "Must have field controller reference");
+		return m_FieldController->GetCourt()->GetCollidingGoal(*this);
+	}
 	// Reassigns to another owner
 	void Fedora::SetOwner(const FedoraAgent * owner)
 	{
