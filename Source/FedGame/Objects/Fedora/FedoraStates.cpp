@@ -1,5 +1,6 @@
 #include <FedPCH.h>
 #include <Game/GameManager.h>
+#include <Objects/Court/Court.h>
 #include "FedoraStates.h"
 /**
 	Each state runs code that determines Fedora, the hat, behavior
@@ -66,7 +67,10 @@ namespace Fed::FedoraStates
 	}
 	void GlobalState::Execute(Fedora* owner)
 	{
-		
+		const GoalTrigger* collidingGoal = owner->GetCollidingGoal();
+		if (collidingGoal) {
+			// TODO: Initiate goal!
+		}
 	}
 	void GlobalState::Exit(Fedora* owner)
 	{
