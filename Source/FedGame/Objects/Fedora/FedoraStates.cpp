@@ -69,7 +69,7 @@ namespace Fed::FedoraStates
 	{
 		const GoalTrigger* collidingGoal = owner->GetCollidingGoal();
 		if (collidingGoal) {
-			// TODO: Initiate goal!
+			// TODO: Initiate goal! Must Create Event
 		}
 	}
 	void GlobalState::Exit(Fedora* owner)
