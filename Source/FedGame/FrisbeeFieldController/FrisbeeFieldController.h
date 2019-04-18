@@ -40,9 +40,11 @@ namespace Fed
 	public:
 		Subject FrisbeeThrown;
 		Subject FrisbeePickup;
+		Subject FrisbeeScored;
 
 	private:
 		bool OnFedoraThrown(FrisbeeThrownEvent& e);
+		bool OnFedoraScored(FrisbeeScoredEvent& e);
 	private:
 		Fedora* m_Fedora;
 		Court* m_Court;

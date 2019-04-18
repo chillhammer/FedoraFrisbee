@@ -1,6 +1,8 @@
 #include <FedPCH.h>
 #include <Game/GameManager.h>
 #include <Objects/Court/Court.h>
+#include <EventSystem/Events/FrisbeeFieldEvent.h>
+#include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include "FedoraStates.h"
 /**
 	Each state runs code that determines Fedora, the hat, behavior
@@ -69,7 +71,12 @@ namespace Fed::FedoraStates
 	{
 		const GoalTrigger* collidingGoal = owner->GetCollidingGoal();
 		if (collidingGoal) {
-			// TODO: Initiate goal! Must Create Event
+			const FedoraAgent* scoringAgent = owner->GetOwner();
+			if (scoringAgent == nullptr) {
+
+			}
+			FrisbeeScoredEvent event(collidingGoal->Color, owner->GetOwner());
+			owner->GetOwner()->GetFieldController()->FrisbeeScored.Notify(event);
 		}
 	}
 	void GlobalState::Exit(Fedora* owner)

@@ -25,6 +25,7 @@ namespace Fed
 		const bool IsMoving() const;
 		const Vector3 GetFuturePosition(float time, bool debugDraw = false) const;
 		const class GoalTrigger* GetCollidingGoal() const;
+		const class FrisbeeFieldController* GetFieldController() const;
 		void SetOwner(const class FedoraAgent* owner);
 		void Move();
 		void Stop();

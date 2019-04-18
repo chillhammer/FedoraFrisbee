@@ -95,6 +95,10 @@ namespace Fed
 		ASSERT(m_FieldController, "Must have field controller reference");
 		return m_FieldController->GetCourt()->GetCollidingGoal(*this);
 	}
+	const FrisbeeFieldController* Fedora::GetFieldController() const
+	{
+		return m_FieldController;
+	}
 	// Reassigns to another owner
 	void Fedora::SetOwner(const FedoraAgent * owner)
 	{

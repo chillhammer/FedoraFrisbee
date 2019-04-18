@@ -60,4 +60,31 @@ namespace Fed
 		Vector3 m_PickupPosition;
 		const FedoraAgent& m_Agent;
 	};
+
+	// Scored in a goal
+	// Called from collision
+	class FrisbeeScoredEvent : public Event
+	{
+	public:
+		FrisbeeScoredEvent(TeamColor scoringTeam, const FedoraAgent* scoringAgent)
+			: m_ScoringTeam(scoringTeam), m_ScoringAgent(scoringAgent)
+		{
+		}
+
+		inline TeamColor GetScoringTeam() const { return m_ScoringTeam; }
+		inline const FedoraAgent* GetAgent() const { return m_ScoringAgent; }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "Frisbee Scored from Agent " << m_ScoringAgent->GetID();
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(FrisbeeScored)
+		EVENT_CLASS_CATEGORY(EventCategoryFrisbeeField)
+	private:
+		TeamColor m_ScoringTeam;
+		const FedoraAgent* m_ScoringAgent;
+	};
 }
