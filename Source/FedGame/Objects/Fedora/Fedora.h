@@ -24,9 +24,11 @@ namespace Fed
 		void SetFieldControllerReference(class FrisbeeFieldController* fieldController);
 		const bool IsMoving() const;
 		const Vector3 GetFuturePosition(float time, bool debugDraw = false) const;
-		const class GoalTrigger* GetCollidingGoal() const;
+		const struct GoalTrigger* GetCollidingGoal() const;
 		const class FrisbeeFieldController* GetFieldController() const;
 		void SetOwner(const class FedoraAgent* owner);
+		void SetCanScore(bool canScore);
+		bool GetCanScore() const;
 		void Move();
 		void Stop();
 	private:
@@ -47,5 +49,6 @@ namespace Fed
 
 		float m_TimeSinceThrown;
 		Vector3 m_LastThrownPosition;
+		bool m_CanScore;
 	};
 }

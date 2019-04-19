@@ -3,6 +3,7 @@
 #include <Game/GameManager.h>
 #include <Resources/ResourceManager.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
+#include <Objects/Court/Court.h>
 #include "FedoraStates.h"
 #include "Fedora.h"
 
@@ -111,6 +112,14 @@ namespace Fed
 			m_Speed = 0.f;
 			m_StateMachine.ChangeState(FedoraStates::Attached::Instance());
 		}
+	}
+	void Fedora::SetCanScore(bool canScore)
+	{
+		m_CanScore = canScore;
+	}
+	bool Fedora::GetCanScore() const
+	{
+		return m_CanScore;
 	}
 	// Flying movement
 	void Fedora::Move()

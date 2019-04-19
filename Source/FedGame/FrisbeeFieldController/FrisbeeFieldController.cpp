@@ -5,9 +5,10 @@
 
 namespace Fed
 {
-	FrisbeeFieldController::FrisbeeFieldController() : m_Fedora(nullptr), m_LastThrownAgentID(0)
+	FrisbeeFieldController::FrisbeeFieldController() : m_Fedora(nullptr), m_LastThrownAgentID(0), m_Court(nullptr)
 	{
 		FrisbeeThrown.AddObserver(this);
+		FrisbeeScored.AddObserver(this);
 		m_BlueTeam.SetColor(TeamColor::Blue);
 		m_RedTeam.SetColor(TeamColor::Red);
 
@@ -183,10 +184,18 @@ namespace Fed
 	void FrisbeeFieldController::OnEvent(const Subject * subject, Event & event)
 	{
 		Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FrisbeeFieldController, OnFedoraThrown));
+		Evnt::Dispatch<FrisbeeScoredEvent>(event, EVENT_BIND_FN(FrisbeeFieldController, OnFedoraScored));
 	}
 	bool FrisbeeFieldController::OnFedoraThrown(FrisbeeThrownEvent & e)
 	{
 		m_LastThrownAgentID = e.GetAgent().GetID();
+		return false;
+	}
+	bool FrisbeeFieldController::OnFedoraScored(FrisbeeScoredEvent& e)
+	{
+		m_Fedora->SetCanScore(false);
+		// TODO: Fancy effect when scoring
+
 		return false;
 	}
 }

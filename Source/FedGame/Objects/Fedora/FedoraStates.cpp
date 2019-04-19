@@ -73,10 +73,11 @@ namespace Fed::FedoraStates
 		if (collidingGoal) {
 			const FedoraAgent* scoringAgent = owner->GetOwner();
 			if (scoringAgent == nullptr) {
-
+				int lastThrownID = owner->GetFieldController()->GetLastThrownAgentID();
+				scoringAgent = owner->GetFieldController()->GetAgentFromID(lastThrownID);
 			}
-			FrisbeeScoredEvent event(collidingGoal->Color, owner->GetOwner());
-			owner->GetOwner()->GetFieldController()->FrisbeeScored.Notify(event);
+			FrisbeeScoredEvent event(collidingGoal->Color, scoringAgent);
+			owner->GetFieldController()->FrisbeeScored.Notify(event);
 		}
 	}
 	void GlobalState::Exit(Fedora* owner)
