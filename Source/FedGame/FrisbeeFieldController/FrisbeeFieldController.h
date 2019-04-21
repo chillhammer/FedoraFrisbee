@@ -23,9 +23,9 @@ namespace Fed
 		const FedoraAgent* FindAgentCollidingAgent(const FedoraAgent* agent);
 		const FedoraAgent* FindPlayerAgent();
 		const FedoraAgent* GetAgentFromID(int id) const;
-		bool AgentHasFedora(const FedoraAgent* agent);
+		bool AgentHasFedora(const FedoraAgent* agent) const;
 		void AddAgentReference(const FedoraAgent* agent);
-		bool IsAgentInFedoraPath(const FedoraAgent* agent);
+		bool IsAgentInFedoraPath(const FedoraAgent* agent) const;
 		bool CanAgentInterceptFedora(const FedoraAgent* agent, Vector3* outInterceptPos);
 		bool IsFedoraFree() const;
 		bool IsFedoraMoving() const;
@@ -36,6 +36,7 @@ namespace Fed
 		const int	GetLastThrownAgentID() const;
 		Team*		GetTeam(TeamColor color);
 		Court*		GetCourt() const;
+		void		ResetPositions();
 		void OnEvent(const Subject* subject, Event& event);
 	public:
 		Subject FrisbeeThrown;

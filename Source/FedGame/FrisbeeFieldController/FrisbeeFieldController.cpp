@@ -13,6 +13,7 @@ namespace Fed
 		m_RedTeam.SetColor(TeamColor::Red);
 
 	}
+	#pragma region Accessors
 	// Returns whether given agent is touching fedora
 	bool FrisbeeFieldController::IsAgentCollidingFedora(FedoraAgent * agent)
 	{
@@ -68,24 +69,14 @@ namespace Fed
 		return m_Fedora->GetLaunchSpeed();
 	}
 	// Queries to check if certain agent has fedora
-	bool FrisbeeFieldController::AgentHasFedora(const FedoraAgent * agent)
+	bool FrisbeeFieldController::AgentHasFedora(const FedoraAgent * agent) const
 	{
 		ASSERT(m_Fedora != nullptr, "Must have fedora reference");
 		ASSERT(agent != nullptr, "Must have agent reference");
 		return (m_Fedora->GetOwner() && m_Fedora->GetOwner()->GetID() == agent->GetID());
 	}
-	// Adds agent to field controller reference
-	// Allows it to keep track of all agents and make other functions work properly
-	void FrisbeeFieldController::AddAgentReference(const FedoraAgent* agent)
-	{
-		if (std::find(m_Agents.begin(), m_Agents.end(), agent) == m_Agents.end())
-		{
-			m_Agents.emplace_back(agent);
-			m_AgentLookup[agent->GetID()] = agent;
-		}
-	}
 	// Returns whether agent is currently in fedora's path
-	bool FrisbeeFieldController::IsAgentInFedoraPath(const FedoraAgent * agent)
+	bool FrisbeeFieldController::IsAgentInFedoraPath(const FedoraAgent * agent) const
 	{
 		ASSERT(agent != nullptr, "Agent must not be nullptr");
 		if (IsFedoraFree() && m_Fedora->IsMoving())
@@ -147,6 +138,32 @@ namespace Fed
 		ASSERT(m_Fedora != nullptr, "Fedora Position cannot be retrieved");
 		return m_Fedora->ObjectTransform.Position;
 	}
+	const int FrisbeeFieldController::GetLastThrownAgentID() const
+	{
+		return m_LastThrownAgentID;
+	}
+	Team* FrisbeeFieldController::GetTeam(TeamColor color)
+	{
+		return (color == TeamColor::Blue ? &m_BlueTeam : &m_RedTeam);
+	}
+	Court* FrisbeeFieldController::GetCourt() const
+	{
+		return m_Court;
+	}
+	#pragma endregion
+
+	#pragma region Setters / Modifiers
+	// Adds agent to field controller reference
+	// Allows it to keep track of all agents and make other functions work properly
+	void FrisbeeFieldController::AddAgentReference(const FedoraAgent* agent)
+	{
+		if (std::find(m_Agents.begin(), m_Agents.end(), agent) == m_Agents.end())
+		{
+			m_Agents.emplace_back(agent);
+			m_AgentLookup[agent->GetID()] = agent;
+		}
+	}
+
 	// Sets pointer to fedora.
 	void FrisbeeFieldController::SetFedoraReference(Fedora * fedora)
 	{
@@ -164,23 +181,15 @@ namespace Fed
 		}
 		m_Fedora = fedora;
 	}
+
 	// Sets pointer to court
 	void FrisbeeFieldController::SetCourtReference(Court * court)
 	{
 		m_Court = court;
 	}
-	const int FrisbeeFieldController::GetLastThrownAgentID() const
-	{
-		return m_LastThrownAgentID;
-	}
-	Team * FrisbeeFieldController::GetTeam(TeamColor color)
-	{
-		return (color == TeamColor::Blue ? &m_BlueTeam : &m_RedTeam);
-	}
-	Court * FrisbeeFieldController::GetCourt() const
-	{
-		return m_Court;
-	}
+	#pragma endregion
+	
+	#pragma region Events
 	void FrisbeeFieldController::OnEvent(const Subject * subject, Event & event)
 	{
 		Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FrisbeeFieldController, OnFedoraThrown));
@@ -198,4 +207,5 @@ namespace Fed
 
 		return false;
 	}
+	#pragma endregion
 }
