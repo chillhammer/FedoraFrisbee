@@ -15,6 +15,7 @@ namespace Fed
 		bool HasAgent(int agentID) const;
 		void AddAgent(class FedoraAgent* agent);
 		void RemoveAgent(class FedoraAgent* agent);
+		void ResetPositions();
 	private:
 		StateMachine<Team> m_StateMachine;
 		std::vector<class FedoraAgent*> m_Agents;

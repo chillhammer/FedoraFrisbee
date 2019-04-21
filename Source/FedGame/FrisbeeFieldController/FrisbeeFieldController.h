@@ -31,11 +31,11 @@ namespace Fed
 		bool IsFedoraMoving() const;
 		float		GetFedoraLaunchSpeed() const;
 		Vector3		GetFedoraPosition() const;
-		void		SetFedoraReference(Fedora* fedora);
-		void		SetCourtReference(class Court* court);
 		const int	GetLastThrownAgentID() const;
 		Team*		GetTeam(TeamColor color);
 		Court*		GetCourt() const;
+		void		SetFedoraReference(Fedora* fedora);
+		void		SetCourtReference(class Court* court);
 		void		ResetPositions();
 		void OnEvent(const Subject* subject, Event& event);
 	public:

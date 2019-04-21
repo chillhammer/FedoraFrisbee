@@ -35,4 +35,19 @@ namespace Fed
 		ASSERT(HasAgent(agent->GetID()), "Can't remove agent that doesn't exists");
 		m_Agents.erase(std::remove(m_Agents.begin(), m_Agents.end(), agent), m_Agents.end());
 	}
+	void Team::ResetPositions()
+	{
+		int side = (m_Color == TeamColor::Red ? 1 : -1);
+		for (int i = 0; i < m_Agents.size(); i++) {
+			FedoraAgent* agent = m_Agents[i];
+			switch (i) {
+			case 0:
+				agent->ObjectTransform.Position = Vector3(0.0f, 0.0f, 15.0f * side);
+				break;
+			case 1:
+				agent->ObjectTransform.Position = Vector3(10.0f, 0.0f, 15.0f * side);
+				break;
+			}
+		}
+	}
 }

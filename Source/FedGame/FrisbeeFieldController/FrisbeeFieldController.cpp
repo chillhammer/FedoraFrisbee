@@ -187,6 +187,15 @@ namespace Fed
 	{
 		m_Court = court;
 	}
+	void FrisbeeFieldController::ResetPositions()
+	{
+		m_BlueTeam.ResetPositions();
+		m_RedTeam.ResetPositions();
+
+		m_Fedora->ObjectTransform.Position = Vector3(0, 0, 0);
+		m_Fedora->SetOwner(nullptr);
+		m_Fedora->Stop();
+	}
 	#pragma endregion
 	
 	#pragma region Events
@@ -204,6 +213,7 @@ namespace Fed
 	{
 		m_Fedora->SetCanScore(false);
 		// TODO: Fancy effect when scoring
+		ResetPositions();
 
 		return false;
 	}
