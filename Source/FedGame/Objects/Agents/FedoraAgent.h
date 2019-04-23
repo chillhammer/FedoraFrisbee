@@ -24,6 +24,7 @@ namespace Fed
 		void SetCameraReference(class Camera* camera);
 		void SetFieldControllerReference(class FrisbeeFieldController* controller);
 		void SetTeamColor(TeamColor color);
+		void SetFacingVector(Vector3 facing);
 
 		class FrisbeeFieldController* GetFieldController() const;
 		bool	GetHasFedora() const;

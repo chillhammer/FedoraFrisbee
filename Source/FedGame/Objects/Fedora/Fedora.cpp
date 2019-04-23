@@ -112,6 +112,9 @@ namespace Fed
 			m_Speed = 0.f;
 			m_StateMachine.ChangeState(FedoraStates::Attached::Instance());
 		}
+		else {
+			m_StateMachine.ChangeState(FedoraStates::Flying::Instance());
+		}
 	}
 	void Fedora::SetCanScore(bool canScore)
 	{

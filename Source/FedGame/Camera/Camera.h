@@ -15,6 +15,7 @@ namespace Fed
 		Matrix4x4 GetViewMatrix() const;
 		Matrix4x4 GetProjectionMatrix() const;
 		void SetPivotPosition(Vector3 newPosition);
+		void LookInDirection(Vector3 direction);
 	public:
 		CameraMode Mode;
 		Transform ObjectTransform;

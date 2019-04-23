@@ -74,6 +74,16 @@ namespace Fed
 		m_SuitModel = Resources.GetModel((color == TeamColor::Blue ? "SuitBlue" : "SuitRed"));
 		m_Team->AddAgent(this);
 	}
+	// Flattens and rotates agent to vector
+	void FedoraAgent::SetFacingVector(Vector3 facing)
+	{
+		facing.y = 0;
+		facing = glm::normalize(facing);
+		float newYaw = glm::degrees(std::atan2(facing.z, facing.x)) - 90;
+		ObjectTransform.SetYaw(newYaw);
+		if (m_Camera && m_Camera->Mode == CameraMode::Pivot)
+			m_Camera->LookInDirection(facing);
+	}
 	FrisbeeFieldController * FedoraAgent::GetFieldController() const
 	{
 		return m_FieldController;

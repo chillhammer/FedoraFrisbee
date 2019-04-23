@@ -37,9 +37,11 @@ namespace Fed
 	}
 	void Team::ResetPositions()
 	{
-		int side = (m_Color == TeamColor::Red ? 1 : -1);
+		int side = (m_Color == TeamColor::Red ? -1 : 1);
 		for (int i = 0; i < m_Agents.size(); i++) {
 			FedoraAgent* agent = m_Agents[i];
+			//agent->ObjectTransform.SetYaw(90 + side * 90);
+			agent->SetFacingVector(Vector3(0, 0, side));
 			switch (i) {
 			case 0:
 				agent->ObjectTransform.Position = Vector3(0.0f, 0.0f, 15.0f * side);

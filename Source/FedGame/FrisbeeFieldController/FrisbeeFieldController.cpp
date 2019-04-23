@@ -195,6 +195,8 @@ namespace Fed
 		m_Fedora->ObjectTransform.Position = Vector3(0, 0, 0);
 		m_Fedora->SetOwner(nullptr);
 		m_Fedora->Stop();
+
+		
 	}
 	#pragma endregion
 	
