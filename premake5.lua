@@ -47,7 +47,8 @@ project "FedoraFrisbee"
 	{
 		"GLFW",
 		"Vendor/Lib/GLEW/lib/Release/x64/glew32s.lib",
-		"Vendor/Lib/Assimp/lib/assimpd.lib",
+		"Vendor/Lib/Assimp/lib/assimp.lib",
+		"Vendor/Lib/freetype/freetype.lib",
 		"opengl32.lib"
 	}
 	filter "system:windows"

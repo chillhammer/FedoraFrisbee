@@ -151,30 +151,8 @@ namespace Fed
 		#pragma region Collision
 		if (m_FieldController != nullptr)
 		{
-			const FedoraAgent* other = m_FieldController->FindAgentCollidingAgent(this);
-			if (other)
-			{
-				ObjectTransform.Position = m_PrevPosition;
-				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, m_Direction);
-				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
-				
-				//Steal Fedora
-				if (other->GetHasFedora())
-				{
-					// Send Frisbee Pickup Event
-					FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
-					m_FieldController->FrisbeePickup.Notify(event);
-				}
-				// Move out of other agents
-				other = m_FieldController->FindAgentCollidingAgent(this);
-				int i = 0;
-				while (other && ++i < 1000)
-				{
-					Vector3 moveDir = glm::normalize(slidingDir);
-					ObjectTransform.Position -= moveDir * 0.01f;
-					other = m_FieldController->FindAgentCollidingAgent(this);
-				}
-			}
+			ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
+			// Walls
 			std::vector<const GameObject*> walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 			if (!walls.empty())
 			{
@@ -190,6 +168,37 @@ namespace Fed
 					ObjectTransform.Position -= moveDir * 0.01f;
 					walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 				}
+			}
+			else {
+				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
+				// Do agent collision if not hitting boundary
+				const FedoraAgent* other = m_FieldController->FindAgentCollidingAgent(this);
+				if (other)
+				{
+					ObjectTransform.Position = m_PrevPosition;
+					Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, m_Direction);
+					ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
+
+					//Steal Fedora
+					if (other->GetHasFedora())
+					{
+						// Send Frisbee Pickup Event
+						FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
+						m_FieldController->FrisbeePickup.Notify(event);
+					}
+					// Move out of other agents
+					/* This code causes a glitch where the agent vanishes
+					other = m_FieldController->FindAgentCollidingAgent(this);
+					int i = 0;
+					while (other && ++i < 100)
+					{
+						Vector3 moveDir = glm::normalize(slidingDir);
+						ObjectTransform.Position -= moveDir * 0.01f;
+						other = m_FieldController->FindAgentCollidingAgent(this);
+					}
+					*/
+				}
+				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
 			}
 		}
 		#pragma endregion
