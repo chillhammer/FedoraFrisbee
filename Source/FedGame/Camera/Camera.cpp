@@ -123,7 +123,7 @@ namespace Fed
 	void Camera::LookInDirection(Vector3 direction)
 	{
 		direction = glm::normalize(direction);
-		float newYaw = glm::degrees(std::atan2(direction.z, direction.x)) - 90;
+		float newYaw = glm::degrees(std::atan2(direction.z, direction.x)) + 90;
 		float newPitch = glm::degrees(std::atan2(direction.y, direction.x));
 		m_Yaw = newYaw;
 		m_Pitch = newPitch;

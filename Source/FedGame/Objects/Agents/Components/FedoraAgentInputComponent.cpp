@@ -21,4 +21,7 @@ namespace Fed
 			}
 		}
 	}
+	void FedoraAgentInputComponent::OnEvent(const Subject* subject, Event& event)
+	{
+	}
 }

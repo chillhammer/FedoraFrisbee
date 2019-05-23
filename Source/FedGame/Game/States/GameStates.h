@@ -27,7 +27,7 @@ namespace Fed::GameStates
 
 	STATE_CLASS_SINGLETON(GameManager, TeamMatch,
 		Camera m_Camera;
-		static const int NUM_AGENTS = 3;
+		static const int NUM_AGENTS = 4;
 		FedoraAgent m_Agents[NUM_AGENTS];
 		Vector3 m_Light;
 		ShaderPtr m_Shader;

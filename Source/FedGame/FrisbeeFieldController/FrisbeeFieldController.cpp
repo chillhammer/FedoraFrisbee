@@ -11,6 +11,8 @@ namespace Fed
 		FrisbeeScored.AddObserver(this);
 		m_BlueTeam.SetColor(TeamColor::Blue);
 		m_RedTeam.SetColor(TeamColor::Red);
+		m_BlueTeam.SetFieldControllerReference(this);
+		m_RedTeam.SetFieldControllerReference(this);
 
 	}
 	#pragma region Accessors
@@ -136,7 +138,7 @@ namespace Fed
 	Vector3 FrisbeeFieldController::GetFedoraPosition() const
 	{
 		ASSERT(m_Fedora != nullptr, "Fedora Position cannot be retrieved");
-		return m_Fedora->ObjectTransform.Position;
+		return m_Fedora->ObjectTransform.GetGlobalPosition();
 	}
 	const int FrisbeeFieldController::GetLastThrownAgentID() const
 	{

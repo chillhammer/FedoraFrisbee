@@ -3,8 +3,10 @@
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include <Game/GameManager.h>
 #include <EventSystem/Events/FrisbeeFieldEvent.h>
+#include <EventSystem/IObserver.h>
 #include "FedoraAgent.h"
 #include "Components/FedoraAgentInputPlayer.h"
+#include "Components/FedoraAgentInputComponent.h"
 #include "Components/FedoraAgentInputAI.h"
 namespace Fed
 {
@@ -218,17 +220,20 @@ namespace Fed
 
 	#pragma region Event Handling
 	// Handles Events about the match for this agent
-	void FedoraAgent::OnEvent(const Subject * subject, Event & event)
+	void FedoraAgent::OnEvent(const Subject* subject, Event& event)
 	{
 		Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FedoraAgent, OnFrisbeeThrown));
 		Evnt::Dispatch<FrisbeePickupEvent>(event, EVENT_BIND_FN(FedoraAgent, OnFrisbeePickup));
+		if (m_InputComponent) {
+			m_InputComponent->OnEvent(subject, event);
+		}
 	}
 	// Reacts to when frisbee is thrown
 	bool FedoraAgent::OnFrisbeeThrown(FrisbeeThrownEvent & e)
 	{
 		if (e.GetAgent().GetID() == GetID())
 		{
-			m_CanGrabTimer = 0.5f;
+			m_CanGrabTimer = 0.1f;
 		}
 		return false;
 	}
@@ -238,7 +243,7 @@ namespace Fed
 		if (e.GetAgent().GetID() == GetID())
 		{
 			LOG("Fedora Picked up");
-			m_CanGrabTimer = 0.1f;
+			m_CanGrabTimer = 0.01f;
 		}
 		return false;
 	}

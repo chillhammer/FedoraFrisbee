@@ -3,6 +3,7 @@
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include <Game/GameManager.h>
 #include "TestStates/FedoraAgentInputAITestStates.h"
+#include "TeamStates/FedoraAgentInputAITeamStates.h"
 #include "FedoraAgentInputAI.h"
 
 namespace Fed
@@ -15,6 +16,18 @@ namespace Fed
 	// Handles Events
 	void FedoraAgentInputAI::OnEvent(const Subject * subject, Event & e)
 	{
+		Evnt::Dispatch<WaitSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnWaitSignal));
+		Evnt::Dispatch<PursueSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnPursueSignal));
+	}
+	bool FedoraAgentInputAI::OnWaitSignal(WaitSignal& e)
+	{
+		m_StateMachine.ChangeState(AgentAITeamStates::Wait::Instance());
+		return false;
+	}
+	bool FedoraAgentInputAI::OnPursueSignal(PursueSignal& e)
+	{
+		m_StateMachine.ChangeState(AgentAITeamStates::Wait::Instance());
+		return false;
 	}
 	void FedoraAgentInputAI::Update(FedoraAgent * owner)
 	{
@@ -59,6 +72,8 @@ namespace Fed
 	{
 		FedoraAgent* owner = GetOwner();
 		Vector3 dir = point - owner->ObjectTransform.Position; dir.y = 0;
+		if (dir == Vector3(0, 0, 0))
+			return true;
 		dir = glm::normalize(dir);
 		// (0, 0, 1) = 0 Yaw
 		float targetYaw = glm::degrees(std::atan2(dir.z, dir.x)) - 90.f;

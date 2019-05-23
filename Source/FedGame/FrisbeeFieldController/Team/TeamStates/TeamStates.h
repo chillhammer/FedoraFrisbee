@@ -5,4 +5,5 @@ namespace Fed::TeamStates
 {
 	// Fedora being worn
 	STATE_CLASS_SINGLETON(Team, Standoff, );
+	STATE_CLASS_SINGLETON(Team, Pursue, );
 }

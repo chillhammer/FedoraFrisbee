@@ -9,16 +9,18 @@
 **/
 namespace Fed::TeamStates
 {
-	// Doing nothing
-	void Standoff::Enter(Team* owner)
+	// Get control of fedora
+	void Pursue::Enter(Team* owner)
 	{
-		WaitSignal waitSignal;
-		owner->BroadcastSignal(waitSignal);
+		owner->SetPursuitAgent(owner->FindClosesetAgentToFedora());
+		PursueSignal signal;
+		owner->GetPursuitAgent()->OnEvent(nullptr, signal); // Make this Agent Pursue
 	}
-	void Standoff::Execute(Team* owner)
+	void Pursue::Execute(Team* owner)
 	{
 	}
-	void Standoff::Exit(Team* owner)
+	void Pursue::Exit(Team* owner)
 	{
+		owner->SetPursuitAgent(nullptr);
 	}
 }

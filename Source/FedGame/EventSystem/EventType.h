@@ -14,7 +14,10 @@ enum class EventType
 	MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 
 	// Frisbee Field Controller Events
-	FrisbeeThrown, FrisbeePickup, FrisbeeScored
+	FrisbeeThrown, FrisbeePickup, FrisbeeScored,
+
+	// Team Signals
+	Wait, Pursue
 };
 
 enum EventCategory
@@ -25,5 +28,6 @@ enum EventCategory
 	EventCategoryKeyboard = BIT(2),
 	EventCategoryMouse = BIT(3),
 	EventCategoryMouseButton = BIT(4),
-	EventCategoryFrisbeeField = BIT(5)
+	EventCategoryFrisbeeField = BIT(5),
+	EventCategoryTeam = BIT(6)
 };

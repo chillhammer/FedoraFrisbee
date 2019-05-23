@@ -22,9 +22,11 @@ namespace Fed::GameStates
 
 		m_DebugShader = Resources.GetShader("Debug");
 
-		SetupAgent(m_Agents[0], &m_Camera, &m_FieldController, Vector3(0, 0, 0), TeamColor::Blue, AgentInputType::PLAYER);
-		SetupAgent(m_Agents[1], &m_Camera, &m_FieldController, Vector3(0, 0, -10.f), TeamColor::Red);
-		SetupAgent(m_Agents[2], &m_Camera, &m_FieldController, Vector3(10.f, 0, -10.f), TeamColor::Blue);
+		for (int i = 0; i < NUM_AGENTS; i++) {
+			TeamColor color = (i >= NUM_AGENTS / 2 ? TeamColor::Red : TeamColor::Blue);
+			AgentInputType input = (i == 0 ? AgentInputType::PLAYER : AgentInputType::AI);
+			SetupAgent(m_Agents[i], &m_Camera, &m_FieldController, Vector3(i, 0, 0), color, input);
+		}
 
 		m_Fedora.ObjectTransform.Position = Vector3(0, 0, 0);
 		m_Fedora.SetOwner(nullptr);
@@ -32,11 +34,14 @@ namespace Fed::GameStates
 		m_Fedora.SetFieldControllerReference(&m_FieldController);
 		m_FieldController.SetFedoraReference(&m_Fedora);
 		m_FieldController.SetCourtReference(&m_Court);
+		m_FieldController.ResetPositions();
 	}
 
 	void TeamMatch::Execute(GameManager* owner)
 	{
 		m_Camera.Update();
+		m_FieldController.GetTeam(TeamColor::Blue)->Update();
+		m_FieldController.GetTeam(TeamColor::Red)->Update();
 		for (FedoraAgent& agent : m_Agents)
 			agent.Update();
 		m_Fedora.Update();
@@ -45,7 +50,7 @@ namespace Fed::GameStates
 
 		m_Court.Draw();
 		//m_Court.DrawDebugWalls();
-		m_Court.DrawDebugGoals();
+		//m_Court.DrawDebugGoals();
 		m_Fedora.Draw();
 		DrawAgents(m_Agents, NUM_AGENTS);
 	}
