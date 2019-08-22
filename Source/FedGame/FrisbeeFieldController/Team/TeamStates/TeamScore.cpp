@@ -3,26 +3,22 @@
 #include <Objects/Agents/FedoraAgent.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include <EventSystem/Events/TeamSignal.h>
-#include <Input/InputManager.h>
 #include "TeamStates.h"
 /**
 	Each state runs code that determines Fedora, the hat, behavior
 **/
 namespace Fed::TeamStates
 {
-	// Doing nothing
-	void Standoff::Enter(Team* owner)
+	// Tries to get the fedora into the goal
+	void Score::Enter(Team* owner)
 	{
-		WaitSignal waitSignal;
-		owner->BroadcastSignal(waitSignal);
+		// Initial Logic is in  void Team::SetTeamPlay(TeamPlay play, FedoraAgent* agentWithFedora)
 	}
-	void Standoff::Execute(Team* owner)
+	void Score::Execute(Team* owner)
 	{
-		if (Input.IsKeyDown(KEY_W)) {
-			owner->ExitStandoff();
-		}
 	}
-	void Standoff::Exit(Team* owner)
+	void Score::Exit(Team* owner)
 	{
+		owner->SetPursuitAgent(nullptr);
 	}
 }

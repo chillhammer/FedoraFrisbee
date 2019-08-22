@@ -8,7 +8,7 @@
 namespace Fed
 {
 	class FedoraAgentInputAI
-		: public FedoraAgentInputComponent, public IObserver
+		: public FedoraAgentInputComponent
 	{
 	public:
 		FedoraAgentInputAI();
@@ -24,6 +24,8 @@ namespace Fed
 		virtual void OnEvent(const Subject* subject, class Event& event) override;
 		bool OnWaitSignal(WaitSignal& e);
 		bool OnPursueSignal(PursueSignal& e);
+		bool OnScoreSignal(ScoreSignal& e);
+		bool OnDefendSignal(DefendSignal& e);
 	private:
 		StateMachine<FedoraAgentInputAI> m_StateMachine;
 		FedoraAgent* m_Owner;

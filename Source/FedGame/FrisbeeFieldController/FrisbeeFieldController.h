@@ -46,6 +46,7 @@ namespace Fed
 	private:
 		bool OnFedoraThrown(FrisbeeThrownEvent& e);
 		bool OnFedoraScored(FrisbeeScoredEvent& e);
+		bool OnFedoraPickup(FrisbeePickupEvent& e);
 	private:
 		Fedora* m_Fedora;
 		Court* m_Court;

@@ -9,6 +9,7 @@ namespace Fed
 	{
 		FrisbeeThrown.AddObserver(this);
 		FrisbeeScored.AddObserver(this);
+		FrisbeePickup.AddObserver(this);
 		m_BlueTeam.SetColor(TeamColor::Blue);
 		m_RedTeam.SetColor(TeamColor::Red);
 		m_BlueTeam.SetFieldControllerReference(this);
@@ -207,6 +208,7 @@ namespace Fed
 	{
 		Evnt::Dispatch<FrisbeeThrownEvent>(event, EVENT_BIND_FN(FrisbeeFieldController, OnFedoraThrown));
 		Evnt::Dispatch<FrisbeeScoredEvent>(event, EVENT_BIND_FN(FrisbeeFieldController, OnFedoraScored));
+		Evnt::Dispatch<FrisbeePickupEvent>(event, EVENT_BIND_FN(FrisbeeFieldController, OnFedoraPickup));
 	}
 	bool FrisbeeFieldController::OnFedoraThrown(FrisbeeThrownEvent & e)
 	{
@@ -219,6 +221,15 @@ namespace Fed
 		// TODO: Fancy effect when scoring
 		ResetPositions();
 
+		return false;
+	}
+	bool FrisbeeFieldController::OnFedoraPickup(FrisbeePickupEvent& e)
+	{
+		Team* pickup = e.GetAgent().GetTeam();
+		Team* other = (&m_BlueTeam == pickup ? &m_RedTeam : &m_BlueTeam);
+		pickup->SetTeamPlay(TeamPlay::Offensive, &e.GetAgent());
+		other->SetTeamPlay(TeamPlay::Defensive, &e.GetAgent());
+		LOG("Team {0} goes on Attack", pickup->GetColor() == TeamColor::Blue ? "Blue" : "Red");
 		return false;
 	}
 	#pragma endregion

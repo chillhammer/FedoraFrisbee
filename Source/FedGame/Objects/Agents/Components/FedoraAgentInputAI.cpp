@@ -11,13 +11,15 @@ namespace Fed
 	FedoraAgentInputAI::FedoraAgentInputAI() : m_StateMachine(this, AgentAITestStates::Wait::Instance()),
 		m_Acceleration(12.f), m_Friction(-30.f)
 	{
-		m_StateMachine.SetGlobalState(AgentAITestStates::GlobalMovement::Instance());
+		m_StateMachine.SetGlobalState(AgentAITeamStates::GlobalMovement::Instance());
 	}
 	// Handles Events
 	void FedoraAgentInputAI::OnEvent(const Subject * subject, Event & e)
 	{
 		Evnt::Dispatch<WaitSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnWaitSignal));
 		Evnt::Dispatch<PursueSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnPursueSignal));
+		Evnt::Dispatch<ScoreSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnScoreSignal));
+		Evnt::Dispatch<DefendSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnDefendSignal));
 	}
 	bool FedoraAgentInputAI::OnWaitSignal(WaitSignal& e)
 	{
@@ -26,7 +28,16 @@ namespace Fed
 	}
 	bool FedoraAgentInputAI::OnPursueSignal(PursueSignal& e)
 	{
-		m_StateMachine.ChangeState(AgentAITeamStates::Wait::Instance());
+		m_StateMachine.ChangeState(AgentAITeamStates::Pursue::Instance());
+		return false;
+	}
+	bool FedoraAgentInputAI::OnScoreSignal(ScoreSignal& e)
+	{
+		m_StateMachine.ChangeState(AgentAITeamStates::MoveToScore::Instance());
+		return false;
+	}
+	bool FedoraAgentInputAI::OnDefendSignal(DefendSignal& e)
+	{
 		return false;
 	}
 	void FedoraAgentInputAI::Update(FedoraAgent * owner)

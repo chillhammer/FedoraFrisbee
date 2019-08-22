@@ -17,7 +17,7 @@ enum class EventType
 	FrisbeeThrown, FrisbeePickup, FrisbeeScored,
 
 	// Team Signals
-	Wait, Pursue
+	Wait, Pursue, Score, Defend
 };
 
 enum EventCategory

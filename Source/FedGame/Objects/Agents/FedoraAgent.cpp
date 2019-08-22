@@ -242,8 +242,7 @@ namespace Fed
 	{
 		if (e.GetAgent().GetID() == GetID())
 		{
-			LOG("Fedora Picked up");
-			m_CanGrabTimer = 0.01f;
+			m_CanGrabTimer = 0.02f;
 		}
 		return false;
 	}

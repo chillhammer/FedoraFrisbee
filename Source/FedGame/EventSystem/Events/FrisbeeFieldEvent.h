@@ -39,13 +39,13 @@ namespace Fed
 	class FrisbeePickupEvent : public Event
 	{
 	public:
-		FrisbeePickupEvent(Vector3 pickupPosition, const FedoraAgent& agent)
+		FrisbeePickupEvent(Vector3 pickupPosition, FedoraAgent& agent)
 			: m_PickupPosition(pickupPosition), m_Agent(agent)
 		{
 		}
 
 		inline Vector3 GetPosition() const { return m_PickupPosition; }
-		inline const FedoraAgent& GetAgent() const { return m_Agent; }
+		inline FedoraAgent& GetAgent() const { return m_Agent; }
 
 		std::string ToString() const override
 		{
@@ -58,7 +58,7 @@ namespace Fed
 		EVENT_CLASS_CATEGORY(EventCategoryFrisbeeField)
 	private:
 		Vector3 m_PickupPosition;
-		const FedoraAgent& m_Agent;
+		FedoraAgent& m_Agent;
 	};
 
 	// Scored in a goal

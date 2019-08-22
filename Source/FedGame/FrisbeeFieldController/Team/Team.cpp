@@ -1,6 +1,7 @@
 #include <FedPCH.h>
 #include <Objects/Agents/FedoraAgent.h>
 #include <FedGame/FrisbeeFieldController/FrisbeeFieldController.h>
+#include <EventSystem/Events/TeamSignal.h>
 #include "TeamStates/TeamStates.h"
 #include "Team.h"
 
@@ -8,6 +9,10 @@ namespace Fed
 {
 	Team::Team() : m_StateMachine(this, TeamStates::Standoff::Instance())
 	{
+	}
+	TeamPlay Team::GetPlay() const
+	{
+		return m_Play;
 	}
 	TeamColor Team::GetColor() const
 	{
@@ -71,6 +76,24 @@ namespace Fed
 			}
 		}
 	}
+	void Team::ExitStandoff()
+	{
+		m_StateMachine.ChangeState(TeamStates::Pursue::Instance());
+	}
+	// Sets team play and changes team state
+	void Team::SetTeamPlay(TeamPlay play, FedoraAgent* agentWithFedora)
+	{
+		m_Play = play;
+		if (play == TeamPlay::Offensive) {
+			m_StateMachine.ChangeState(TeamStates::Score::Instance());
+			ScoreSignal signal;
+			agentWithFedora->OnEvent(nullptr, signal);
+		} else if (play == TeamPlay::Defensive) {
+			m_StateMachine.ChangeState(TeamStates::Defend::Instance());
+			DefendSignal signal;
+			agentWithFedora->OnEvent(nullptr, signal);
+		}
+	}
 	void Team::SetFieldControllerReference(FrisbeeFieldController* controller)
 	{
 		m_FieldController = controller;
@@ -86,6 +109,12 @@ namespace Fed
 	FedoraAgent* Team::GetPursuitAgent() const
 	{
 		return m_PursuitAgent;
+	}
+	// Returns agent with fedora. Asserts this team has the fedora
+	FedoraAgent* Team::GetAgentWithFedora() const
+	{
+		// TODO: Fill this out or delete function
+		return nullptr;
 	}
 	// Calculates closest agent position-wise to position
 	FedoraAgent* Team::FindClosestAgent(Vector3 position) const

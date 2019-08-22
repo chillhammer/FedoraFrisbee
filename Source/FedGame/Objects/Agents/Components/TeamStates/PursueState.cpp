@@ -8,7 +8,7 @@
 **/
 namespace Fed::AgentAITeamStates
 {
-	// Doing nothing
+	// Intermediate state. Decides between intercept or chase
 	void Pursue::Enter(FedoraAgentInputAI* owner)
 	{
 	}
@@ -16,6 +16,19 @@ namespace Fed::AgentAITeamStates
 	{
 		FedoraAgent* agent = owner->GetOwner();
 		FrisbeeFieldController* fieldController = agent->GetFieldController();
+
+		// Should only be pursuing if team does not have fedora
+
+		// Try to intercept
+		if (owner->CanInterceptFedora())
+		{
+			owner->GetFSM().ChangeState(Intercept::Instance());
+		}
+		// Otherwise chase
+		else
+		{
+			owner->GetFSM().ChangeState(ChaseFrisbee::Instance());
+		}
 
 	}
 	void Pursue::Exit(FedoraAgentInputAI* owner)
