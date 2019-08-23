@@ -87,6 +87,10 @@ namespace Fed
 		
 		return dist;
 	}
+	Vector3 BoundingBox::GetCenter() const
+	{
+		return m_Center;
+	}
 	// Can change size and position to customize bounding boxes
 	void BoundingBox::SetParameters(Vector3 center, Vector3 halfExtents)
 	{

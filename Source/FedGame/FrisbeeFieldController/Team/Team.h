@@ -33,6 +33,7 @@ namespace Fed
 
 		class FedoraAgent* FindClosestAgent(Vector3 position) const;
 		class FedoraAgent* FindClosesetAgentToFedora() const;
+		class FedoraAgent* FindPassToAgent(class FedoraAgent* passing, Vector3& outPassPosition) const;
 	private:
 		StateMachine<Team> m_StateMachine;
 		std::vector<class FedoraAgent*> m_Agents;

@@ -55,6 +55,42 @@ namespace Fed
 			return (*it).second;
 		return nullptr;
 	}
+	// Returns first agent on path to target location
+	const FedoraAgent* FrisbeeFieldController::FindAgentInAgentPath(const FedoraAgent* agent, Vector3 target) const
+	{
+		Vector3 loc = agent->ObjectTransform.GetGlobalPosition(); loc.y = 0;
+		target.y = 0;
+		float maxDist = glm::length(target - loc);
+		float bestDist = -1;
+		const FedoraAgent* closestAgent = nullptr;
+
+		for (const FedoraAgent* a : m_Agents) {
+			// Can't be itself
+			if (a == agent)
+				continue;
+			Vector3 aPos = a->ObjectTransform.GetGlobalPosition();
+			float dist = glm::length(aPos - loc);
+
+			// Can't be farther than target
+			if (dist > maxDist)
+				continue;
+
+			//Vector3 toA = glm::normalize(aPos - loc);
+			Vector3 toT = glm::normalize(target - loc);
+
+			Vector3 futurePos = loc + toT * dist;
+			
+			// If it collides, find closest agent
+			if (agent->IsCollidingAtPosition(*a, futurePos)) {
+				if (bestDist == -1 || dist < bestDist) {
+					bestDist = dist;
+					closestAgent = a;
+				}
+			}
+		}
+
+		return closestAgent;
+	}
 	// Can agent pickup fedora. Fedora has no owner
 	bool FrisbeeFieldController::IsFedoraFree() const
 	{

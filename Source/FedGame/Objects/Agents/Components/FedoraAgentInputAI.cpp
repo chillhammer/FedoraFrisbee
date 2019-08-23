@@ -9,7 +9,7 @@
 namespace Fed
 {
 	FedoraAgentInputAI::FedoraAgentInputAI() : m_StateMachine(this, AgentAITestStates::Wait::Instance()),
-		m_Acceleration(12.f), m_Friction(-30.f)
+		m_Acceleration(12.f), m_Friction(-30.f), m_Accelerate(false), m_Owner(nullptr), m_InterceptPosition(0,0,0)
 	{
 		m_StateMachine.SetGlobalState(AgentAITeamStates::GlobalMovement::Instance());
 	}

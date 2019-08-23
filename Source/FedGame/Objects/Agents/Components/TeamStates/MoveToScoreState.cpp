@@ -14,14 +14,28 @@ namespace Fed::AgentAITeamStates
 	}
 	void MoveToScore::Execute(FedoraAgentInputAI* owner)
 	{
-		FrisbeeFieldController* controller = owner->GetOwner()->GetFieldController();
+		FedoraAgent* agent = owner->GetOwner();
+		FrisbeeFieldController* controller = agent->GetFieldController();
 		const std::vector<GoalTrigger>& goals = controller->GetCourt()->GetGoals();
-		TeamColor color = owner->GetOwner()->GetTeam()->GetColor();
+		TeamColor color = agent->GetTeam()->GetColor();
 		const GoalTrigger& targetGoal = (color != goals[0].Color ? goals[0] : goals[1]);
 
-		Vector3 targetPos = targetGoal.Object.ObjectTransform.GetGlobalPosition();
+		ASSERT(targetGoal.Object.ObjectTransform.Position == Vector3(0, 0, 0), "Assumption that goals' position has no offset is false.");
+		Vector3 targetPos = targetGoal.Object.GetBoundingBox().GetCenter(); targetPos.y = 0;
 
 		// If Path Blocked, Throw To Nearest Teammate
+		const FedoraAgent* blocking = controller->FindAgentInAgentPath(agent, targetPos);
+		if (blocking != nullptr) {
+			// TODO: find teammate closest to enemy goal
+			const Team* team = agent->GetTeam();
+			Vector3 throwToPos;
+			// TODO: fix find pass function
+			const FedoraAgent* passToAgent = team->FindPassToAgent(agent, throwToPos);
+			ASSERT(passToAgent, "Temp: must have ally to pass to");
+			owner->FaceTowards(throwToPos, 100.f);
+			owner->ThrowFrisbee(agent);
+			owner->GetFSM().ChangeState(AgentAITeamStates::Wait::Instance());
+		}
 
 		// Actually Move to Goal
 		float facingSpeed = 6.5f;

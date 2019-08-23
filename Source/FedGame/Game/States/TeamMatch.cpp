@@ -64,7 +64,7 @@ namespace Fed::GameStates
 	static void SetupAgent(FedoraAgent& agent, Camera* camera, FrisbeeFieldController* field, Vector3 position, TeamColor teamColor, AgentInputType input)
 	{
 		agent.Reset();
-		agent.ObjectTransform.Position = position;
+		agent.ObjectTransform.Position = position; // Temporary position assignment
 		agent.SetInputType(input);
 		agent.SetCameraReference(camera);
 		agent.SetFieldControllerReference(field);

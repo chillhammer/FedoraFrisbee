@@ -23,6 +23,7 @@ namespace Fed
 		const FedoraAgent* FindAgentCollidingAgent(const FedoraAgent* agent);
 		const FedoraAgent* FindPlayerAgent();
 		const FedoraAgent* GetAgentFromID(int id) const;
+		const FedoraAgent* FindAgentInAgentPath(const FedoraAgent* agent, Vector3 target) const;
 		bool AgentHasFedora(const FedoraAgent* agent) const;
 		void AddAgentReference(const FedoraAgent* agent);
 		bool IsAgentInFedoraPath(const FedoraAgent* agent) const;

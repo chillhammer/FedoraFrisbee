@@ -19,6 +19,5 @@ namespace Fed::TeamStates
 	}
 	void Score::Exit(Team* owner)
 	{
-		owner->SetPursuitAgent(nullptr);
 	}
 }

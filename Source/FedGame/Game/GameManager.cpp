@@ -66,7 +66,9 @@ namespace Fed
 	float GameManager::DeltaTime() const
 	{
 		// Pause / Glitch
-		if (m_DeltaTime > 1) return m_TimeScale;
+		if (m_DeltaTime > 1) {
+			return m_TimeScale;
+		}
 		return m_DeltaTime * m_TimeScale;
 	}
 
@@ -113,7 +115,7 @@ namespace Fed
 	void GameManager::UpdateDeltaTime()
 	{
 		double currentTime = glfwGetTime();
-		m_DeltaTime = currentTime - m_LastUpdatedTime;
+		m_DeltaTime = glm::min(currentTime - m_LastUpdatedTime, 1.0);
 		m_LastUpdatedTime = currentTime;
 	}
 

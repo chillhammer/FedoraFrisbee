@@ -17,6 +17,7 @@ namespace Fed
 		bool IsIntersecting(const Transform& myTrans, const Transform& otherTrans, const BoundingBox& other) const;
 		Vector3 GetSlidingDirection(const Transform& myTrans, const Transform& otherTrans, const BoundingBox& other, const Vector3& dir) const;
 		float GetOverlapDistance(const Transform& myTrans, const Transform& otherTrans, const BoundingBox& other, const Vector3& movement) const;
+		Vector3 GetCenter() const;
 		void SetParameters(Vector3 center, Vector3 halfExtents);
 		void DebugDraw(const struct Transform&) const;
 	private:

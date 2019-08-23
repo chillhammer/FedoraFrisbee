@@ -58,6 +58,12 @@ namespace Fed
 	{
 		return m_BoundingBox.IsIntersecting(ObjectTransform, other.ObjectTransform, other.m_BoundingBox);
 	}
+	bool GameObject::IsCollidingAtPosition(const GameObject& other, Vector3 newPos) const
+	{
+		Transform temp(ObjectTransform);
+		temp.Position = newPos;
+		return m_BoundingBox.IsIntersecting(temp, other.ObjectTransform, other.m_BoundingBox);
+	}
 	void GameObject::Draw()
 	{
 		if (m_Model == nullptr)

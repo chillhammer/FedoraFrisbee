@@ -113,6 +113,7 @@ namespace Fed
 	// Returns agent with fedora. Asserts this team has the fedora
 	FedoraAgent* Team::GetAgentWithFedora() const
 	{
+		ASSERT(false, "GetAgentWithFedora() incomplete");
 		// TODO: Fill this out or delete function
 		return nullptr;
 	}
@@ -135,5 +136,18 @@ namespace Fed
 	FedoraAgent* Team::FindClosesetAgentToFedora() const
 	{
 		return FindClosestAgent(m_FieldController->GetFedoraPosition());
+	}
+	// Find agent to pass to, if any
+	FedoraAgent* Team::FindPassToAgent(FedoraAgent* passing, Vector3& outPassPosition) const
+	{
+		ASSERT(passing->GetHasFedora(), "Agent must have fedora to find pass!");
+		for (FedoraAgent* potential : m_Agents) {
+			if (potential != passing) {
+				// TODO: Replace this with fancier algorithm
+				outPassPosition = potential->ObjectTransform.GetGlobalPosition();
+				return potential;
+			}
+		}
+		return nullptr;
 	}
 }

@@ -19,6 +19,7 @@ namespace Fed
 		int GetID() const;
 		void AttachToParent(const GameObject* parent);
 		bool IsColliding(const GameObject& other) const;
+		bool IsCollidingAtPosition(const GameObject& other, Vector3 newPos) const;
 		void Draw();
 		void Draw(const ShaderPtr& shader);
 		void DrawBoundingBox() const;
