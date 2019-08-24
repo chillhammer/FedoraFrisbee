@@ -106,6 +106,25 @@ namespace Fed
 	{
 		m_PursuitAgent = agent;
 	}
+	// Calculates risk rating by summing inverse of distances to each agent. Used by enemy team
+	float Team::CalculateRiskAtPos(Vector3 position)
+	{
+		float risk = 0.0f;
+		for (FedoraAgent* agent : m_Agents) {
+			float dist = glm::length2(position - agent->ObjectTransform.Position);
+			ASSERT(dist != 0, "Cannot divide by zero in safety calculation");
+			risk += 1 / dist;
+		}
+		return risk;
+	}
+	std::vector<Vector3> Team::GetAgentPositions() const
+	{
+		std::vector<Vector3> positions;
+		for (const FedoraAgent* agent : m_Agents) {
+			positions.push_back(agent->ObjectTransform.Position);
+		}
+		return positions;
+	}
 	FedoraAgent* Team::GetPursuitAgent() const
 	{
 		return m_PursuitAgent;
@@ -141,12 +160,20 @@ namespace Fed
 	FedoraAgent* Team::FindPassToAgent(FedoraAgent* passing, Vector3& outPassPosition) const
 	{
 		ASSERT(passing->GetHasFedora(), "Agent must have fedora to find pass!");
+		float passingRisk = passing->CalculateRisk(); // how dangerous of a situation is passing agent in
 		for (FedoraAgent* potential : m_Agents) {
-			if (potential != passing) {
-				// TODO: Replace this with fancier algorithm
-				outPassPosition = potential->ObjectTransform.GetGlobalPosition();
-				return potential;
-			}
+			// Can't be itself
+			if (potential == passing)
+				continue;
+
+			float potentialRisk = potential->CalculateRisk();
+			// Must have lower risk
+			if (potentialRisk > passingRisk)
+				continue;
+
+			// TODO: Replace this with fancier algorithm
+			outPassPosition = potential->ObjectTransform.GetGlobalPosition();
+			return potential;
 		}
 		return nullptr;
 	}

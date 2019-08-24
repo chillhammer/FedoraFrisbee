@@ -24,6 +24,8 @@ namespace Fed
 		void SetTeamPlay(TeamPlay play, class FedoraAgent* agentWithFedora);
 		void SetFieldControllerReference(class FrisbeeFieldController* controller);
 		void SetPursuitAgent(class FedoraAgent* agent);
+		float CalculateRiskAtPos(Vector3 position);
+		std::vector<Vector3> GetAgentPositions() const;
 
 		class FrisbeeFieldController* GetFieldController() const;
 

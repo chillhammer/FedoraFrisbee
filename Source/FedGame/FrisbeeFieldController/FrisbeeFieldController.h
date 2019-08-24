@@ -34,6 +34,8 @@ namespace Fed
 		Vector3		GetFedoraPosition() const;
 		const int	GetLastThrownAgentID() const;
 		Team*		GetTeam(TeamColor color);
+		Team*		GetEnemyTeam(TeamColor color);
+		Team*		GetEnemyTeam(Team* team);
 		Court*		GetCourt() const;
 		void		SetFedoraReference(Fedora* fedora);
 		void		SetCourtReference(class Court* court);

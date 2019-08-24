@@ -78,6 +78,48 @@ namespace Fed
 			return false;
 		}
 	}
+	// Move to point while avoiding all enemies
+	bool FedoraAgentInputAI::SeekAndAvoidEnemies(const Vector3& point)
+	{
+		FedoraAgent* owner = GetOwner();
+		Vector3 agentPos = owner->ObjectTransform.Position;
+		Vector3 dir = glm::normalize(point - agentPos);
+		float visionRadius = 7.0f;
+		Vector3 avoidanceSteer = Vector3(0, 0, 0);
+		float closestDist = -1;
+
+		Team* enemyTeam = owner->GetFieldController()->GetEnemyTeam(owner->GetTeam());
+		auto enemyPositions = enemyTeam->GetAgentPositions();
+
+		for (const Vector3& ePos : enemyPositions) {
+			Vector3 toEnemy = ePos - agentPos;
+			float dot = glm::dot(dir, toEnemy);
+			// Only consider enemies in front of you
+			if (dot < 0)
+				continue;
+			float dist = glm::length(toEnemy);
+			// Ignore if farther than vision radius
+			if (dist > visionRadius)
+				continue;
+
+			// Only consider closest enemy agent
+			if (closestDist == -1 || dist < closestDist) {
+				Vector3 projected = dir * glm::dot(glm::normalize(toEnemy), dir) * dist;
+				float distFromPath = glm::length(toEnemy - projected);
+				float avoidanceRadius = 3.0f;
+				// Ignore if farther than avoidance radius
+				if (distFromPath >= avoidanceRadius)
+					continue;
+				// Will set avoidance steer in direction of enemy -> path (away from enemy) multiplied by how close they are
+				avoidanceSteer = glm::normalize(projected - toEnemy) * (avoidanceRadius - distFromPath);
+				closestDist = dist;
+			}
+		}
+		bool result = MoveTowards(point);
+		owner->m_Direction = glm::normalize(owner->m_Direction + avoidanceSteer);
+
+		return result;
+	}
 	// Lerp rotates towards point
 	bool FedoraAgentInputAI::FaceTowards(const Vector3 & point, float speed)
 	{

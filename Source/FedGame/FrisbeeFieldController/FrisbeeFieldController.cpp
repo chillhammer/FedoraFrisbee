@@ -185,6 +185,14 @@ namespace Fed
 	{
 		return (color == TeamColor::Blue ? &m_BlueTeam : &m_RedTeam);
 	}
+	Team* FrisbeeFieldController::GetEnemyTeam(TeamColor color)
+	{
+		return GetTeam((color == TeamColor::Blue ? TeamColor::Red : TeamColor::Blue));
+	}
+	Team* FrisbeeFieldController::GetEnemyTeam(Team* team)
+	{
+		return GetEnemyTeam(team->GetColor());
+	}
 	Court* FrisbeeFieldController::GetCourt() const
 	{
 		return m_Court;

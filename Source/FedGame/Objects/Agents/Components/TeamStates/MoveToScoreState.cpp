@@ -31,16 +31,20 @@ namespace Fed::AgentAITeamStates
 			Vector3 throwToPos;
 			// TODO: fix find pass function
 			const FedoraAgent* passToAgent = team->FindPassToAgent(agent, throwToPos);
-			ASSERT(passToAgent, "Temp: must have ally to pass to");
-			owner->FaceTowards(throwToPos, 100.f);
-			owner->ThrowFrisbee(agent);
-			owner->GetFSM().ChangeState(AgentAITeamStates::Wait::Instance());
+
+			if (passToAgent) {
+				if (owner->FaceTowards(throwToPos, 10.f)) {
+					owner->ThrowFrisbee(agent);
+					owner->GetFSM().ChangeState(AgentAITeamStates::Wait::Instance());
+				}
+				return;
+			}
 		}
 
 		// Actually Move to Goal
 		float facingSpeed = 6.5f;
 		owner->FaceTowards(targetPos, facingSpeed);
-		owner->MoveTowards(targetPos);
+		owner->SeekAndAvoidEnemies(targetPos);
 
 	}
 	void MoveToScore::Exit(FedoraAgentInputAI* owner)

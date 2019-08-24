@@ -14,6 +14,7 @@ namespace Fed
 		FedoraAgentInputAI();
 		void Update(FedoraAgent* owner) override;
 		bool MoveTowards(const Vector3& point);
+		bool SeekAndAvoidEnemies(const Vector3& point);
 		bool FaceTowards(const Vector3& point, float speed);
 		void MoveBasedOnVelocity();
 		Vector3 GetAgentPredictedPosition(const FedoraAgent* agent) const;

@@ -29,6 +29,7 @@ namespace Fed
 		class FrisbeeFieldController* GetFieldController() const;
 		bool	GetHasFedora() const;
 		float	GetMaxSpeed() const;
+		float	CalculateRisk() const;
 		bool	InFedoraPath() const;
 		bool	IsPlayerControlled() const;
 		const Vector3 GetFuturePosition(float time) const;

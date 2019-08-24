@@ -101,6 +101,13 @@ namespace Fed
 	{
 		return m_MaxSpeed;
 	}
+	// Calculates risk rating based on how far the enemies are. Sum of squared distance to each enemy
+	float FedoraAgent::CalculateRisk() const
+	{
+		ASSERT(m_FieldController != nullptr, "Must have field controller reference");
+		Team* enemyTeam = m_FieldController->GetEnemyTeam(m_Team);
+		return enemyTeam->CalculateRiskAtPos(ObjectTransform.Position);
+	}
 
 	// Returns whether fedora is travelling towards this agent
 	bool FedoraAgent::InFedoraPath() const
