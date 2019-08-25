@@ -32,6 +32,7 @@ namespace Fed
 		float	CalculateRisk() const;
 		bool	InFedoraPath() const;
 		bool	IsPlayerControlled() const;
+		bool	CanBeStolenFrom() const;
 		const Vector3 GetFuturePosition(float time) const;
 		Team* GetTeam() const;
 
@@ -54,5 +55,7 @@ namespace Fed
 		Vector3 m_Direction;
 		Vector3 m_PrevPosition;
 		float m_CanGrabTimer;
+		float m_CanBeStolenFromTimer;
+		const float INVULNERABLE_TIME = 1.0f;
 	};
 }

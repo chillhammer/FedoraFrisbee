@@ -15,6 +15,7 @@ namespace Fed
 		TeamColor	GetColor() const;
 		void		SetColor(TeamColor color);
 		void BroadcastSignal(class Event& event);
+		void StunAgent(int agentID, float time = 1.0f);
 		bool HasAgent(int agentID) const;
 		void AddAgent(class FedoraAgent* agent);
 		void Update();

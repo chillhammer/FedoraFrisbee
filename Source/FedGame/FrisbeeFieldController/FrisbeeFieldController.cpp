@@ -1,6 +1,7 @@
 #include <FedPCH.h>
 #include <Objects/Fedora/Fedora.h>
 #include <Objects/Agents/FedoraAgent.h>
+#include <EventSystem/Events/TeamSignal.h>
 #include "FrisbeeFieldController.h"
 
 namespace Fed
@@ -101,6 +102,10 @@ namespace Fed
 	{
 		ASSERT(m_Fedora != nullptr, "Must have fedora reference");
 		return m_Fedora->IsMoving();
+	}
+	void FrisbeeFieldController::StunAgent(const FedoraAgent* agent, float time)
+	{
+		agent->GetTeam()->StunAgent(agent->GetID(), time);
 	}
 	float FrisbeeFieldController::GetFedoraLaunchSpeed() const
 	{

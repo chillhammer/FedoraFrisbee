@@ -12,7 +12,8 @@ namespace Fed
 {
 	FedoraAgent::FedoraAgent() 
 		: GameObject("FedoraAgent"), m_FieldController(nullptr), m_CanGrabTimer(0.f), m_MaxSpeed(10.75f), 
-			m_SuitModel(Resources.GetModel("SuitBlue")), m_InputType(AgentInputType::NONE), m_InputComponent(nullptr), m_Team(nullptr)
+			m_SuitModel(Resources.GetModel("SuitBlue")), m_InputType(AgentInputType::NONE), m_InputComponent(nullptr), m_Team(nullptr),
+			INVULNERABLE_TIME(1.0f)
 	{
 		SetBoundingBox(Vector3(0, 1, 0), Vector3(0.5, 1, 0.5));
 	}
@@ -122,6 +123,11 @@ namespace Fed
 		return m_InputType == AgentInputType::PLAYER;
 	}
 
+	bool FedoraAgent::CanBeStolenFrom() const
+	{
+		return m_CanBeStolenFromTimer <= 0;
+	}
+
 	const Vector3 FedoraAgent::GetFuturePosition(float time) const
 	{
 		Vector3 futurePos = ObjectTransform.Position + m_Speed * m_Direction * time;
@@ -146,6 +152,7 @@ namespace Fed
 		//if (m_CanGrabTimer <= Game.DeltaTime() && m_CanGrabTimer != 0.f)
 			//LOG("Can grab now!");
 		m_CanGrabTimer = glm::max(0.f, m_CanGrabTimer - Game.DeltaTime());
+		m_CanBeStolenFromTimer = glm::max(0.f, m_CanBeStolenFromTimer - Game.DeltaTime());
 		if (m_FieldController != nullptr && m_FieldController->IsFedoraFree() && m_CanGrabTimer <= 0.f)
 		{
 			if (m_FieldController->IsAgentCollidingFedora(this))
@@ -189,11 +196,15 @@ namespace Fed
 					ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
 
 					//Steal Fedora
-					if (other->GetHasFedora())
+					if (other->GetHasFedora() && other->CanBeStolenFrom())
 					{
 						// Send Frisbee Pickup Event
 						FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
 						m_FieldController->FrisbeePickup.Notify(event);
+
+						m_CanBeStolenFromTimer = INVULNERABLE_TIME;
+
+						m_FieldController->StunAgent(other, 2.0f);
 					}
 					// Move out of other agents
 					/* This code causes a glitch where the agent vanishes
@@ -216,6 +227,7 @@ namespace Fed
 	void FedoraAgent::Reset()
 	{
 		m_CanGrabTimer = 0.f;
+		m_CanBeStolenFromTimer = 0.f;
 	}
 
 	// Draws suit ontop of agent
@@ -240,7 +252,7 @@ namespace Fed
 	{
 		if (e.GetAgent().GetID() == GetID())
 		{
-			m_CanGrabTimer = 0.1f;
+			m_CanGrabTimer = 0.2f;
 		}
 		return false;
 	}
@@ -249,7 +261,7 @@ namespace Fed
 	{
 		if (e.GetAgent().GetID() == GetID())
 		{
-			m_CanGrabTimer = 0.02f;
+			m_CanGrabTimer = 0.1f;
 		}
 		return false;
 	}

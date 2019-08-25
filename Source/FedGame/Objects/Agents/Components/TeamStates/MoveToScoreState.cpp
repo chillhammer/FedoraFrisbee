@@ -25,7 +25,7 @@ namespace Fed::AgentAITeamStates
 
 		// If Path Blocked, Throw To Nearest Teammate
 		const FedoraAgent* blocking = controller->FindAgentInAgentPath(agent, targetPos);
-		if (blocking != nullptr) {
+		if (blocking != nullptr && glm::length2(blocking->ObjectTransform.Position - agent->ObjectTransform.Position) < 7.0f * 7.0f) {
 			// TODO: find teammate closest to enemy goal
 			const Team* team = agent->GetTeam();
 			Vector3 throwToPos;
@@ -33,18 +33,19 @@ namespace Fed::AgentAITeamStates
 			const FedoraAgent* passToAgent = team->FindPassToAgent(agent, throwToPos);
 
 			if (passToAgent) {
-				if (owner->FaceTowards(throwToPos, 10.f)) {
+				if (owner->FaceTowards(throwToPos, 6.5f)) {
 					owner->ThrowFrisbee(agent);
 					owner->GetFSM().ChangeState(AgentAITeamStates::Wait::Instance());
 				}
+				owner->MoveAndAvoidEnemies(throwToPos);
 				return;
 			}
 		}
 
 		// Actually Move to Goal
-		float facingSpeed = 6.5f;
+		float facingSpeed = 3.5f;
 		owner->FaceTowards(targetPos, facingSpeed);
-		owner->SeekAndAvoidEnemies(targetPos);
+		owner->MoveAndAvoidEnemies(targetPos);
 
 	}
 	void MoveToScore::Exit(FedoraAgentInputAI* owner)

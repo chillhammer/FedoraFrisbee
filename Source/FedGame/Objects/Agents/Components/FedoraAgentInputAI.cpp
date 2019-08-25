@@ -9,7 +9,8 @@
 namespace Fed
 {
 	FedoraAgentInputAI::FedoraAgentInputAI() : m_StateMachine(this, AgentAITestStates::Wait::Instance()),
-		m_Acceleration(12.f), m_Friction(-30.f), m_Accelerate(false), m_Owner(nullptr), m_InterceptPosition(0,0,0)
+		m_Acceleration(12.f), m_Friction(-30.f), m_Accelerate(false), m_Owner(nullptr), m_InterceptPosition(0,0,0), 
+		m_TargetAgent(nullptr), m_StunTimer(0.0f)
 	{
 		m_StateMachine.SetGlobalState(AgentAITeamStates::GlobalMovement::Instance());
 	}
@@ -20,6 +21,8 @@ namespace Fed
 		Evnt::Dispatch<PursueSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnPursueSignal));
 		Evnt::Dispatch<ScoreSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnScoreSignal));
 		Evnt::Dispatch<DefendSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnDefendSignal));
+		Evnt::Dispatch<StealSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnStealSignal));
+		Evnt::Dispatch<StunSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnStunSignal));
 	}
 	bool FedoraAgentInputAI::OnWaitSignal(WaitSignal& e)
 	{
@@ -40,6 +43,17 @@ namespace Fed
 	{
 		return false;
 	}
+	bool FedoraAgentInputAI::OnStealSignal(StealSignal& e)
+	{
+		m_TargetAgent = &e.GetAgent();
+		m_StateMachine.ChangeState(AgentAITeamStates::MoveToSteal::Instance());
+		return false;
+	}
+	bool FedoraAgentInputAI::OnStunSignal(StunSignal& e)
+	{
+		m_StunTimer = e.GetTime();
+		return false;
+	}
 	void FedoraAgentInputAI::Update(FedoraAgent * owner)
 	{
 		ASSERT(owner != nullptr, "Agent cannot be nullptr");
@@ -47,6 +61,8 @@ namespace Fed
 		m_Owner = owner;
 
 		m_StateMachine.Update();
+
+		m_StunTimer = glm::max(0.0f, m_StunTimer - Game.DeltaTime());
 	}
 
 	////////////////////////////////////
@@ -79,7 +95,7 @@ namespace Fed
 		}
 	}
 	// Move to point while avoiding all enemies
-	bool FedoraAgentInputAI::SeekAndAvoidEnemies(const Vector3& point)
+	bool FedoraAgentInputAI::MoveAndAvoidEnemies(const Vector3& point)
 	{
 		FedoraAgent* owner = GetOwner();
 		Vector3 agentPos = owner->ObjectTransform.Position;
@@ -120,6 +136,20 @@ namespace Fed
 
 		return result;
 	}
+	// Intercepts FedoraAgent with Fedora. Unit command for AI
+	bool FedoraAgentInputAI::MoveToSteal()
+	{
+		ASSERT(m_TargetAgent && m_TargetAgent->GetHasFedora(), "TargetAgent must exist with fedora");
+		FedoraAgent* owner = GetOwner();
+		// Move towards agent future position to intercept them
+		Vector3 targetPos = GetAgentPredictedPosition(m_TargetAgent, glm::max(0.1f, owner->m_Speed));
+		Vector3 dir = targetPos - m_Owner->ObjectTransform.Position;
+		m_Accelerate = true;
+		owner->m_Direction = glm::normalize(dir);
+		owner->m_Speed = glm::max(owner->m_Speed, owner->GetMaxSpeed() * 0.5f);
+		// Keeps same format as other move functions, but accelerate into target
+		return false;
+	}
 	// Lerp rotates towards point
 	bool FedoraAgentInputAI::FaceTowards(const Vector3 & point, float speed)
 	{
@@ -155,16 +185,24 @@ namespace Fed
 		// Reset Accelertion
 		m_Accelerate = false;
 
+		Vector3 heading = m_Owner->ObjectTransform.GetHeading(); heading.y = 0; heading = glm::normalize(heading);
+		float horLean = 1 - glm::abs(glm::dot(heading, m_Owner->m_Direction));
+		float moveAngle = glm::degrees(std::atan2(m_Owner->m_Direction.z, m_Owner->m_Direction.x)) + 180;
+		float moveAngleOffset = 180 - moveAngle;
+		float headingAngle = ProcessAngle(glm::degrees(std::atan2(m_Owner->m_Direction.z, m_Owner->m_Direction.x)) + 180 + moveAngleOffset);
+		horLean *= glm::sign(headingAngle - 180);
+
 		// Lean based on speed
 		float leanAmount = m_Owner->m_Speed / m_Owner->GetMaxSpeed();
 		m_Owner->ObjectTransform.SetPitch(LerpAngle(m_Owner->ObjectTransform.GetPitch(), leanAmount * 20.f, 5.0f * Game.DeltaTime()));
+		m_Owner->ObjectTransform.SetRoll(LerpAngle(m_Owner->ObjectTransform.GetRoll(), horLean * leanAmount * 150.0f, 5.0f * Game.DeltaTime()));
 	}
-	// Throws fedora to agent with predicted future movement
-	Vector3 FedoraAgentInputAI::GetAgentPredictedPosition(const FedoraAgent * agent) const
+	// Uses predicted future movement to throw fedora or to steal fedora
+	Vector3 FedoraAgentInputAI::GetAgentPredictedPosition(const FedoraAgent * agent, float interceptingSpeed) const
 	{
 		ASSERT(agent != nullptr, "Agent cannot be nullptr");
 		float dist = glm::length(GetOwner()->ObjectTransform.Position - agent->ObjectTransform.Position);
-		float timeForFedora = dist / GetOwner()->GetFieldController()->GetFedoraLaunchSpeed();
+		float timeForFedora = dist / interceptingSpeed;
 		Vector3 predictedAgentPos = agent->GetFuturePosition(timeForFedora);
 		return predictedAgentPos;
 	}
@@ -185,6 +223,14 @@ namespace Fed
 		Vector3 pos = m_InterceptPosition;
 		pos.y = 0;
 		return pos;
+	}
+	bool FedoraAgentInputAI::IsStunned() const
+	{
+		return m_StunTimer > 0;
+	}
+	FedoraAgent* FedoraAgentInputAI::GetTargetAgent() const
+	{
+		return m_TargetAgent;
 	}
 	// Provides access to state machine. Used from within state machine
 	StateMachine<FedoraAgentInputAI>& FedoraAgentInputAI::GetFSM()

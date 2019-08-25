@@ -10,5 +10,6 @@ namespace Fed::AgentAITeamStates
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, ChaseFrisbee, );
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, Intercept, );
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, MoveToScore, );
+	STATE_CLASS_SINGLETON(FedoraAgentInputAI, MoveToSteal, );
 	STATE_CLASS_SINGLETON(FedoraAgentInputAI, GlobalMovement, );
 }

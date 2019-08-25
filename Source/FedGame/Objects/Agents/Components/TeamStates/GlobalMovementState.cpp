@@ -14,7 +14,8 @@ namespace Fed::AgentAITeamStates
 	}
 	void GlobalMovement::Execute(FedoraAgentInputAI* owner)
 	{
-		owner->MoveBasedOnVelocity();
+		if (!owner->IsStunned())
+			owner->MoveBasedOnVelocity();
 	}
 	void GlobalMovement::Exit(FedoraAgentInputAI* owner)
 	{

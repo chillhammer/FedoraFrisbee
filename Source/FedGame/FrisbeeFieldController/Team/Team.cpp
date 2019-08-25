@@ -29,6 +29,19 @@ namespace Fed
 			it->OnEvent(nullptr, event);
 		}
 	}
+	// Specialized function to stun an agent from within a collision
+	void Team::StunAgent(int agentID, float time)
+	{
+		for (auto it : m_Agents)
+		{
+			if (it->GetID() == agentID) {
+				StunSignal stun(time);
+				it->OnEvent(nullptr, stun);
+				return;
+			}
+		}
+		ASSERT(false, "Can't stun this agent as it doesn't exist");
+	}
 	bool Team::HasAgent(int agentID) const
 	{
 		for (auto it : m_Agents)
@@ -86,12 +99,19 @@ namespace Fed
 		m_Play = play;
 		if (play == TeamPlay::Offensive) {
 			m_StateMachine.ChangeState(TeamStates::Score::Instance());
+			WaitSignal waitSignal;
+			BroadcastSignal(waitSignal);
 			ScoreSignal signal;
 			agentWithFedora->OnEvent(nullptr, signal);
 		} else if (play == TeamPlay::Defensive) {
 			m_StateMachine.ChangeState(TeamStates::Defend::Instance());
+
 			DefendSignal signal;
-			agentWithFedora->OnEvent(nullptr, signal);
+			BroadcastSignal(signal);
+
+			FedoraAgent* assignedStealer = FindClosesetAgentToFedora();
+			StealSignal stealSignal(*agentWithFedora);
+			assignedStealer->OnEvent(nullptr, stealSignal);
 		}
 	}
 	void Team::SetFieldControllerReference(FrisbeeFieldController* controller)

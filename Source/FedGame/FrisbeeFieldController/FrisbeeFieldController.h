@@ -30,6 +30,7 @@ namespace Fed
 		bool CanAgentInterceptFedora(const FedoraAgent* agent, Vector3* outInterceptPos);
 		bool IsFedoraFree() const;
 		bool IsFedoraMoving() const;
+		void StunAgent(const FedoraAgent* agent, float time = 1.0f);
 		float		GetFedoraLaunchSpeed() const;
 		Vector3		GetFedoraPosition() const;
 		const int	GetLastThrownAgentID() const;
