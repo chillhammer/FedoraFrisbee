@@ -165,11 +165,9 @@ namespace Fed
 
 		// Collision! - Could use refactor. Currently doing manual checks
 		#pragma region Collision
-		//ASSERT(ObjectTransform.Position.x > -20.25f, "Can't be lower than this!");
 		if (m_FieldController != nullptr)
 		{
 			ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
-			Vector3 movement = ObjectTransform.Position - m_PrevPosition;
 			// Walls
 			std::vector<const GameObject*> walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 			if (!walls.empty())
@@ -177,8 +175,6 @@ namespace Fed
 				const GameObject* wall = walls[0];
 				ObjectTransform.Position = m_PrevPosition;
 				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), m_Direction);
-				//float distOverlap = m_BoundingBox.GetOverlapDistance(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), movement);
-				//ObjectTransform.Position += (distOverlap) * glm::normalize(movement);
 				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
 				
 				walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
@@ -195,6 +191,7 @@ namespace Fed
 				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
 				// Do agent collision if not hitting boundary
 				const FedoraAgent* other = m_FieldController->FindAgentCollidingAgent(this);
+				/*
 				if (other)
 				{
 					ObjectTransform.Position = m_PrevPosition;
@@ -224,6 +221,47 @@ namespace Fed
 					}
 					
 				}
+				*/
+				while (other)
+				{
+					Vector3 movement = ObjectTransform.Position - m_PrevPosition;
+					Vector3 moveDir = glm::normalize(movement);
+					float distToTouch = m_BoundingBox.GetOverlapDistance(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, movement);
+
+					// Go Back In Time
+					ObjectTransform.Position = m_PrevPosition;
+
+					
+					// Push Against Object
+					ObjectTransform.Position += moveDir * distToTouch;
+
+					// Still Hitting? Make Sure Not Hitting Anything
+					const FedoraAgent* stillHitting = m_FieldController->FindAgentCollidingAgent(this);
+					if (stillHitting) {
+						other = stillHitting;
+						continue;
+					}
+
+					// Slide Into Potentially Other Object
+					m_PrevPosition = ObjectTransform.Position;
+					Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, moveDir);
+					ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
+
+					//Steal Fedora
+					if (other->GetHasFedora() && other->CanBeStolenFrom())
+					{
+						// Send Frisbee Pickup Event
+						FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
+						m_FieldController->FrisbeePickup.Notify(event);
+
+						m_CanBeStolenFromTimer = INVULNERABLE_TIME;
+
+						m_FieldController->StunAgent(other, 2.0f);
+					}
+					// Move out of other agents
+					other = m_FieldController->FindAgentCollidingAgent(this);
+				}
+
 				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
 			}
 		}
@@ -274,6 +312,9 @@ namespace Fed
 		if (e.GetAgent().GetID() == GetID())
 		{
 			m_CanGrabTimer = 0.1f;
+		}
+		else {
+			m_CanGrabTimer = 0.0f;
 		}
 		return false;
 	}

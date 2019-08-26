@@ -11,6 +11,7 @@ namespace Fed::AgentAITeamStates
 	// Move to goal to score!
 	void MoveToScore::Enter(FedoraAgentInputAI* owner)
 	{
+		owner->SetBlocked(false);
 	}
 	void MoveToScore::Execute(FedoraAgentInputAI* owner)
 	{
@@ -23,9 +24,17 @@ namespace Fed::AgentAITeamStates
 		ASSERT(targetGoal.Object.ObjectTransform.Position == Vector3(0, 0, 0), "Assumption that goals' position has no offset is false.");
 		Vector3 targetPos = targetGoal.Object.GetBoundingBox().GetCenter(); targetPos.y = 0;
 
+		// Check for blocking agents
+		if (!owner->IsBlocked()) {
+			const FedoraAgent* blocking = controller->FindAgentInAgentPath(agent, targetPos);
+			float blockingRadius = 7.0f;
+			if (blocking != nullptr && glm::length2(blocking->ObjectTransform.Position - agent->ObjectTransform.Position) < blockingRadius * blockingRadius) {
+				owner->SetBlocked(true);
+			}
+		}
+
 		// If Path Blocked, Throw To Nearest Teammate
-		const FedoraAgent* blocking = controller->FindAgentInAgentPath(agent, targetPos);
-		if (blocking != nullptr && glm::length2(blocking->ObjectTransform.Position - agent->ObjectTransform.Position) < 7.0f * 7.0f) {
+		if (owner->IsBlocked()) {
 			// TODO: find teammate closest to enemy goal
 			const Team* team = agent->GetTeam();
 			Vector3 throwToPos;
@@ -33,7 +42,7 @@ namespace Fed::AgentAITeamStates
 			const FedoraAgent* passToAgent = team->FindPassToAgent(agent, throwToPos);
 
 			if (passToAgent) {
-				if (owner->FaceTowards(throwToPos, 6.5f)) {
+				if (owner->FaceTowards(throwToPos, 9.5f)) {
 					owner->ThrowFrisbee(agent);
 					owner->GetFSM().ChangeState(AgentAITeamStates::Wait::Instance());
 				}
@@ -50,5 +59,6 @@ namespace Fed::AgentAITeamStates
 	}
 	void MoveToScore::Exit(FedoraAgentInputAI* owner)
 	{
+		owner->SetBlocked(false);
 	}
 };

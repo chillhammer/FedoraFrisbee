@@ -27,8 +27,8 @@ namespace Fed::FedoraStates
 			float targetYaw = owner->GetOwner()->ObjectTransform.GetYaw();
 			float targetPitch = owner->GetOwner()->ObjectTransform.GetPitch();
 			float targetRoll = owner->GetOwner()->ObjectTransform.GetRoll();
-			owner->ObjectTransform.Position = glm::lerp(owner->ObjectTransform.Position, target, 0.5f * m_TimeSinceAttached);
-			owner->ObjectTransform.Position.y = glm::lerp(owner->ObjectTransform.Position.y, target.y, 0.02f);
+			owner->ObjectTransform.Position = glm::lerp(owner->ObjectTransform.Position, target, 0.8f * m_TimeSinceAttached);
+			owner->ObjectTransform.Position.y = glm::lerp(owner->ObjectTransform.Position.y, target.y, 0.04f);
 			owner->ObjectTransform.SetYaw(LerpAngle(owner->ObjectTransform.GetYaw(), targetYaw, 0.1f));
 			owner->ObjectTransform.SetPitch(LerpAngle(owner->ObjectTransform.GetPitch(), targetPitch, 0.1f));
 			owner->ObjectTransform.SetRoll(LerpAngle(owner->ObjectTransform.GetRoll(), targetRoll, 0.1f));

@@ -76,7 +76,7 @@ namespace Fed
 		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object pre-movement");
 		float dist = 0;
 		Vector3 dir = glm::normalize(movement);
-		float step = 0.0001f;
+		float step = 0.001f;
 		while (!IsIntersecting(oldTrans, otherTrans, other))
 		{
 			dist += step;

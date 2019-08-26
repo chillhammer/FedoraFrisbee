@@ -142,11 +142,17 @@ namespace Fed
 		ASSERT(m_TargetAgent && m_TargetAgent->GetHasFedora(), "TargetAgent must exist with fedora");
 		FedoraAgent* owner = GetOwner();
 		// Move towards agent future position to intercept them
-		Vector3 targetPos = GetAgentPredictedPosition(m_TargetAgent, glm::max(0.1f, owner->m_Speed));
+		Vector3 targetPos = GetAgentPredictedPosition(m_TargetAgent, glm::max(m_TargetAgent->GetMaxSpeed() * 0.5f, m_TargetAgent->m_Speed));
 		Vector3 dir = targetPos - m_Owner->ObjectTransform.Position;
 		m_Accelerate = true;
-		owner->m_Direction = glm::normalize(dir);
 		owner->m_Speed = glm::max(owner->m_Speed, owner->GetMaxSpeed() * 0.5f);
+		// Move To Predicted if Far
+		if (glm::length2(dir) > 1.0f) {
+			owner->m_Direction = glm::normalize(dir);
+		}
+		else { // Or just chase
+			owner->m_Direction = glm::normalize(m_TargetAgent->ObjectTransform.Position - m_Owner->ObjectTransform.Position);
+		}
 		// Keeps same format as other move functions, but accelerate into target
 		return false;
 	}
@@ -197,13 +203,17 @@ namespace Fed
 		m_Owner->ObjectTransform.SetPitch(LerpAngle(m_Owner->ObjectTransform.GetPitch(), leanAmount * 20.f, 5.0f * Game.DeltaTime()));
 		m_Owner->ObjectTransform.SetRoll(LerpAngle(m_Owner->ObjectTransform.GetRoll(), horLean * leanAmount * 150.0f, 5.0f * Game.DeltaTime()));
 	}
+	void FedoraAgentInputAI::SetBlocked(bool blocked)
+	{
+		m_Blocked = blocked;
+	}
 	// Uses predicted future movement to throw fedora or to steal fedora
 	Vector3 FedoraAgentInputAI::GetAgentPredictedPosition(const FedoraAgent * agent, float interceptingSpeed) const
 	{
 		ASSERT(agent != nullptr, "Agent cannot be nullptr");
 		float dist = glm::length(GetOwner()->ObjectTransform.Position - agent->ObjectTransform.Position);
-		float timeForFedora = dist / interceptingSpeed;
-		Vector3 predictedAgentPos = agent->GetFuturePosition(timeForFedora);
+		float timeForObjectToIntercept = dist / interceptingSpeed;
+		Vector3 predictedAgentPos = agent->GetFuturePosition(timeForObjectToIntercept);
 		return predictedAgentPos;
 	}
 	// Returns owner of this component. Used within FSM
@@ -227,6 +237,10 @@ namespace Fed
 	bool FedoraAgentInputAI::IsStunned() const
 	{
 		return m_StunTimer > 0;
+	}
+	bool FedoraAgentInputAI::IsBlocked() const
+	{
+		return m_Blocked;
 	}
 	FedoraAgent* FedoraAgentInputAI::GetTargetAgent() const
 	{
