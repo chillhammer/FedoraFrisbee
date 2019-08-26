@@ -13,6 +13,7 @@ namespace Fed
 	public:
 		FedoraAgentInputComponent() {}
 		virtual void Update(class FedoraAgent* owner) = 0;
+		virtual void LateUpdate(class FedoraAgent* owner) {};
 		void ThrowFrisbee(class FedoraAgent* owner);
 		virtual void OnEvent(const Subject* subject, class Event& event) override;
 	};

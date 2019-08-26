@@ -82,9 +82,10 @@ namespace Fed
 			dist += step;
 			oldTrans.Position += dir * step;
 		}
-		dist -= step;
-		oldTrans.Position -= dir * step;
-		
+		dist -= step * 2;
+		oldTrans.Position -= dir * step * 2.f;
+		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object post-pushout");
+
 		return dist;
 	}
 	Vector3 BoundingBox::GetCenter() const

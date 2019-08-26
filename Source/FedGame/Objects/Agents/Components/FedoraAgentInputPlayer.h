@@ -13,6 +13,7 @@ namespace Fed
 		FedoraAgentInputPlayer();
 		void OnEvent(const Subject* subject, Event& e);
 		void Update(FedoraAgent* owner) override;
+		void LateUpdate(FedoraAgent* owner) override;
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMousePressed(MouseButtonPressedEvent& e);
 	private:

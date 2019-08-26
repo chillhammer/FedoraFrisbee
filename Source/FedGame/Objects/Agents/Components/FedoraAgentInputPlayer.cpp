@@ -62,7 +62,10 @@ namespace Fed
 		float leanSpeed = 20.f;
 		owner->ObjectTransform.SetPitch(LerpAngle(owner->ObjectTransform.GetPitch(), forwardSign * owner->m_Speed * forwardLean, leanSpeed * Game.DeltaTime()));
 		owner->ObjectTransform.SetRoll(LerpAngle(owner->ObjectTransform.GetRoll(), sideSign * owner->m_Speed * sideLean, leanSpeed * Game.DeltaTime()));
-
+	}
+	// Post collision update
+	void FedoraAgentInputPlayer::LateUpdate(FedoraAgent* owner)
+	{
 		// Update Camera Pivot
 		if (owner->m_Camera)
 		{

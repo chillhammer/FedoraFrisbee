@@ -165,9 +165,11 @@ namespace Fed
 
 		// Collision! - Could use refactor. Currently doing manual checks
 		#pragma region Collision
+		//ASSERT(ObjectTransform.Position.x > -20.25f, "Can't be lower than this!");
 		if (m_FieldController != nullptr)
 		{
 			ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
+			Vector3 movement = ObjectTransform.Position - m_PrevPosition;
 			// Walls
 			std::vector<const GameObject*> walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 			if (!walls.empty())
@@ -175,7 +177,10 @@ namespace Fed
 				const GameObject* wall = walls[0];
 				ObjectTransform.Position = m_PrevPosition;
 				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), m_Direction);
+				//float distOverlap = m_BoundingBox.GetOverlapDistance(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), movement);
+				//ObjectTransform.Position += (distOverlap) * glm::normalize(movement);
 				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
+				
 				walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 				int i = 0;
 				while (!walls.empty() && ++i < 1000)
@@ -184,6 +189,7 @@ namespace Fed
 					ObjectTransform.Position -= moveDir * 0.01f;
 					walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 				}
+				
 			}
 			else {
 				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
@@ -207,7 +213,7 @@ namespace Fed
 						m_FieldController->StunAgent(other, 2.0f);
 					}
 					// Move out of other agents
-					/* This code causes a glitch where the agent vanishes
+					//This code causes a glitch where the agent vanishes
 					other = m_FieldController->FindAgentCollidingAgent(this);
 					int i = 0;
 					while (other && ++i < 100)
@@ -216,12 +222,18 @@ namespace Fed
 						ObjectTransform.Position -= moveDir * 0.01f;
 						other = m_FieldController->FindAgentCollidingAgent(this);
 					}
-					*/
+					
 				}
 				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
 			}
 		}
+		
 		#pragma endregion
+
+		if (m_InputComponent)
+		{
+			m_InputComponent->LateUpdate(this);
+		}
 	}
 	// Upon game match reset
 	void FedoraAgent::Reset()
