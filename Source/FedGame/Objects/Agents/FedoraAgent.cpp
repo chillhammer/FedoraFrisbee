@@ -134,6 +134,15 @@ namespace Fed
 		return futurePos;
 	}
 
+	// Uses predicted future movement to throw fedora or to steal fedora
+	Vector3 FedoraAgent::GetAgentPredictedPosition(Vector3 startingPoint, float interceptingSpeed) const
+	{
+		float dist = glm::length(ObjectTransform.Position - startingPoint);
+		float timeForObjectToIntercept = dist / interceptingSpeed;
+		Vector3 predictedAgentPos = GetFuturePosition(timeForObjectToIntercept);
+		return predictedAgentPos;
+	}
+
 	Team * FedoraAgent::GetTeam() const
 	{
 		return m_Team;

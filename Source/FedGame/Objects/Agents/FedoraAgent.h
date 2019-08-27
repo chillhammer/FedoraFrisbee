@@ -34,6 +34,7 @@ namespace Fed
 		bool	IsPlayerControlled() const;
 		bool	CanBeStolenFrom() const;
 		const Vector3 GetFuturePosition(float time) const;
+		Vector3 GetAgentPredictedPosition(Vector3 startingPoint, float interceptingSpeed) const;
 		Team* GetTeam() const;
 
 		void DrawSuit() const;

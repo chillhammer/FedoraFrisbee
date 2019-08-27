@@ -142,7 +142,7 @@ namespace Fed
 		ASSERT(m_TargetAgent && m_TargetAgent->GetHasFedora(), "TargetAgent must exist with fedora");
 		FedoraAgent* owner = GetOwner();
 		// Move towards agent future position to intercept them
-		Vector3 targetPos = GetAgentPredictedPosition(m_TargetAgent, glm::max(m_TargetAgent->GetMaxSpeed() * 0.5f, m_TargetAgent->m_Speed));
+		Vector3 targetPos = m_TargetAgent->GetAgentPredictedPosition(owner->ObjectTransform.Position, glm::max(m_TargetAgent->GetMaxSpeed() * 0.5f, m_TargetAgent->m_Speed));
 		Vector3 dir = targetPos - m_Owner->ObjectTransform.Position;
 		m_Accelerate = true;
 		owner->m_Speed = glm::max(owner->m_Speed, owner->GetMaxSpeed() * 0.5f);
@@ -207,15 +207,7 @@ namespace Fed
 	{
 		m_Blocked = blocked;
 	}
-	// Uses predicted future movement to throw fedora or to steal fedora
-	Vector3 FedoraAgentInputAI::GetAgentPredictedPosition(const FedoraAgent * agent, float interceptingSpeed) const
-	{
-		ASSERT(agent != nullptr, "Agent cannot be nullptr");
-		float dist = glm::length(GetOwner()->ObjectTransform.Position - agent->ObjectTransform.Position);
-		float timeForObjectToIntercept = dist / interceptingSpeed;
-		Vector3 predictedAgentPos = agent->GetFuturePosition(timeForObjectToIntercept);
-		return predictedAgentPos;
-	}
+	
 	// Returns owner of this component. Used within FSM
 	FedoraAgent * FedoraAgentInputAI::GetOwner() const
 	{

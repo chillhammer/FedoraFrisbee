@@ -26,7 +26,7 @@ namespace Fed::AgentAITestStates
 		Vector3 pointToFace = player->ObjectTransform.Position;
 		if (agent->GetHasFedora())
 		{
-			pointToFace = owner->GetAgentPredictedPosition(player, agent->GetFieldController()->GetFedoraLaunchSpeed());
+			pointToFace = player->GetAgentPredictedPosition(agent->ObjectTransform.Position, agent->GetFieldController()->GetFedoraLaunchSpeed());
 		}
 		bool facingPlayer = owner->FaceTowards(pointToFace, 55.5f);
 

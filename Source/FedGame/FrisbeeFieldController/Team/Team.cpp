@@ -192,7 +192,8 @@ namespace Fed
 				continue;
 
 			// TODO: Replace this with fancier algorithm
-			outPassPosition = potential->ObjectTransform.GetGlobalPosition();
+			outPassPosition = potential->GetAgentPredictedPosition(passing->ObjectTransform.Position, passing->GetFieldController()->GetFedoraLaunchSpeed());  
+			
 			return potential;
 		}
 		return nullptr;
