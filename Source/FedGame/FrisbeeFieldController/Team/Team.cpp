@@ -7,7 +7,7 @@
 
 namespace Fed
 {
-	Team::Team() : m_StateMachine(this, TeamStates::Standoff::Instance())
+	Team::Team() : m_StateMachine(this, TeamStates::Standoff::Instance()), m_PositionFinder(this)
 	{
 	}
 	TeamPlay Team::GetPlay() const
@@ -136,6 +136,11 @@ namespace Fed
 			risk += 1 / dist;
 		}
 		return risk;
+	}
+	// Draws the red blocks on the field to indicate the score in desirability for that position for the AI
+	void Team::DebugRenderPositionScores() const
+	{
+		m_PositionFinder.DebugRender();
 	}
 	std::vector<Vector3> Team::GetAgentPositions() const
 	{

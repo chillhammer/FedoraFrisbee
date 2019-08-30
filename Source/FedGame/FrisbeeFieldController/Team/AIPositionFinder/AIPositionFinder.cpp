@@ -1,4 +1,7 @@
 #include <FedPCH.h>
+#include <Resources/ResourceManager.h>
+#include <Transform/Transform.h>
+#include "../Team.h"
 #include "AIPositionFinder.h"
 namespace Fed {
 	AIPositionFinder::AIPositionFinder(const Team* team) : m_Team(team), m_BestPosition(nullptr)
@@ -16,15 +19,28 @@ namespace Fed {
 
 		m_Positions.reserve((z2 - z1) * (x2 - x1) / spacing);
 
-		for (float z = z1; glm::abs(z) < glm::abs(z2); z += spacing * zSign) 
+		for (float z = z1; glm::abs(z) <= glm::abs(z2); z += spacing * zSign) 
 		{
-			for (float x = x1; x < x2; x += spacing) 
+			for (float x = x1; x <= x2; x += spacing) 
 			{
 				float score = 1.0f;
 				// TODO: Create update function
 
 				m_Positions.emplace_back(Vector3(x, 0, z), score);
 			}
+		}
+	}
+
+	// Renders each spot
+	void AIPositionFinder::DebugRender() const
+	{
+		ModelPtr box = Resources.GetModel("WoodenBox");
+		ShaderPtr debug = Resources.GetShader("Debug");
+		Transform trans;
+		for (FieldPosition pos : m_Positions) {
+			trans.Position = pos.Position;
+			trans.Scale = Vector3(pos.Score, pos.Score, pos.Score);
+			box->Draw(debug, trans.GetMatrix());
 		}
 	}
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "../Team.h"
 #include <vector>
 
 namespace Fed
@@ -9,8 +8,9 @@ namespace Fed
 	class AIPositionFinder
 	{
 	public:
-		AIPositionFinder(const Team* team);
-		// TODO: debug-render and update functions
+		AIPositionFinder(const class Team* team);
+		// TODO: update functions
+		void DebugRender() const;
 	private:
 		struct FieldPosition {
 			Vector3 Position;

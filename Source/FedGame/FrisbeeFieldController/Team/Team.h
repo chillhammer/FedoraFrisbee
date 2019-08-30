@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <StateMachine/StateMachine.h>
+#include "AIPositionFinder/AIPositionFinder.h"
 
 namespace Fed
 {
@@ -26,6 +27,7 @@ namespace Fed
 		void SetFieldControllerReference(class FrisbeeFieldController* controller);
 		void SetPursuitAgent(class FedoraAgent* agent);
 		float CalculateRiskAtPos(Vector3 position);
+		void DebugRenderPositionScores() const;
 		std::vector<Vector3> GetAgentPositions() const;
 
 		class FrisbeeFieldController* GetFieldController() const;
@@ -38,6 +40,7 @@ namespace Fed
 		class FedoraAgent* FindClosesetAgentToFedora() const;
 		class FedoraAgent* FindPassToAgent(class FedoraAgent* passing, Vector3& outPassPosition) const;
 	private:
+		AIPositionFinder m_PositionFinder;
 		StateMachine<Team> m_StateMachine;
 		std::vector<class FedoraAgent*> m_Agents;
 		TeamColor m_Color;
