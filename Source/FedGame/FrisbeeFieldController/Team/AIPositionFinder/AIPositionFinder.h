@@ -9,8 +9,8 @@ namespace Fed
 	{
 	public:
 		AIPositionFinder(const class Team* team);
-		// TODO: update functions
 		void DebugRender() const;
+		void Update();
 	private:
 		struct FieldPosition {
 			Vector3 Position;
@@ -18,6 +18,7 @@ namespace Fed
 			FieldPosition() : Position(0, 0, 0), Score(0) {}
 			FieldPosition(Vector3 pos, float score) : Position(pos), Score(score) {}
 		};
+		void UpdateBestPosition();
 
 		const Team* m_Team;
 		const FieldPosition* m_BestPosition;

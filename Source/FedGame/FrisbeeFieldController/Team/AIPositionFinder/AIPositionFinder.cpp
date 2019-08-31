@@ -24,8 +24,6 @@ namespace Fed {
 			for (float x = x1; x <= x2; x += spacing) 
 			{
 				float score = 1.0f;
-				// TODO: Create update function
-
 				m_Positions.emplace_back(Vector3(x, 0, z), score);
 			}
 		}
