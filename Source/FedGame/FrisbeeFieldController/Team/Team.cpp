@@ -58,6 +58,7 @@ namespace Fed
 	}
 	void Team::Update()
 	{
+		m_PositionFinder.Update();
 		m_StateMachine.Update();
 	}
 	void Team::RemoveAgent(FedoraAgent * agent)

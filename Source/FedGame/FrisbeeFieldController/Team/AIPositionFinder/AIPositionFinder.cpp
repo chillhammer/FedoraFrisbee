@@ -1,10 +1,12 @@
 #include <FedPCH.h>
 #include <Resources/ResourceManager.h>
 #include <Transform/Transform.h>
+#include <Game/GameManager.h>
 #include "../Team.h"
+#include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include "AIPositionFinder.h"
 namespace Fed {
-	AIPositionFinder::AIPositionFinder(const Team* team) : m_Team(team), m_BestPosition(nullptr)
+	AIPositionFinder::AIPositionFinder(const Team* team) : m_Team(team), m_BestPosition(nullptr), m_UpdateTimer(0.0f)
 	{
 		// Fill in Positions
 		int zSign = (team->GetColor() == TeamColor::Blue ? -1 : 1); // Get Opposite Side of Goal
@@ -40,6 +42,34 @@ namespace Fed {
 			trans.Scale = Vector3(pos.Score, pos.Score, pos.Score);
 			box->Draw(debug, trans.GetMatrix());
 		}
+	}
+
+	void AIPositionFinder::Update()
+	{
+		m_UpdateTimer -= Game.DeltaTime();
+		if (m_UpdateTimer <= 0) {
+			UpdateBestPosition();
+			m_UpdateTimer = UPDATE_FREQUENCY;
+		}
+	}
+
+	void AIPositionFinder::UpdateBestPosition()
+	{
+		float bestScore = -1;
+		FieldPosition* bestPos = nullptr;
+		Vector3 fedoraPos = m_Team->GetFieldController()->GetFedoraPosition();
+		for (FieldPosition& pos : m_Positions) {
+			float distSqr = glm::length(pos.Position - fedoraPos);
+
+			pos.Score = 1 + distSqr * 0.05f;
+
+			// Finding Best Position
+			if (pos.Score > bestScore) {
+				bestScore = pos.Score;
+				bestPos = &pos;
+			}
+		}
+		m_BestPosition = bestPos;
 	}
 
 }

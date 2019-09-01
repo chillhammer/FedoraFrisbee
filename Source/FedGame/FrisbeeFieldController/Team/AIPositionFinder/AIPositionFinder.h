@@ -23,5 +23,7 @@ namespace Fed
 		const Team* m_Team;
 		const FieldPosition* m_BestPosition;
 		std::vector<FieldPosition> m_Positions;
+		float m_UpdateTimer;
+		const float UPDATE_FREQUENCY = 1.0f;
 	};
 }
