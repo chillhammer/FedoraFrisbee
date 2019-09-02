@@ -79,6 +79,21 @@ namespace Fed
 		}
 		return nullptr;
 	}
+	// Returns distance from point to goal
+	float Court::GetDistSqrToGoal(const Vector3& pos, const Team* team) const
+	{
+		ASSERT(team, "Must pass in valid Team pointer");
+		for (const GoalTrigger& goal : m_Goals)
+		{
+			if (goal.Color == team->GetColor()) {
+				Vector3 goalCenter = goal.Object.GetBoundingBox().GetCenter();
+				goalCenter.y = 0.0f;
+				return glm::length2(goalCenter - pos);
+			}
+		}
+		ASSERT(false, "Could not find goal");
+		return -1.0f;
+	}
 
 	// Draws walls' debug box
 	void Court::DrawDebugWalls() const

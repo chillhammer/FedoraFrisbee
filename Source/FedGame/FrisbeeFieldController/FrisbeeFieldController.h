@@ -32,6 +32,7 @@ namespace Fed
 		bool IsFedoraMoving() const;
 		void StunAgent(const FedoraAgent* agent, float time = 1.0f);
 		float		GetFedoraLaunchSpeed() const;
+		float		GetFedoraRange() const;
 		Vector3		GetFedoraPosition() const;
 		const int	GetLastThrownAgentID() const;
 		Team*		GetTeam(TeamColor color);

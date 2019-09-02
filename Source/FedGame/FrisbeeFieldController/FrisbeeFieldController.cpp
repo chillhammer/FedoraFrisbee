@@ -112,6 +112,10 @@ namespace Fed
 		ASSERT(m_Fedora != nullptr, "Must have fedora reference");
 		return m_Fedora->GetLaunchSpeed();
 	}
+	float FrisbeeFieldController::GetFedoraRange() const
+	{
+		return m_Fedora->GetThrowRange();
+	}
 	// Queries to check if certain agent has fedora
 	bool FrisbeeFieldController::AgentHasFedora(const FedoraAgent * agent) const
 	{
