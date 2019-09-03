@@ -151,6 +151,25 @@ namespace Fed
 		}
 		return positions;
 	}
+	// Loops agents to see if they can intercept fedora throw
+	// Will also return the first agent it finds that can intercept. May change later to find best agent instead of first.
+	bool Team::CanInterceptFedoraThrow(Vector3 throwPos, Vector3 targetPos, FedoraAgent* outInterceptAgent, Vector3* outInterceptPos) const
+	{
+		Vector3 toTarget = targetPos - throwPos;
+		for (FedoraAgent* agent : m_Agents) {
+			Vector3 toAgent = agent->ObjectTransform.Position - throwPos;
+			// Ignore if agent is behind throw
+			if (glm::dot(toAgent, toTarget) <= 0) {
+				continue;
+			}
+			if (m_FieldController->CanAgentInterceptFedora(agent, outInterceptPos)) {
+				outInterceptAgent = agent;
+				return true;
+			}
+
+		}
+		return false;
+	}
 	FedoraAgent* Team::GetPursuitAgent() const
 	{
 		return m_PursuitAgent;

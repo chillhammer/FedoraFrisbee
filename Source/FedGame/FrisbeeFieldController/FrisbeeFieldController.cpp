@@ -181,6 +181,16 @@ namespace Fed
 		}
 		return false;
 	}
+	// Args: throwTeam: team that will be throwing the fedora. 
+	//		 throwPos:  position to launch fedora from. 
+	//		 targetPos: position to throw fedora to
+	// Returns whether given throw can be intercepted by any enemy
+	bool FrisbeeFieldController::CanEnemyInterceptFedoraThrow(const Team* throwTeam, Vector3 throwPos, Vector3 targetPos, FedoraAgent* outInterceptAgent, Vector3* outInterceptPos)
+	{
+		Team* enemyTeam = GetEnemyTeam(throwTeam->GetColor());
+
+		return enemyTeam->CanInterceptFedoraThrow(throwPos, targetPos, outInterceptAgent, outInterceptPos);
+	}
 	Vector3 FrisbeeFieldController::GetFedoraPosition() const
 	{
 		ASSERT(m_Fedora != nullptr, "Fedora Position cannot be retrieved");
@@ -190,15 +200,15 @@ namespace Fed
 	{
 		return m_LastThrownAgentID;
 	}
-	Team* FrisbeeFieldController::GetTeam(TeamColor color)
+	Team* FrisbeeFieldController::GetTeam(TeamColor color) 
 	{
 		return (color == TeamColor::Blue ? &m_BlueTeam : &m_RedTeam);
 	}
-	Team* FrisbeeFieldController::GetEnemyTeam(TeamColor color)
+	Team* FrisbeeFieldController::GetEnemyTeam(TeamColor color) 
 	{
 		return GetTeam((color == TeamColor::Blue ? TeamColor::Red : TeamColor::Blue));
 	}
-	Team* FrisbeeFieldController::GetEnemyTeam(Team* team)
+	Team* FrisbeeFieldController::GetEnemyTeam(Team* team) 
 	{
 		return GetEnemyTeam(team->GetColor());
 	}

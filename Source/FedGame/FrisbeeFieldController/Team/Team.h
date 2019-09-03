@@ -29,6 +29,8 @@ namespace Fed
 		float CalculateRiskAtPos(Vector3 position);
 		void DebugRenderPositionScores() const;
 		std::vector<Vector3> GetAgentPositions() const;
+		bool CanInterceptFedoraThrow(Vector3 throwPos, Vector3 targetPos, 
+			FedoraAgent* outInterceptAgent = nullptr, Vector3* outInterceptPos = nullptr) const;
 
 		class FrisbeeFieldController* GetFieldController() const;
 
