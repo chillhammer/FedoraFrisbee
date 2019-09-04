@@ -67,6 +67,8 @@ namespace Fed {
 
 			// Reward spots within range of goal
 			float distGoal = m_Team->GetFieldController()->GetCourt()->GetDistSqrToGoal(pos.Position, enemyTeam);
+			// Get Goal Position
+			// bool canScoreGoal = !m_Team->GetFieldController()->CanEnemyInterceptFedoraThrow(m_Team, pos, )
 			float nearGoalScore = (distGoal < fedoraRange * fedoraRange ? 1.0f : 0.0f);
 
 			// TODO: Reward spots that will not be intercepted from
