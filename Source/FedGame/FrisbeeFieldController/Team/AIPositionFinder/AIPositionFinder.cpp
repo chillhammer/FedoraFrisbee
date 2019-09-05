@@ -35,11 +35,13 @@ namespace Fed {
 	{
 		ModelPtr box = Resources.GetModel("WoodenBox");
 		ShaderPtr debug = Resources.GetShader("Debug");
+		ShaderPtr bestShader = Resources.GetShader("Model");
 		Transform trans;
-		for (FieldPosition pos : m_Positions) {
+		for (const FieldPosition& pos : m_Positions) {
+			ShaderPtr shader = (&pos == m_BestPosition ? bestShader : debug);
 			trans.Position = pos.Position;
 			trans.Scale = Vector3(pos.Score, pos.Score, pos.Score);
-			box->Draw(debug, trans.GetMatrix());
+			box->Draw(shader, trans.GetMatrix());
 		}
 	}
 
@@ -52,13 +54,19 @@ namespace Fed {
 		}
 	}
 
+	Vector3 AIPositionFinder::GetBestPosition() const
+	{
+		return m_BestPosition->Position;
+	}
+
 	void AIPositionFinder::UpdateBestPosition()
 	{
 		float bestScore = -1;
+		FrisbeeFieldController* controller = m_Team->GetFieldController();
 		FieldPosition* bestPos = nullptr;
-		Vector3 fedoraPos = m_Team->GetFieldController()->GetFedoraPosition();
-		const Team* enemyTeam = m_Team->GetFieldController()->GetEnemyTeam(m_Team->GetColor());
-		float fedoraRange = m_Team->GetFieldController()->GetFedoraRange();
+		Vector3 fedoraPos = controller->GetFedoraPosition();
+		const Team* enemyTeam = controller->GetEnemyTeam(m_Team->GetColor());
+		float fedoraRange = controller->GetFedoraRange();
 
 		for (FieldPosition& pos : m_Positions) {
 			// Reward spots far from fedora
@@ -66,14 +74,25 @@ namespace Fed {
 			float distScore = dist * 0.03f;
 
 			// Reward spots within range of goal
-			float distGoal = m_Team->GetFieldController()->GetCourt()->GetDistSqrToGoal(pos.Position, enemyTeam);
-			// Get Goal Position
-			// bool canScoreGoal = !m_Team->GetFieldController()->CanEnemyInterceptFedoraThrow(m_Team, pos, )
-			float nearGoalScore = (distGoal < fedoraRange * fedoraRange ? 1.0f : 0.0f);
+			Vector3 goalPos = controller->GetCourt()->GetGoalPosition(enemyTeam);
+			float goalDistSqr = glm::length2(goalPos - pos.Position);
+			float nearGoalScore = 0.0f; 
+			if (goalDistSqr < fedoraRange * fedoraRange) {
+				// Only calculate expensive intercept check if within goal range
+				bool canScoreGoal = !controller->CanEnemyInterceptFedoraThrow(m_Team, pos.Position, goalPos);
+				if (canScoreGoal)
+					nearGoalScore = 1.0f;
+			}
 
-			// TODO: Reward spots that will not be intercepted from
+			// Reward spots that will not be intercepted from
+			bool canPass = !controller->CanEnemyInterceptFedoraThrow(m_Team, fedoraPos, pos.Position);
+			float passScore = (canPass ? 1.0f : 0.0f);
 
-			pos.Score = 1 + distScore + nearGoalScore;
+			distScore = 0.0f;
+			// pass score currently always returning true
+			nearGoalScore = 0.0f;
+
+			pos.Score = 1 + distScore + nearGoalScore + passScore;
 
 			// Finding Best Position
 			if (pos.Score > bestScore) {

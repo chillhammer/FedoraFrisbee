@@ -175,9 +175,7 @@ namespace Fed
 					*outInterceptPos = interceptPoint;
 				return true;
 			}
-			//LOG("Cannot intercept. Time Ahead: {0}   -   Time To Intercept: {1}", timeAhead, timeToIntercept);
-			//LOG("Cannot intercept. Intecept Point: ({0}, {1}, {2})", interceptPoint.x, interceptPoint.y, interceptPoint.z);
-			//LOG("Cannot intercept. Dist to Intercept: {0}   --   Agent Max Speed: {1}", distToIntercept, agent->GetMaxSpeed());
+			// TODO: what if fedora is still on agent                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  a
 		}
 		return false;
 	}

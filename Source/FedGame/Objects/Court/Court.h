@@ -23,7 +23,7 @@ namespace Fed
 		const std::vector<GoalTrigger>& GetGoals() const;
 		std::vector<const GameObject*> GetCollidingWalls(const GameObject& other) const;
 		const GoalTrigger* GetCollidingGoal(const GameObject& other) const;
-		float GetDistSqrToGoal(const Vector3& pos, const Team* team) const;
+		Vector3 GetGoalPosition(const Team* team) const;
 		void DrawDebugWalls() const;
 		void DrawDebugGoals() const;
 	private:

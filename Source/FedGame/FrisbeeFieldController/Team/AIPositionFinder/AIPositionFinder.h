@@ -11,6 +11,7 @@ namespace Fed
 		AIPositionFinder(const class Team* team);
 		void DebugRender() const;
 		void Update();
+		Vector3 GetBestPosition() const;
 	private:
 		struct FieldPosition {
 			Vector3 Position;
@@ -24,6 +25,6 @@ namespace Fed
 		const FieldPosition* m_BestPosition;
 		std::vector<FieldPosition> m_Positions;
 		float m_UpdateTimer;
-		const float UPDATE_FREQUENCY = 1.0f;
+		const float UPDATE_FREQUENCY = 0.5f;
 	};
 }
