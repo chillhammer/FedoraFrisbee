@@ -162,6 +162,15 @@ namespace Fed
 			if (glm::dot(toAgent, toTarget) <= 0) {
 				continue;
 			}
+			float distToFedora = glm::length(toAgent);
+
+			// Ignore if agent is farther than target
+			if (glm::length(toTarget) < distToFedora)
+				continue;
+
+			
+
+			// TODO: Replace this conditional
 			if (m_FieldController->CanAgentInterceptFedora(agent, outInterceptPos)) {
 				outInterceptAgent = agent;
 				return true;
