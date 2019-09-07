@@ -163,15 +163,26 @@ namespace Fed
 				continue;
 			}
 			float distToFedora = glm::length(toAgent);
+			float distToTarget = glm::length(toTarget);
 
 			// Ignore if agent is farther than target
-			if (glm::length(toTarget) < distToFedora)
+			if (distToTarget < distToFedora)
 				continue;
 
-			
+			float fedoraSpeed = m_FieldController->GetFedoraLaunchSpeed();
+			float timeAhead = distToFedora / fedoraSpeed; // estimation, not counting deceleration
 
-			// TODO: Replace this conditional
-			if (m_FieldController->CanAgentInterceptFedora(agent, outInterceptPos)) {
+			float distFedoraTraveled = timeAhead * fedoraSpeed;
+			Vector3 interceptPoint = throwPos + glm::normalize(toTarget) * distFedoraTraveled;
+
+			float distToIntercept = glm::length(agent->ObjectTransform.Position - interceptPoint);
+			float timeToIntercept = distToIntercept / agent->GetMaxSpeed();
+
+			float distToInterceptFromTarget = glm::length(targetPos - interceptPoint);
+
+			// If there is enough time to get into position
+			// and can reach interception point before agent at target location
+			if (timeToIntercept < timeAhead || distToIntercept < distToInterceptFromTarget) {
 				outInterceptAgent = agent;
 				return true;
 			}

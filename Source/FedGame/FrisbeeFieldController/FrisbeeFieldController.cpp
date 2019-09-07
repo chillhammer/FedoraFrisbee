@@ -173,7 +173,7 @@ namespace Fed
 				if (outInterceptPos != nullptr)
 					*outInterceptPos = interceptPoint;
 				return true;
-			}                                                                                                                                                                                                                                                                                                                                                                                                                                                                             a
+			}
 		}
 		LOG_WARN("Trying to call CanAgentInterceptFedora() when fedora is not in-air");
 		return false;
