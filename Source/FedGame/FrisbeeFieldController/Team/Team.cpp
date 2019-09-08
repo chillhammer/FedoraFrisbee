@@ -182,7 +182,7 @@ namespace Fed
 
 			// If there is enough time to get into position
 			// and can reach interception point before agent at target location
-			if (timeToIntercept < timeAhead || distToIntercept < distToInterceptFromTarget) {
+			if (timeToIntercept < timeAhead/* || distToIntercept < distToInterceptFromTarget*/) {
 				outInterceptAgent = agent;
 				return true;
 			}
