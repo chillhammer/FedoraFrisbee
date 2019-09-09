@@ -181,8 +181,8 @@ namespace Fed
 			float distToInterceptFromTarget = glm::length(targetPos - interceptPoint);
 
 			// If there is enough time to get into position
-			// and can reach interception point before agent at target location
-			if (timeToIntercept < timeAhead/* || distToIntercept < distToInterceptFromTarget*/) {
+			// or can reach interception point before agent at target location
+			if (timeToIntercept < timeAhead || distToIntercept < distToInterceptFromTarget) {
 				outInterceptAgent = agent;
 				return true;
 			}

@@ -37,10 +37,18 @@ namespace Fed {
 		ShaderPtr debug = Resources.GetShader("Debug");
 		ShaderPtr bestShader = Resources.GetShader("Model");
 		Transform trans;
+
+		// Normalize scale only for debug rendering purposes
+		float highScore = 0.0f;
+		for (const FieldPosition& pos : m_Positions) {
+			highScore = glm::max(pos.Score, highScore);
+		}
+
 		for (const FieldPosition& pos : m_Positions) {
 			ShaderPtr shader = (&pos == m_BestPosition ? bestShader : debug);
+			float scale = pos.Score / (highScore * 0.5f);
 			trans.Position = pos.Position;
-			trans.Scale = Vector3(pos.Score, pos.Score, pos.Score);
+			trans.Scale = Vector3(scale, scale, scale);
 			box->Draw(shader, trans.GetMatrix());
 		}
 	}
@@ -81,16 +89,17 @@ namespace Fed {
 				// Only calculate expensive intercept check if within goal range
 				bool canScoreGoal = !controller->CanEnemyInterceptFedoraThrow(m_Team, pos.Position, goalPos);
 				if (canScoreGoal)
-					nearGoalScore = 1.0f;
+					nearGoalScore = 0.5f;
 			}
 
 			// Reward spots that will not be intercepted from
 			bool canPass = !controller->CanEnemyInterceptFedoraThrow(m_Team, fedoraPos, pos.Position);
-			float passScore = (canPass ? 1.0f : 0.0f);
+			float passScore = (canPass ? 2.0f : 0.0f);
 
-			distScore = 0.0f;
+			//distScore = 0.0f;
 			// pass score currently always returning true
-			nearGoalScore = 0.0f;
+			//passScore = 0.0f;
+			// nearGoalScore = 0.0f;
 
 			pos.Score = 1 + distScore + nearGoalScore + passScore;
 

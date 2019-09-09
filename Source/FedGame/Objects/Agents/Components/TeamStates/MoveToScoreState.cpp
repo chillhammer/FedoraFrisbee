@@ -11,6 +11,7 @@ namespace Fed::AgentAITeamStates
 	// Move to goal to score!
 	void MoveToScore::Enter(FedoraAgentInputAI* owner)
 	{
+		// This blocked flag means if it's path is blocked and thus abort mission
 		owner->SetBlocked(false);
 	}
 	void MoveToScore::Execute(FedoraAgentInputAI* owner)
