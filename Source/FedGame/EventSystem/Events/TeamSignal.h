@@ -82,4 +82,16 @@ namespace Fed
 	private:
 		float m_Time;
 	};
+
+	// Attempt to get fedora into goal
+	class AssistScoreSignal : public Event
+	{
+	public:
+		AssistScoreSignal() {}
+		std::string ToString() const override {
+			return "Assist Score Signal";
+		}
+		EVENT_CLASS_TYPE(AssistScore)
+		EVENT_CLASS_CATEGORY(EventCategoryTeam)
+	};
 }

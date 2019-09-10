@@ -23,6 +23,7 @@ namespace Fed
 		Evnt::Dispatch<DefendSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnDefendSignal));
 		Evnt::Dispatch<StealSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnStealSignal));
 		Evnt::Dispatch<StunSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnStunSignal));
+		Evnt::Dispatch<AssistScoreSignal>(e, EVENT_BIND_FN(FedoraAgentInputAI, OnAssistScoreSignal));
 	}
 	bool FedoraAgentInputAI::OnWaitSignal(WaitSignal& e)
 	{
@@ -52,6 +53,11 @@ namespace Fed
 	bool FedoraAgentInputAI::OnStunSignal(StunSignal& e)
 	{
 		m_StunTimer = e.GetTime();
+		return false;
+	}
+	bool FedoraAgentInputAI::OnAssistScoreSignal(AssistScoreSignal& e)
+	{
+		// TODO: complete assist score signal
 		return false;
 	}
 	void FedoraAgentInputAI::Update(FedoraAgent * owner)

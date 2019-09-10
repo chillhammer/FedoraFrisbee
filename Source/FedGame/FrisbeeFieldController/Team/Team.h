@@ -29,6 +29,7 @@ namespace Fed
 		float CalculateRiskAtPos(Vector3 position);
 		void DebugRenderPositionScores() const;
 		std::vector<Vector3> GetAgentPositions() const;
+		Vector3 GetBestAssistPosition() const;
 		bool CanInterceptFedoraThrow(Vector3 throwPos, Vector3 targetPos, 
 			FedoraAgent* outInterceptAgent = nullptr, Vector3* outInterceptPos = nullptr) const;
 
@@ -40,6 +41,7 @@ namespace Fed
 
 		class FedoraAgent* FindClosestAgent(Vector3 position) const;
 		class FedoraAgent* FindClosesetAgentToFedora() const;
+		class FedoraAgent* FindClosestAgentToEnemyGoal(int rank = 0, class FedoraAgent* agentToIgnore = nullptr);
 		class FedoraAgent* FindPassToAgent(class FedoraAgent* passing, Vector3& outPassPosition) const;
 	private:
 		AIPositionFinder m_PositionFinder;

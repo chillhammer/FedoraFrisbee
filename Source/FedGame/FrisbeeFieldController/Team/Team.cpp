@@ -100,10 +100,16 @@ namespace Fed
 		m_Play = play;
 		if (play == TeamPlay::Offensive) {
 			m_StateMachine.ChangeState(TeamStates::Score::Instance());
+			
 			WaitSignal waitSignal;
 			BroadcastSignal(waitSignal);
+
 			ScoreSignal signal;
 			agentWithFedora->OnEvent(nullptr, signal);
+
+			AssistScoreSignal assistSignal;
+			FindClosestAgentToEnemyGoal(0, agentWithFedora)->OnEvent(nullptr, assistSignal);
+
 		} else if (play == TeamPlay::Defensive) {
 			m_StateMachine.ChangeState(TeamStates::Defend::Instance());
 
@@ -150,6 +156,10 @@ namespace Fed
 			positions.push_back(agent->ObjectTransform.Position);
 		}
 		return positions;
+	}
+	Vector3 Team::GetBestAssistPosition() const
+	{
+		return m_PositionFinder.GetBestPosition();
 	}
 	// Loops agents to see if they can intercept fedora throw
 	// Will also return the first agent it finds that can intercept. May change later to find best agent instead of first.
@@ -220,6 +230,34 @@ namespace Fed
 	FedoraAgent* Team::FindClosesetAgentToFedora() const
 	{
 		return FindClosestAgent(m_FieldController->GetFedoraPosition());
+	}
+	FedoraAgent* Team::FindClosestAgentToEnemyGoal(int rank, FedoraAgent* agentToIgnore)
+	{
+		ASSERT(rank < m_Agents.size(), "Trying to find rank beyond agent list");
+		float zEnemyGoal = m_FieldController->GetCourt()->GetGoalPosition(m_FieldController->GetEnemyTeam(this)).z;
+
+		auto sortedAgents = m_Agents;
+		std::sort(sortedAgents.begin(), sortedAgents.end(),
+		[zEnemyGoal](const FedoraAgent* a, const FedoraAgent* b)
+		{
+			float aScore = glm::abs(a->ObjectTransform.Position.z - zEnemyGoal);
+			float bScore = glm::abs(b->ObjectTransform.Position.z - zEnemyGoal);
+			return aScore < bScore;
+		});
+
+		FedoraAgent* resultingAgent = sortedAgents[rank];
+
+		if (resultingAgent == agentToIgnore) {
+			// If last agent, then return none
+			if (rank == m_Agents.size() - 1) {
+				LOG_WARN("Cannot find closest agent to goal due to AgentToIgnore in Team::FindClosestAgentToEnemyGoal()");
+				return nullptr;
+			}
+			else {
+				resultingAgent = sortedAgents[rank + 1];
+			}
+		}
+		return resultingAgent;
 	}
 	// Find agent to pass to, if any
 	FedoraAgent* Team::FindPassToAgent(FedoraAgent* passing, Vector3& outPassPosition) const

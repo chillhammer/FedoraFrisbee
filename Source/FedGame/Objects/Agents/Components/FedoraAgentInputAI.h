@@ -33,6 +33,7 @@ namespace Fed
 		bool OnDefendSignal(DefendSignal& e);
 		bool OnStealSignal(StealSignal& e);
 		bool OnStunSignal(StunSignal& e);
+		bool OnAssistScoreSignal(AssistScoreSignal& e);
 	private:
 		StateMachine<FedoraAgentInputAI> m_StateMachine;
 		FedoraAgent* m_Owner;
