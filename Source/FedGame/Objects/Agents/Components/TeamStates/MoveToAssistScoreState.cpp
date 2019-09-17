@@ -9,17 +9,17 @@
 namespace Fed::AgentAITeamStates
 {
 	// Move to best assist position
-	void MoveToScore::Enter(FedoraAgentInputAI* owner)
+	void MoveToAssistScore::Enter(FedoraAgentInputAI* owner)
 	{
 	}
-	void MoveToScore::Execute(FedoraAgentInputAI* owner)
+	void MoveToAssistScore::Execute(FedoraAgentInputAI* owner)
 	{
 		FedoraAgent* agent = owner->GetOwner();
 		FrisbeeFieldController* controller = agent->GetFieldController();
 
 		Vector3 targetPos = controller->GetTeam(agent->GetTeam()->GetColor())->GetBestAssistPosition();
 
-		// Actually Move to Goal
+		// Actually Move to Assist Position
 		float facingSpeed = 3.5f;
 		owner->FaceTowards(targetPos, facingSpeed);
 		owner->MoveTowards(targetPos);

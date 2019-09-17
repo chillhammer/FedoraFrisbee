@@ -57,7 +57,7 @@ namespace Fed
 	}
 	bool FedoraAgentInputAI::OnAssistScoreSignal(AssistScoreSignal& e)
 	{
-		// TODO: complete assist score signal
+		m_StateMachine.ChangeState(AgentAITeamStates::MoveToAssistScore::Instance());
 		return false;
 	}
 	void FedoraAgentInputAI::Update(FedoraAgent * owner)
