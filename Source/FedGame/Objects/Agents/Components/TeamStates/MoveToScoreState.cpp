@@ -36,7 +36,6 @@ namespace Fed::AgentAITeamStates
 
 		// If Path Blocked, Throw To Nearest Teammate
 		if (owner->IsBlocked()) {
-			// TODO: find teammate closest to enemy goal
 			const Team* team = agent->GetTeam();
 			Vector3 throwToPos;
 			// TODO: fix find pass function
@@ -47,14 +46,17 @@ namespace Fed::AgentAITeamStates
 					owner->ThrowFrisbee(agent);
 					owner->GetFSM().ChangeState(AgentAITeamStates::Wait::Instance());
 				}
-				owner->MoveAndAvoidEnemies(throwToPos);
+				else {
+					owner->MoveAndAvoidEnemies(throwToPos);
+				}
 				return;
 			}
 		}
 
 		// Actually Move to Goal
 		float facingSpeed = 3.5f;
-		owner->FaceTowards(targetPos, facingSpeed);
+		// TODO: Face actual direction moved
+		owner->FaceTowards(targetPos, facingSpeed); 
 		owner->MoveAndAvoidEnemies(targetPos);
 
 	}

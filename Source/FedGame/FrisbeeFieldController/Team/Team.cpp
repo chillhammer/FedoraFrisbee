@@ -259,6 +259,29 @@ namespace Fed
 		}
 		return resultingAgent;
 	}
+	// find closest agent to ray
+	FedoraAgent* Team::FindClosestAgentToRay(Vector3 origin, Vector3 dir, FedoraAgent* agentToIgnore)
+	{
+		FedoraAgent* closestAgent = nullptr;
+		float smallestDistSqr = -1;
+		for (FedoraAgent* agent : m_Agents) {
+			if (agent == agentToIgnore) {
+				continue;
+			}
+			Vector3 toAgent = agent->ObjectTransform.Position - origin;
+			float dot = glm::dot(toAgent, dir);
+			if (dot <= 0)
+				continue;
+
+			Vector3 projected = dot * dir + origin;
+			float distSqr = glm::length2(projected - agent->ObjectTransform.Position);
+			if (closestAgent == nullptr || distSqr < smallestDistSqr) {
+				closestAgent = agent;
+				smallestDistSqr = distSqr;
+			}
+		}
+		return closestAgent;
+	}
 	// Find agent to pass to, if any
 	FedoraAgent* Team::FindPassToAgent(FedoraAgent* passing, Vector3& outPassPosition) const
 	{

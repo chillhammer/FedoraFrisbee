@@ -105,10 +105,10 @@ namespace Fed
 	{
 		FedoraAgent* owner = GetOwner();
 		Vector3 agentPos = owner->ObjectTransform.Position;
-		Vector3 dir = glm::normalize(point - agentPos);
+		Vector3 toDest = point - agentPos;
+		Vector3 dir = glm::normalize(toDest);
 		float visionRadius = 7.0f;
 		Vector3 avoidanceSteer = Vector3(0, 0, 0);
-		float closestDist = -1;
 
 		Team* enemyTeam = owner->GetFieldController()->GetEnemyTeam(owner->GetTeam());
 		auto enemyPositions = enemyTeam->GetAgentPositions();
@@ -124,18 +124,24 @@ namespace Fed
 			if (dist > visionRadius)
 				continue;
 
-			// Only consider closest enemy agent
-			if (closestDist == -1 || dist < closestDist) {
-				Vector3 projected = dir * glm::dot(glm::normalize(toEnemy), dir) * dist;
-				float distFromPath = glm::length(toEnemy - projected);
-				float avoidanceRadius = 3.0f;
-				// Ignore if farther than avoidance radius
-				if (distFromPath >= avoidanceRadius)
-					continue;
-				// Will set avoidance steer in direction of enemy -> path (away from enemy) multiplied by how close they are
-				avoidanceSteer = glm::normalize(projected - toEnemy) * (avoidanceRadius - distFromPath);
-				closestDist = dist;
-			}
+			// Consider all enemies within radius, not just closest
+			Vector3 projected = dir * glm::dot(toEnemy, dir); // Enemy position projected on path [local space]
+			float distFromPath = glm::length(toEnemy - projected);
+			float avoidanceRadius = 3.0f;
+			// Ignore if farther than avoidance radius
+			if (distFromPath >= avoidanceRadius)
+				continue;
+			// Will set avoidance steer in direction of enemy -> path (away from enemy) multiplied by how close they are
+			//Vector3 avoidanceDir = projected - toEnemy;
+			Vector3 avoidanceDir = -toEnemy;
+			// If straight ahead, go left. Prevents normalizing zero vector
+			//if (glm::length2(avoidanceDir) < 0.05f) { 
+			//	avoidanceDir = Vector3(-dir.z, 0.0f, dir.x);
+			//}
+			avoidanceDir = glm::normalize(avoidanceDir);
+
+			//avoidanceSteer += avoidanceDir * (avoidanceRadius - distFromPath);
+			avoidanceSteer += avoidanceDir * (avoidanceRadius - dist) * 2.0f;
 		}
 		bool result = MoveTowards(point);
 		owner->m_Direction = glm::normalize(owner->m_Direction + avoidanceSteer);

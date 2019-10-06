@@ -4,6 +4,7 @@
 #include <EventSystem/Events/FrisbeeFieldEvent.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
 #include "FedoraAgentInputPlayer.h"
+#include <EventSystem/Events/TeamSignal.h>
 #include "../FedoraAgent.h"
 
 namespace Fed
@@ -77,6 +78,11 @@ namespace Fed
 		{
 			ThrowFrisbee(owner);
 			m_InputFedoraThrow = false;
+
+			FedoraAgent* bestReceiver = owner->m_Team->FindClosestAgentToRay(owner->ObjectTransform.Position, owner->ObjectTransform.GetHeading(), owner);
+			PursueSignal signal;
+			if (bestReceiver)
+				bestReceiver->OnEvent(nullptr, signal);
 		}
 	}
 	bool FedoraAgentInputPlayer::OnKeyPressed(KeyPressedEvent & e)

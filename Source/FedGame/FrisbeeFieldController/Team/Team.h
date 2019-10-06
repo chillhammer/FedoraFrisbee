@@ -42,6 +42,7 @@ namespace Fed
 		class FedoraAgent* FindClosestAgent(Vector3 position) const;
 		class FedoraAgent* FindClosesetAgentToFedora() const;
 		class FedoraAgent* FindClosestAgentToEnemyGoal(int rank = 0, class FedoraAgent* agentToIgnore = nullptr);
+		class FedoraAgent* FindClosestAgentToRay(Vector3 origin, Vector3 dir, class FedoraAgent* agentToIgnore = nullptr);
 		class FedoraAgent* FindPassToAgent(class FedoraAgent* passing, Vector3& outPassPosition) const;
 	private:
 		AIPositionFinder m_PositionFinder;
