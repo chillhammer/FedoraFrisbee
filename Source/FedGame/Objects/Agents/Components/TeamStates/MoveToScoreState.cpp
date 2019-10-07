@@ -28,7 +28,7 @@ namespace Fed::AgentAITeamStates
 		// Check for blocking agents
 		if (!owner->IsBlocked()) {
 			const FedoraAgent* blocking = controller->FindAgentInAgentPath(agent, targetPos);
-			float blockingRadius = 7.0f;
+			float blockingRadius = 6.0f;
 			if (blocking != nullptr && glm::length2(blocking->ObjectTransform.Position - agent->ObjectTransform.Position) < blockingRadius * blockingRadius) {
 				owner->SetBlocked(true);
 			}
@@ -38,13 +38,15 @@ namespace Fed::AgentAITeamStates
 		if (owner->IsBlocked()) {
 			const Team* team = agent->GetTeam();
 			Vector3 throwToPos;
-			// TODO: fix find pass function
-			const FedoraAgent* passToAgent = team->FindPassToAgent(agent, throwToPos);
+			FedoraAgent* passToAgent = team->FindPassToAgent(agent, throwToPos);
 
 			if (passToAgent) {
 				if (owner->FaceTowards(throwToPos, 9.5f)) {
 					owner->ThrowFrisbee(agent);
 					owner->GetFSM().ChangeState(AgentAITeamStates::Wait::Instance());
+
+					PursueSignal signal;
+					passToAgent->OnEvent(nullptr, signal);
 				}
 				else {
 					owner->MoveAndAvoidEnemies(throwToPos);
@@ -56,7 +58,15 @@ namespace Fed::AgentAITeamStates
 		// Actually Move to Goal
 		float facingSpeed = 3.5f;
 		// TODO: Face actual direction moved
-		owner->FaceTowards(targetPos, facingSpeed); 
+		Vector3 facingPos = targetPos;
+		float dotThreshold = 0.4f; // Min limit before facing moving direction
+		Vector3 toTarget = glm::normalize(targetPos - agent->ObjectTransform.Position);
+
+		if (glm::dot(toTarget, agent->GetDirection()) < dotThreshold) {
+			facingPos = agent->ObjectTransform.Position + agent->GetDirection();
+		}
+
+		owner->FaceTowards(facingPos, facingSpeed); 
 		owner->MoveAndAvoidEnemies(targetPos);
 
 	}

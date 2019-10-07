@@ -12,7 +12,7 @@ namespace Fed::TeamStates
 	// Tries to retrieve the fedora from the enemy
 	void Defend::Enter(Team* owner)
 	{
-		WaitSignal signal;
+		DefendSignal signal;
 		owner->BroadcastSignal(signal);
 	}
 	void Defend::Execute(Team* owner)

@@ -21,12 +21,6 @@ namespace Fed::AgentAITeamStates
 		owner->FaceTowards(frisbeePos, facingSpeed);
 		owner->MoveTowards(frisbeePos);
 
-		// Stop chasing if it is picked up
-		if (!controller->IsFedoraFree())
-		{
-			owner->GetFSM().ChangeState(Wait::Instance());
-		}
-
 	}
 	void ChaseFrisbee::Exit(FedoraAgentInputAI* owner)
 	{

@@ -42,6 +42,7 @@ namespace Fed
 	}
 	bool FedoraAgentInputAI::OnDefendSignal(DefendSignal& e)
 	{
+		m_StateMachine.ChangeState(AgentAITeamStates::Defend::Instance());
 		return false;
 	}
 	bool FedoraAgentInputAI::OnStealSignal(StealSignal& e)
@@ -107,10 +108,11 @@ namespace Fed
 		Vector3 agentPos = owner->ObjectTransform.Position;
 		Vector3 toDest = point - agentPos;
 		Vector3 dir = glm::normalize(toDest);
-		float visionRadius = 7.0f;
-		Vector3 avoidanceSteer = Vector3(0, 0, 0);
-
+		float visionRadius = 10.0f;
 		Team* enemyTeam = owner->GetFieldController()->GetEnemyTeam(owner->GetTeam());
+		
+		// Avoid Enemies
+		Vector3 avoidanceSteer = Vector3(0, 0, 0);
 		auto enemyPositions = enemyTeam->GetAgentPositions();
 
 		for (const Vector3& ePos : enemyPositions) {
@@ -127,24 +129,40 @@ namespace Fed
 			// Consider all enemies within radius, not just closest
 			Vector3 projected = dir * glm::dot(toEnemy, dir); // Enemy position projected on path [local space]
 			float distFromPath = glm::length(toEnemy - projected);
-			float avoidanceRadius = 3.0f;
+			float avoidanceRadius = 7.0f;
 			// Ignore if farther than avoidance radius
 			if (distFromPath >= avoidanceRadius)
 				continue;
-			// Will set avoidance steer in direction of enemy -> path (away from enemy) multiplied by how close they are
-			//Vector3 avoidanceDir = projected - toEnemy;
-			Vector3 avoidanceDir = -toEnemy;
-			// If straight ahead, go left. Prevents normalizing zero vector
-			//if (glm::length2(avoidanceDir) < 0.05f) { 
-			//	avoidanceDir = Vector3(-dir.z, 0.0f, dir.x);
-			//}
-			avoidanceDir = glm::normalize(avoidanceDir);
-
-			//avoidanceSteer += avoidanceDir * (avoidanceRadius - distFromPath);
-			avoidanceSteer += avoidanceDir * (avoidanceRadius - dist) * 2.0f;
+			Vector3 avoidanceDir = glm::normalize(-toEnemy);
+			float avoidanceWeight = 1.0f;
+			avoidanceSteer += avoidanceDir * (avoidanceRadius - dist) * avoidanceWeight;
 		}
+		// Avoid walls
+		const std::vector<GameObject>& walls = m_Owner->GetFieldController()->GetCourt()->GetWalls();
+		Vector3 wallAvoidanceSteer = Vector3(0.0f, 0.0f, 0.0f);
+		for (const GameObject& wall : walls) {
+			Vector3 closest = wall.GetBoundingBox().GetClosestPoint(agentPos);
+			closest.y = agentPos.y;
+			float wallRadius = 2.0f;
+			float distSqr = glm::length2(closest - agentPos);
+			if (distSqr < wallRadius * wallRadius) {
+				Vector3 avoidanceDir = glm::normalize(agentPos - closest);
+				float dist = glm::pow(distSqr, 0.5f);
+				float avoidanceWeight = 2.0f;
+
+				wallAvoidanceSteer += avoidanceDir * glm::pow(wallRadius - dist, 2.0f) * avoidanceWeight;
+			}
+		}
+		// Avoid Own Goal
+		Vector3 goalPos = m_Owner->GetFieldController()->GetCourt()->GetGoalPosition(owner->GetTeam());
+		float goalZone = 4.0f;
+		if (glm::abs(goalPos.z - agentPos.z) < goalZone) {
+			avoidanceSteer.z = glm::sign(agentPos.z - goalPos.z);
+		}
+
 		bool result = MoveTowards(point);
-		owner->m_Direction = glm::normalize(owner->m_Direction + avoidanceSteer);
+		owner->m_Direction = glm::normalize(owner->m_Direction + avoidanceSteer + wallAvoidanceSteer);
+		
 
 		return result;
 	}
@@ -172,7 +190,7 @@ namespace Fed
 	bool FedoraAgentInputAI::FaceTowards(const Vector3 & point, float speed)
 	{
 		FedoraAgent* owner = GetOwner();
-		Vector3 dir = point - owner->ObjectTransform.Position; dir.y = 0;
+		Vector3 dir = point - owner->ObjectTransform.Position; dir.y = 0; 
 		if (dir == Vector3(0, 0, 0))
 			return true;
 		dir = glm::normalize(dir);

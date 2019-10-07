@@ -73,7 +73,7 @@ namespace Fed
 		ASSERT(IsIntersecting(myTrans, otherTrans, other), "Must be intersecting object post-movement");
 		Transform oldTrans = myTrans; 
 		oldTrans.Position -= movement;
-		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object pre-movement");
+		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object pre-movement"); // Potential floating point error here
 		float dist = 0;
 		Vector3 dir = glm::normalize(movement);
 		float step = 0.001f;
@@ -82,8 +82,8 @@ namespace Fed
 			dist += step;
 			oldTrans.Position += dir * step;
 		}
-		dist -= step * 2;
-		oldTrans.Position -= dir * step * 2.f;
+		dist -= step * 3.0f;
+		oldTrans.Position -= dir * step * 3.0f;
 		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object post-pushout");
 
 		return dist;
@@ -91,6 +91,14 @@ namespace Fed
 	Vector3 BoundingBox::GetCenter() const
 	{
 		return m_Center;
+	}
+	Vector3 BoundingBox::GetClosestPoint(const Vector3& point)
+	{
+		Vector3 closest;
+		closest.x = glm::clamp(point.x, m_Center.x - m_HalfExtents.x, m_Center.x + m_HalfExtents.x);
+		closest.y = glm::clamp(point.y, m_Center.y - m_HalfExtents.y, m_Center.y + m_HalfExtents.y);
+		closest.z = glm::clamp(point.z, m_Center.z - m_HalfExtents.z, m_Center.z + m_HalfExtents.z);
+		return closest;
 	}
 	// Can change size and position to customize bounding boxes
 	void BoundingBox::SetParameters(Vector3 center, Vector3 halfExtents)

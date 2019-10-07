@@ -6,13 +6,11 @@
 
 namespace Fed
 {
-	FrisbeeFieldController::FrisbeeFieldController() : m_Fedora(nullptr), m_LastThrownAgentID(0), m_Court(nullptr)
+	FrisbeeFieldController::FrisbeeFieldController() : m_Fedora(nullptr), m_LastThrownAgentID(0), m_BlueTeam(TeamColor::Blue), m_RedTeam(TeamColor::Red), m_Court(nullptr)
 	{
 		FrisbeeThrown.AddObserver(this);
 		FrisbeeScored.AddObserver(this);
 		FrisbeePickup.AddObserver(this);
-		m_BlueTeam.SetColor(TeamColor::Blue);
-		m_RedTeam.SetColor(TeamColor::Red);
 		m_BlueTeam.SetFieldControllerReference(this);
 		m_RedTeam.SetFieldControllerReference(this);
 
@@ -182,7 +180,7 @@ namespace Fed
 	//		 throwPos:  position to launch fedora from. 
 	//		 targetPos: position to throw fedora to
 	// Returns whether given throw can be intercepted by any enemy
-	bool FrisbeeFieldController::CanEnemyInterceptFedoraThrow(const Team* throwTeam, Vector3 throwPos, Vector3 targetPos, FedoraAgent* outInterceptAgent, Vector3* outInterceptPos)
+	bool FrisbeeFieldController::CanEnemyInterceptFedoraThrow(const Team* throwTeam, Vector3 throwPos, Vector3 targetPos, FedoraAgent** outInterceptAgent, Vector3* outInterceptPos)
 	{
 		Team* enemyTeam = GetEnemyTeam(throwTeam->GetColor());
 
@@ -272,7 +270,24 @@ namespace Fed
 	}
 	bool FrisbeeFieldController::OnFedoraThrown(FrisbeeThrownEvent & e)
 	{
+		// Update Last Thrown ID
 		m_LastThrownAgentID = e.GetAgent().GetID();
+
+		// Try to get enemy team to intercept or at least chase
+		// Does not have information on intended pass target
+		Team* enemyTeam = GetEnemyTeam(e.GetAgent().GetTeam());
+		Vector3 throwPos = e.GetAgent().ObjectTransform.Position;
+		FedoraAgent* enemyPursueAgent = nullptr;
+		enemyTeam->CanInterceptFedoraThrow(throwPos, throwPos + m_Fedora->GetThrowRange() * e.GetDirection(), &enemyPursueAgent);
+
+		if (enemyPursueAgent == nullptr) {
+			// If no one can intercept, have closest person chase
+			enemyPursueAgent = enemyTeam->FindClosesetAgentToFedora();
+		}
+		ASSERT(enemyPursueAgent, "Must have an enemy chasing the thrown fedora");
+		PursueSignal signal;
+		enemyPursueAgent->OnEvent(nullptr, signal);
+
 		return false;
 	}
 	bool FrisbeeFieldController::OnFedoraScored(FrisbeeScoredEvent& e)

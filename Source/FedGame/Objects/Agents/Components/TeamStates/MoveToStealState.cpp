@@ -23,7 +23,7 @@ namespace Fed::AgentAITeamStates
 		
 		ASSERT(owner->GetTargetAgent(), "Must have target agent to steal from");
 		if (!owner->GetTargetAgent()->GetHasFedora()) {
-			owner->GetFSM().ChangeState(AgentAITeamStates::Wait::Instance());
+			owner->GetFSM().ChangeState(AgentAITeamStates::Pursue::Instance());
 			return;
 		}
 		float facingSpeed = 6.5f;

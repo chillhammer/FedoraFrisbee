@@ -10,6 +10,9 @@ namespace Fed
 	Team::Team() : m_StateMachine(this, TeamStates::Standoff::Instance()), m_PositionFinder(this)
 	{
 	}
+	Team::Team(TeamColor color) : m_StateMachine(this, TeamStates::Standoff::Instance()), m_Color(color), m_PositionFinder(this)
+	{
+	}
 	TeamPlay Team::GetPlay() const
 	{
 		return m_Play;
@@ -113,8 +116,8 @@ namespace Fed
 		} else if (play == TeamPlay::Defensive) {
 			m_StateMachine.ChangeState(TeamStates::Defend::Instance());
 
-			DefendSignal signal;
-			BroadcastSignal(signal);
+			//DefendSignal signal;
+			//BroadcastSignal(signal);
 
 			FedoraAgent* assignedStealer = FindClosesetAgentToFedora();
 			StealSignal stealSignal(*agentWithFedora);
@@ -163,7 +166,7 @@ namespace Fed
 	}
 	// Loops agents to see if they can intercept fedora throw
 	// Will also return the first agent it finds that can intercept. May change later to find best agent instead of first.
-	bool Team::CanInterceptFedoraThrow(Vector3 throwPos, Vector3 targetPos, FedoraAgent* outInterceptAgent, Vector3* outInterceptPos) const
+	bool Team::CanInterceptFedoraThrow(Vector3 throwPos, Vector3 targetPos, FedoraAgent** outInterceptAgent, Vector3* outInterceptPos) const
 	{
 		Vector3 toTarget = targetPos - throwPos;
 		for (FedoraAgent* agent : m_Agents) {
@@ -182,7 +185,7 @@ namespace Fed
 			float fedoraSpeed = m_FieldController->GetFedoraLaunchSpeed();
 			float timeAhead = distToFedora / fedoraSpeed; // estimation, not counting deceleration
 
-			float distFedoraTraveled = timeAhead * fedoraSpeed;
+			float distFedoraTraveled = glm::min(timeAhead * fedoraSpeed, m_FieldController->GetFedoraRange());
 			Vector3 interceptPoint = throwPos + glm::normalize(toTarget) * distFedoraTraveled;
 
 			float distToIntercept = glm::length(agent->ObjectTransform.Position - interceptPoint);
@@ -193,7 +196,8 @@ namespace Fed
 			// If there is enough time to get into position
 			// or can reach interception point before agent at target location
 			if (timeToIntercept < timeAhead || distToIntercept < distToInterceptFromTarget) {
-				outInterceptAgent = agent;
+				if (outInterceptAgent)
+					*outInterceptAgent = agent;
 				return true;
 			}
 
@@ -207,8 +211,10 @@ namespace Fed
 	// Returns agent with fedora. Asserts this team has the fedora
 	FedoraAgent* Team::GetAgentWithFedora() const
 	{
-		ASSERT(false, "GetAgentWithFedora() incomplete");
-		// TODO: Fill this out or delete function
+		for (FedoraAgent* agent : m_Agents) {
+			if (m_FieldController->AgentHasFedora(agent))
+				return agent;
+		}
 		return nullptr;
 	}
 	// Calculates closest agent position-wise to position
@@ -287,21 +293,78 @@ namespace Fed
 	{
 		ASSERT(passing->GetHasFedora(), "Agent must have fedora to find pass!");
 		float passingRisk = passing->CalculateRisk(); // how dangerous of a situation is passing agent in
+		FrisbeeFieldController* fieldController = GetFieldController();
+		Team* enemyTeam = fieldController->GetEnemyTeam(GetColor());
+		float fedoraSpeed = fieldController->GetFedoraLaunchSpeed();
+
+		FedoraAgent* bestAgent = nullptr;
+		Vector3 bestPassingLoc = Vector3(0.0f, 0.0f, 0.0f);
+		float lowestRisk = -1;
 		for (FedoraAgent* potential : m_Agents) {
 			// Can't be itself
 			if (potential == passing)
 				continue;
 
-			float potentialRisk = potential->CalculateRisk();
-			// Must have lower risk
-			if (potentialRisk > passingRisk)
+			// Find best passing location
+			Vector3 agentPos = potential->ObjectTransform.Position;
+			float distToAgent = glm::length(agentPos - passing->ObjectTransform.Position);
+			Vector3 dirToAgent = glm::normalize(agentPos - passing->ObjectTransform.Position);
+			Vector3 agentSide = Vector3(-dirToAgent.z, 0.0f, dirToAgent.x);
+			ASSERT(glm::abs(glm::length2(agentSide) - 1.0f) < 0.1f, "Side dir is not normalized");
+			
+			float fedoraTravelDist = glm::min(distToAgent, fieldController->GetFedoraRange());
+			float sideDist = potential->GetMaxSpeed() * (fedoraTravelDist / fedoraSpeed) * 0.8f;
+
+			std::vector<Vector3> potentialLocs{ agentPos, agentPos + agentSide * sideDist, agentPos - agentSide * sideDist };
+
+			float agentLowestRisk = -1;
+			Vector3 agentBestLoc = Vector3(0.0f, 0.0f, 0.0f);
+
+			// Finding best passing location for this agent
+			if (!potential->IsPlayerControlled()) {
+				for (Vector3 loc : potentialLocs) {
+					// Make sure within field
+					if (!fieldController->GetCourt()->IsPointWithinField(loc))
+						continue;
+
+					// Make sure passable
+					if (enemyTeam->CanInterceptFedoraThrow(passing->ObjectTransform.Position, loc)) {
+						LOG("Cannot pass to location: x={0}, y={1}", loc.x, loc.z);
+						continue;
+					}
+
+					// Assert no agent in path
+					//const FedoraAgent* blockingAgent = fieldController->FindAgentInAgentPath(passing, loc - dirToAgent * 2.0f);
+					//ASSERT(blockingAgent == nullptr, "Blocking agent should not exist");
+
+					// Find lowest risk
+					float risk = enemyTeam->CalculateRiskAtPos(loc);
+					if (agentLowestRisk < 0 || agentLowestRisk > risk) {
+						agentLowestRisk = risk;
+							agentBestLoc = loc;
+					}
+				}
+			}
+			else {
+				// If passing to human, always pass based on their velocity. Don't guarantee if it is passable on purpose
+				agentBestLoc = potential->GetAgentPredictedPosition(passing->ObjectTransform.Position, fedoraSpeed);
+				agentLowestRisk = enemyTeam->CalculateRiskAtPos(agentBestLoc);
+			}
+
+			// Ignore agents in riskier positions
+			if (agentLowestRisk > passingRisk)
 				continue;
 
-			// TODO: Replace this with fancier algorithm
-			outPassPosition = potential->GetAgentPredictedPosition(passing->ObjectTransform.Position, passing->GetFieldController()->GetFedoraLaunchSpeed());  
-			
-			return potential;
+			// Global search
+			if (lowestRisk == -1 || agentLowestRisk < lowestRisk) {
+				lowestRisk = agentLowestRisk;
+				bestPassingLoc = agentBestLoc;
+				if (lowestRisk != -1) // only change if found suitable target
+					bestAgent = potential;
+			}
+
 		}
-		return nullptr;
+		outPassPosition = bestPassingLoc;
+		return bestAgent;
 	}
 }

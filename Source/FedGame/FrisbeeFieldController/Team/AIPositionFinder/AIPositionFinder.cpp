@@ -9,7 +9,7 @@ namespace Fed {
 	AIPositionFinder::AIPositionFinder(const Team* team) : m_Team(team), m_BestPosition(nullptr), m_UpdateTimer(0.0f)
 	{
 		// Fill in Positions
-		int zSign = (team->GetColor() == TeamColor::Blue ? 1 : -1); // Get Opposite Side of Goal
+		int zSign = (team->GetColor() == TeamColor::Blue ? -1 : 1); // Get Opposite Side of Goal
 
 		// Field is 40 x 60 in dimensions
 		// Will only consider 30 x 25, in spacing of 5. 6 by 5 positions

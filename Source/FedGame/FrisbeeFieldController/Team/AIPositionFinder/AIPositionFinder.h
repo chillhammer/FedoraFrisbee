@@ -13,6 +13,7 @@ namespace Fed
 		void Update();
 		Vector3 GetBestPosition() const;
 	private:
+		AIPositionFinder() {};
 		struct FieldPosition {
 			Vector3 Position;
 			float	Score;

@@ -24,6 +24,7 @@ namespace Fed
 		std::vector<const GameObject*> GetCollidingWalls(const GameObject& other) const;
 		const GoalTrigger* GetCollidingGoal(const GameObject& other) const;
 		Vector3 GetGoalPosition(const Team* team) const;
+		bool IsPointWithinField(Vector3 point) const;
 		void DrawDebugWalls() const;
 		void DrawDebugGoals() const;
 	private:

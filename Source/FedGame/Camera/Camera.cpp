@@ -110,7 +110,10 @@ namespace Fed
 	Matrix4x4 Camera::GetProjectionMatrix() const
 	{
 		float fov = 45;
-		float aspect = (float)Game.GetWindow().GetWidth() / (float) Game.GetWindow().GetHeight();
+		float aspect = 0.1f;
+		if (Game.GetWindow().GetHeight() != 0 && Game.GetWindow().GetHeight() != 0)
+			aspect = (float)Game.GetWindow().GetWidth() / (float)Game.GetWindow().GetHeight();
+
 		return glm::perspective(glm::radians(fov), aspect, 0.1f, 100.f);
 	}
 

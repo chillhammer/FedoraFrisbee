@@ -93,6 +93,11 @@ namespace Fed
 		return Vector3(0,0,0);
 	}
 
+	bool Court::IsPointWithinField(Vector3 point) const
+	{
+		return (glm::abs(point.x) < 20.0f || glm::abs(point.z) < 35.f);
+	}
+
 	// Draws walls' debug box
 	void Court::DrawDebugWalls() const
 	{

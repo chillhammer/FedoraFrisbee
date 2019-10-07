@@ -29,7 +29,7 @@ namespace Fed
 		bool IsAgentInFedoraPath(const FedoraAgent* agent) const;
 		bool CanAgentInterceptFedora(const FedoraAgent* agent, Vector3* outInterceptPos);
 		bool CanEnemyInterceptFedoraThrow(const Team* throwTeam, Vector3 throwPos, Vector3 targetPos, 
-			FedoraAgent* outInterceptAgent = nullptr, Vector3* outInterceptPos = nullptr);
+			FedoraAgent** outInterceptAgent = nullptr, Vector3* outInterceptPos = nullptr);
 		bool IsFedoraFree() const;
 		bool IsFedoraMoving() const;
 		void StunAgent(const FedoraAgent* agent, float time = 1.0f);

@@ -12,6 +12,7 @@ namespace Fed
 	{
 	public:
 		Team();
+		Team(TeamColor);
 		TeamPlay	GetPlay() const;
 		TeamColor	GetColor() const;
 		void		SetColor(TeamColor color);
@@ -31,7 +32,7 @@ namespace Fed
 		std::vector<Vector3> GetAgentPositions() const;
 		Vector3 GetBestAssistPosition() const;
 		bool CanInterceptFedoraThrow(Vector3 throwPos, Vector3 targetPos, 
-			FedoraAgent* outInterceptAgent = nullptr, Vector3* outInterceptPos = nullptr) const;
+			FedoraAgent** outInterceptAgent = nullptr, Vector3* outInterceptPos = nullptr) const;
 
 		class FrisbeeFieldController* GetFieldController() const;
 
@@ -45,10 +46,10 @@ namespace Fed
 		class FedoraAgent* FindClosestAgentToRay(Vector3 origin, Vector3 dir, class FedoraAgent* agentToIgnore = nullptr);
 		class FedoraAgent* FindPassToAgent(class FedoraAgent* passing, Vector3& outPassPosition) const;
 	private:
+		TeamColor m_Color;
 		AIPositionFinder m_PositionFinder;
 		StateMachine<Team> m_StateMachine;
 		std::vector<class FedoraAgent*> m_Agents;
-		TeamColor m_Color;
 		TeamPlay m_Play;
 		class FedoraAgent* m_ControllingAgent;
 		class FedoraAgent* m_PursuitAgent;

@@ -22,8 +22,8 @@ namespace Fed::AgentAITeamStates
 		// Actually Move to Assist Position
 		float facingSpeed = 3.5f;
 		owner->FaceTowards(targetPos, facingSpeed);
-		// TODO: un-comment this line for assistance movement
-		//if (owner->MoveTowards(targetPos))
+
+		if (owner->MoveTowards(targetPos))
 		{
 			owner->FaceTowards(controller->GetFedoraPosition(), facingSpeed);
 		}

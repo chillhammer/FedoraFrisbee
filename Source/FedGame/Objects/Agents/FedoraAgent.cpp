@@ -102,6 +102,10 @@ namespace Fed
 	{
 		return m_MaxSpeed;
 	}
+	Vector3 FedoraAgent::GetDirection() const
+	{
+		return m_Direction;
+	}
 	// Calculates risk rating based on how far the enemies are. Sum of squared distance to each enemy
 	float FedoraAgent::CalculateRisk() const
 	{
@@ -196,42 +200,12 @@ namespace Fed
 				}
 				
 			}
-			else {
+			{
 				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
 				// Do agent collision if not hitting boundary
 				const FedoraAgent* other = m_FieldController->FindAgentCollidingAgent(this);
-				/*
-				if (other)
-				{
-					ObjectTransform.Position = m_PrevPosition;
-					Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, m_Direction);
-					ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
-
-					//Steal Fedora
-					if (other->GetHasFedora() && other->CanBeStolenFrom())
-					{
-						// Send Frisbee Pickup Event
-						FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
-						m_FieldController->FrisbeePickup.Notify(event);
-
-						m_CanBeStolenFromTimer = INVULNERABLE_TIME;
-
-						m_FieldController->StunAgent(other, 2.0f);
-					}
-					// Move out of other agents
-					//This code causes a glitch where the agent vanishes
-					other = m_FieldController->FindAgentCollidingAgent(this);
-					int i = 0;
-					while (other && ++i < 100)
-					{
-						Vector3 moveDir = glm::normalize(slidingDir);
-						ObjectTransform.Position -= moveDir * 0.01f;
-						other = m_FieldController->FindAgentCollidingAgent(this);
-					}
-					
-				}
-				*/
-				while (other)
+				int i = 0;
+				while (other && ++i < 1000)
 				{
 					Vector3 movement = ObjectTransform.Position - m_PrevPosition;
 					Vector3 moveDir = glm::normalize(movement);

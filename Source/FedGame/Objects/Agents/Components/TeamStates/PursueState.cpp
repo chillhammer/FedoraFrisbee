@@ -20,7 +20,7 @@ namespace Fed::AgentAITeamStates
 		// Should only be pursuing if team does not have fedora
 
 		// Try to intercept
-		if (owner->CanInterceptFedora())
+		if (fieldController->IsFedoraMoving() && owner->CanInterceptFedora())
 		{
 			owner->GetFSM().ChangeState(Intercept::Instance());
 		}
