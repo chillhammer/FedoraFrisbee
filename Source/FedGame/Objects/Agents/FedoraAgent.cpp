@@ -183,6 +183,9 @@ namespace Fed
 		if (m_FieldController != nullptr)
 		{
 			ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
+			Vector3 movement = ObjectTransform.Position - m_PrevPosition;
+			Vector3 moveDir = glm::normalize(movement);
+
 			// Walls
 			std::vector<const GameObject*> walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 			if (!walls.empty())
@@ -192,6 +195,9 @@ namespace Fed
 				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), m_Direction);
 				ASSERT(slidingDir != Vector3(0.0f, 0.0f, 0.0f), "Sliding Dir should not be zero");
 				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
+
+				movement = slidingDir * m_Speed * Game.DeltaTime();
+				moveDir = glm::normalize(movement);
 				
 				walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 				int i = 0;
@@ -217,9 +223,9 @@ namespace Fed
 				int i = 0;
 				while (other && ++i < 1000 && !IsInvincible())
 				{
-					Vector3 movement = ObjectTransform.Position - m_PrevPosition;
-					Vector3 moveDir = glm::normalize(movement);
 					float distToTouch = m_BoundingBox.GetOverlapDistance(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, movement);
+
+					//ASSERT(m_PrevPosition == ObjectTransform.Position - movement, "Making sure movement is movement");
 
 					// Go Back In Time
 					ObjectTransform.Position = m_PrevPosition;
@@ -239,6 +245,10 @@ namespace Fed
 					Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, moveDir);
 					ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
 
+					// Reset Movement
+					movement = slidingDir * m_Speed * Game.DeltaTime();
+					moveDir = glm::normalize(movement);
+
 					//Steal Fedora
 					if (other->GetHasFedora() && other->CanBeStolenFrom() && other->GetTeam() != m_Team)
 					{
@@ -256,6 +266,15 @@ namespace Fed
 				}
 
 				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
+			}
+
+			//  Back to Walls
+			walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
+			if (!walls.empty())
+			{
+				ObjectTransform.Position = m_PrevPosition;
+				walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
+				ASSERT(walls.empty(), "Still colliding with walls somehow");
 			}
 		}
 		
@@ -305,6 +324,7 @@ namespace Fed
 		if (e.GetAgent().GetID() == GetID())
 		{
 			m_CanGrabTimer = 0.1f;
+			m_CanBeStolenFromTimer = 0.1f;
 		}
 		else {
 			m_CanGrabTimer = 0.0f;

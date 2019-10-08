@@ -85,17 +85,28 @@ namespace Fed
 	{
 		FedoraAgent* owner = GetOwner();
 		Vector3 dir = point - owner->ObjectTransform.Position;
+		float distSqr = glm::length2(dir);
 		// How much time at the current speed would decelerating bring speed to 0
 		float timeToStop = owner->m_Speed / m_Friction * -1.f;
 		// Integrate to find out how much distance friction would carry you at current speed
 		// speed * x - 1/2 * friction x ^ 2
 		float distToStop = owner->m_Speed * timeToStop - (0.5f * -m_Friction * timeToStop * timeToStop);
 		
-		if (glm::length(dir) <= distToStop)
+
+		// Snap to location
+		float snapRange = 0.2f;
+		if (distSqr < snapRange * snapRange) {
+			m_Accelerate = false;
+			owner->ObjectTransform.Position = point;
+			owner->m_Speed = 0.0f;
+			return true;
+		}
+
+		if (distSqr <= distToStop * distToStop)
 		{
 			//owner->ObjectTransform.Position = point;
 			m_Accelerate = false;
-			return true;
+			return false;
 		}
 		else
 		{
@@ -138,7 +149,7 @@ namespace Fed
 			if (distFromPath >= avoidanceRadius)
 				continue;
 			Vector3 avoidanceDir = glm::normalize(-toEnemy);
-			float avoidanceWeight = 1.0f;
+			float avoidanceWeight = 0.5f;
 			avoidanceSteer += avoidanceDir * (avoidanceRadius - dist) * avoidanceWeight;
 		}
 		// Avoid walls
@@ -196,7 +207,7 @@ namespace Fed
 		FedoraAgent* owner = GetOwner();
 		Vector3 dir = point - owner->ObjectTransform.Position; dir.y = 0; 
 		if (dir == Vector3(0, 0, 0))
-			return true;
+			return false;
 		dir = glm::normalize(dir);
 		// (0, 0, 1) = 0 Yaw
 		float targetYaw = glm::degrees(std::atan2(dir.z, dir.x)) - 90.f;
@@ -268,6 +279,10 @@ namespace Fed
 		Vector3 pos = m_InterceptPosition;
 		pos.y = 0;
 		return pos;
+	}
+	Vector3 FedoraAgentInputAI::GetDirection() const
+	{
+		return m_Owner->m_Direction;
 	}
 	bool FedoraAgentInputAI::IsStunned() const
 	{

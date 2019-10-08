@@ -24,7 +24,7 @@ namespace Fed::GameStates
 
 		for (int i = 0; i < NUM_AGENTS; i++) {
 			TeamColor color = (i >= NUM_AGENTS / 2 ? TeamColor::Red : TeamColor::Blue);
-			AgentInputType input = (i == 0 ? AgentInputType::PLAYER : AgentInputType::AI);
+			AgentInputType input = (i == 0 ? AgentInputType::AI : AgentInputType::AI);
 			SetupAgent(m_Agents[i], &m_Camera, &m_FieldController, Vector3(i, 0, 0), color, input);
 		}
 

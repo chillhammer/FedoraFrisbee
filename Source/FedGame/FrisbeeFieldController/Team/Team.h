@@ -28,6 +28,7 @@ namespace Fed
 		void SetFieldControllerReference(class FrisbeeFieldController* controller);
 		void SetPursuitAgent(class FedoraAgent* agent);
 		float CalculateRiskAtPos(Vector3 position);
+		float CalculateDistSqrToClosestAgent(Vector3 position) const;
 		void DebugRenderPositionScores() const;
 		std::vector<Vector3> GetAgentPositions() const;
 		Vector3 GetBestAssistPosition() const;

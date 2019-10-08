@@ -79,7 +79,7 @@ namespace Fed {
 		for (FieldPosition& pos : m_Positions) {
 			// Reward spots far from fedora
 			float dist = glm::length(pos.Position - fedoraPos);
-			float distScore = (dist < fedoraRange ? dist * 0.03f : 0.0f);
+			float distScore = (dist < fedoraRange && dist > 2.0f ? dist * 0.04f : 0.0f);
 
 			// Reward spots within range of goal
 			Vector3 goalPos = controller->GetCourt()->GetGoalPosition(enemyTeam);
@@ -94,7 +94,7 @@ namespace Fed {
 
 			// Reward spots that will not be intercepted from
 			bool canPass = !controller->CanEnemyInterceptFedoraThrow(m_Team, fedoraPos, pos.Position);
-			float passScore = (canPass ? 2.0f : 0.0f);
+			float passScore = (canPass ? 1.0f : 0.0f);
 
 
 			pos.Score = 1 + distScore + nearGoalScore + passScore;

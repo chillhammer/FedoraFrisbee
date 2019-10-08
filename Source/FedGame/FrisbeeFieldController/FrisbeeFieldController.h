@@ -27,7 +27,7 @@ namespace Fed
 		bool AgentHasFedora(const FedoraAgent* agent) const;
 		void AddAgentReference(const FedoraAgent* agent);
 		bool IsAgentInFedoraPath(const FedoraAgent* agent) const;
-		bool CanAgentInterceptFedora(const FedoraAgent* agent, Vector3* outInterceptPos);
+		bool CanAgentInterceptFedora(const FedoraAgent* agent, Vector3* __restrict outInterceptPos);
 		bool CanEnemyInterceptFedoraThrow(const Team* throwTeam, Vector3 throwPos, Vector3 targetPos, 
 			FedoraAgent** outInterceptAgent = nullptr, Vector3* outInterceptPos = nullptr);
 		bool IsFedoraFree() const;

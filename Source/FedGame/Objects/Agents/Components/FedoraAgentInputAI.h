@@ -24,6 +24,7 @@ namespace Fed
 		FedoraAgent* GetOwner() const;
 		bool	CanInterceptFedora();
 		Vector3 GetInterceptPosition() const;
+		Vector3 GetDirection() const;
 		bool	IsStunned() const;
 		bool	IsBlocked() const;
 		bool	IsCornered() const;

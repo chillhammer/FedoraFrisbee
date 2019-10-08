@@ -19,19 +19,30 @@ namespace Fed::AgentAITeamStates
 	void MoveToScore::Execute(FedoraAgentInputAI* owner)
 	{
 		FedoraAgent* agent = owner->GetOwner();
+		Vector3 agentPos = agent->ObjectTransform.Position;
 		FrisbeeFieldController* controller = agent->GetFieldController();
 		const std::vector<GoalTrigger>& goals = controller->GetCourt()->GetGoals();
 		TeamColor color = agent->GetTeam()->GetColor();
 		const GoalTrigger& targetGoal = (color != goals[0].Color ? goals[0] : goals[1]);
+		Team* team = agent->GetTeam();
+		const Team* enemyTeam = controller->GetEnemyTeam(team);
 
 		ASSERT(targetGoal.Object.ObjectTransform.Position == Vector3(0, 0, 0), "Assumption that goals' position has no offset is false.");
 		Vector3 targetPos = targetGoal.Object.GetBoundingBox().GetCenter(); targetPos.y = 0;
 
 		// Check for blocking agents
 		if (!owner->IsBlocked()) {
+			// Someone in my path
 			const FedoraAgent* blocking = controller->FindAgentInAgentPath(agent, targetPos);
-			float blockingRadius = 6.0f;
+			float blockingRadius = 5.0f;
 			if (blocking != nullptr && glm::length2(blocking->ObjectTransform.Position - agent->ObjectTransform.Position) < blockingRadius * blockingRadius) {
+				owner->SetBlocked(true);
+			}
+			// Close enemy in front of me
+			const FedoraAgent* closest = enemyTeam->FindClosesetAgentToFedora();
+			Vector3 closestPos = closest->ObjectTransform.Position;
+			float reactRadius = 1.0f;
+			if (glm::dot(targetPos - agentPos, closestPos - agentPos) > 0.0f && glm::length2(closestPos - agentPos) < reactRadius * reactRadius) {
 				owner->SetBlocked(true);
 			}
 		}
@@ -46,12 +57,19 @@ namespace Fed::AgentAITeamStates
 
 		// If Path Blocked, Throw To Nearest Teammate
 		if (owner->IsBlocked()) {
-			const Team* team = agent->GetTeam();
 			Vector3 throwToPos;
 			FedoraAgent* passToAgent = team->FindPassToAgent(agent, throwToPos);
 
-			if (passToAgent) {
-				if (owner->FaceTowards(throwToPos, 9.5f)) {
+			if (passToAgent != nullptr) {
+				ASSERT(throwToPos != Vector3(0.0f, 0.0f, 0.0f), "Error in calculating throwToPos");
+
+				// TODO: Remove debug draw here /////
+				Fedora f;
+				f.ObjectTransform.Position = throwToPos;
+				f.DrawBoundingBox();
+				/////////////////////////////////////
+
+				if (owner->FaceTowards(throwToPos, 15.5f)) {
 					owner->ThrowFrisbee(agent);
 					owner->GetFSM().ChangeState(AgentAITeamStates::Wait::Instance());
 
@@ -59,10 +77,13 @@ namespace Fed::AgentAITeamStates
 					passToAgent->OnEvent(nullptr, signal);
 				}
 				else {
-					if (!owner->IsCornered())
-						owner->MoveAndAvoidEnemies(throwToPos);
-					else
-						owner->MoveTowards(throwToPos);
+					float dangerRadius = 2.0f;
+					if (enemyTeam->CalculateDistSqrToClosestAgent(agentPos) < dangerRadius * dangerRadius) {
+						if (!owner->IsCornered())
+							owner->MoveAndAvoidEnemies(throwToPos);
+						else
+							owner->MoveTowards(throwToPos);
+					}
 				}
 				return;
 			}
@@ -72,7 +93,7 @@ namespace Fed::AgentAITeamStates
 		float facingSpeed = 3.5f;
 		Vector3 facingPos = targetPos;
 		float dotThreshold = 0.4f; // Min limit before facing moving direction
-		Vector3 toTarget = glm::normalize(targetPos - agent->ObjectTransform.Position);
+		Vector3 toTarget = glm::normalize(targetPos - agentPos);
 
 		// Face to moving direction if threshhold surpassed
 		if (glm::dot(toTarget, agent->GetDirection()) < dotThreshold) {
@@ -84,6 +105,11 @@ namespace Fed::AgentAITeamStates
 			owner->MoveAndAvoidEnemies(targetPos);
 		else
 			owner->MoveTowards(targetPos);
+
+		// Blocking Check to see if moving backwards
+		// If moving backwards
+		if (glm::dot(targetPos - agentPos, owner->GetDirection()) <= -0.5f && !owner->IsBlocked())
+			owner->SetBlocked(true);
 
 	}
 	void MoveToScore::Exit(FedoraAgentInputAI* owner)

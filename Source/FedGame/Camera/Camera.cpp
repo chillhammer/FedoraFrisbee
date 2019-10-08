@@ -9,7 +9,7 @@
 namespace Fed
 {
 	Camera::Camera()
-		:	m_Speed(3.4f), m_Sensitivity(40.f), m_Yaw(180), 
+		:	m_Speed(3.8f), m_Sensitivity(40.f), m_Yaw(180), 
 			Mode(CameraMode::Pivot), m_PivotLength(4.9f), m_PivotOffset(0, 2.3f, 0.4f),
 			m_PivotPosition(0, 0, 0)
 	{
@@ -50,11 +50,11 @@ namespace Fed
 			}
 			if (Input.IsKeyDown(KEY_LEFT_SHIFT))
 			{
-				ObjectTransform.Position -= Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTimeUnscaled();
+				ObjectTransform.Position -= Vector3(0.f, 2.f, 0.f) * m_Speed * Game.DeltaTimeUnscaled();
 			}
 			if (Input.IsKeyDown(KEY_SPACE))
 			{
-				ObjectTransform.Position += Vector3(0.f, 1.f, 0.f) * m_Speed * Game.DeltaTimeUnscaled();
+				ObjectTransform.Position += Vector3(0.f, 2.f, 0.f) * m_Speed * Game.DeltaTimeUnscaled();
 			}
 
 			// Look Around

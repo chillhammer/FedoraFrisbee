@@ -147,6 +147,18 @@ namespace Fed
 		}
 		return risk;
 	}
+	// Returns distance to closest agent
+	float Team::CalculateDistSqrToClosestAgent(Vector3 position) const
+	{
+		float smallestDist = -1;
+		for (FedoraAgent* agent : m_Agents) {
+			float dist = glm::length2(position - agent->ObjectTransform.Position);
+			if (dist < smallestDist || smallestDist == -1) {
+				smallestDist = dist;
+			}
+		}
+		return smallestDist;
+	}
 	// Draws the red blocks on the field to indicate the score in desirability for that position for the AI
 	void Team::DebugRenderPositionScores() const
 	{
@@ -311,9 +323,20 @@ namespace Fed
 			Vector3 dirToAgent = glm::normalize(agentPos - passing->ObjectTransform.Position);
 			Vector3 agentSide = Vector3(-dirToAgent.z, 0.0f, dirToAgent.x);
 			ASSERT(glm::abs(glm::length2(agentSide) - 1.0f) < 0.1f, "Side dir is not normalized");
+
+			// Ignore close agents
+			float closeThreshold = 3.0f;
+			if (distToAgent < closeThreshold) {
+				continue;
+			}
+
+			// Ignore agents with enemy on them
+			if (enemyTeam->CalculateDistSqrToClosestAgent(agentPos) < enemyTeam->CalculateDistSqrToClosestAgent(passing->ObjectTransform.Position)) {
+				continue;
+			}
 			
 			float fedoraTravelDist = glm::min(distToAgent, fieldController->GetFedoraRange());
-			float sideDist = potential->GetMaxSpeed() * (fedoraTravelDist / fedoraSpeed) * 0.6f;
+			float sideDist = potential->GetMaxSpeed() * (fedoraTravelDist / fedoraSpeed) * 0.9f;
 
 			std::vector<Vector3> potentialLocs{ agentPos, agentPos + agentSide * sideDist, agentPos - agentSide * sideDist };
 
@@ -334,7 +357,7 @@ namespace Fed
 					}
 
 					// Make sure no agent in path
-					const FedoraAgent* blockingAgent = fieldController->FindAgentInAgentPath(passing, loc - dirToAgent * 2.0f);
+					//const FedoraAgent* blockingAgent = fieldController->FindAgentInAgentPath(passing, loc - dirToAgent * 2.0f);
 					//if (blockingAgent != nullptr)
 					//	continue;
 
@@ -348,21 +371,33 @@ namespace Fed
 				}
 			}
 			else {
-				// If passing to human, always pass based on their velocity. Don't guarantee if it is passable on purpose
+				// If passing to human, always pass based on their velocity.
 				agentBestLoc = potential->GetAgentPredictedPosition(passing->ObjectTransform.Position, fedoraSpeed);
-				agentLowestRisk = enemyTeam->CalculateRiskAtPos(agentBestLoc);
+
+				// Make sure within field
+				if (!fieldController->GetCourt()->IsPointWithinField(agentBestLoc))
+					continue;
+
+				// Make sure passable
+				if (enemyTeam->CanInterceptFedoraThrow(passing->ObjectTransform.Position, agentBestLoc)) {
+					continue;
+				}
+				//agentLowestRisk = enemyTeam->CalculateRiskAtPos(agentBestLoc);
+				agentLowestRisk = glm::length2(fieldController->GetCourt()->GetGoalPosition(enemyTeam) - agentBestLoc); // try distance to goal as risk
 			}
 
 			// Ignore agents in riskier positions
-			if (agentLowestRisk > passingRisk)
-				continue;
+			//if (agentLowestRisk > passingRisk)
+			//	continue;
 
 			// Global search
 			if (lowestRisk == -1 || agentLowestRisk < lowestRisk) {
 				lowestRisk = agentLowestRisk;
-				bestPassingLoc = agentBestLoc;
-				if (lowestRisk != -1) // only change if found suitable target
+				
+				if (lowestRisk != -1) { // only change if found suitable target
 					bestAgent = potential;
+					bestPassingLoc = agentBestLoc;
+				}
 			}
 
 		}

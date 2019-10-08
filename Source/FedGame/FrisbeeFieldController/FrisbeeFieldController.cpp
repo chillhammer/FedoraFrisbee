@@ -150,7 +150,7 @@ namespace Fed
 		return false;
 	}
 	// Returns whether an agent can reach a moving fedora. Also returns intercept position if given a pointer. Fedora must be in air
-	bool FrisbeeFieldController::CanAgentInterceptFedora(const FedoraAgent * agent, Vector3 * outInterceptPos)
+	bool FrisbeeFieldController::CanAgentInterceptFedora(const FedoraAgent * agent, Vector3 * __restrict outInterceptPos)
 	{
 		ASSERT(agent != nullptr && m_Fedora != nullptr, "Agent or fedora has nullptr");
 		if (m_Fedora->IsMoving())
