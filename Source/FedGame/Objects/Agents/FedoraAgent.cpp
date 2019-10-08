@@ -100,7 +100,7 @@ namespace Fed
 
 	float FedoraAgent::GetMaxSpeed() const
 	{
-		return m_MaxSpeed;
+		return m_MaxSpeed * (IsInvincible() ? 1.25f : 1.0f);
 	}
 	Vector3 FedoraAgent::GetDirection() const
 	{
@@ -130,6 +130,11 @@ namespace Fed
 	bool FedoraAgent::CanBeStolenFrom() const
 	{
 		return m_CanBeStolenFromTimer <= 0;
+	}
+	// Currently invincible if recently stolen fedora, may be decoupled later
+	bool FedoraAgent::IsInvincible() const
+	{
+		return m_CanBeStolenFromTimer > 0 && IsPlayerControlled();
 	}
 
 	const Vector3 FedoraAgent::GetFuturePosition(float time) const
@@ -162,10 +167,7 @@ namespace Fed
 		}
 
 		// Grab Fedora
-		//if (m_CanGrabTimer <= Game.DeltaTime() && m_CanGrabTimer != 0.f)
-			//LOG("Can grab now!");
 		m_CanGrabTimer = glm::max(0.f, m_CanGrabTimer - Game.DeltaTime());
-		m_CanBeStolenFromTimer = glm::max(0.f, m_CanBeStolenFromTimer - Game.DeltaTime());
 		if (m_FieldController != nullptr && m_FieldController->IsFedoraFree() && m_CanGrabTimer <= 0.f)
 		{
 			if (m_FieldController->IsAgentCollidingFedora(this))
@@ -176,7 +178,7 @@ namespace Fed
 			}
 		}
 
-		// Collision! - Could use refactor. Currently doing manual checks
+		// Collision! - Currently doing manual checks
 		#pragma region Collision
 		if (m_FieldController != nullptr)
 		{
@@ -188,6 +190,7 @@ namespace Fed
 				const GameObject* wall = walls[0];
 				ObjectTransform.Position = m_PrevPosition;
 				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), m_Direction);
+				ASSERT(slidingDir != Vector3(0.0f, 0.0f, 0.0f), "Sliding Dir should not be zero");
 				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
 				
 				walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
@@ -198,14 +201,21 @@ namespace Fed
 					ObjectTransform.Position -= moveDir * 0.01f;
 					walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 				}
-				
+				if (i >= 1000) {
+					LOG_ERROR("Failed on wall collision, i exceeding 1000");
+				}
 			}
+			// Agents
 			{
 				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
 				// Do agent collision if not hitting boundary
 				const FedoraAgent* other = m_FieldController->FindAgentCollidingAgent(this);
+				// Lower timer if not inside agent
+				if (other == nullptr)
+					m_CanBeStolenFromTimer = glm::max(0.f, m_CanBeStolenFromTimer - Game.DeltaTime());
+
 				int i = 0;
-				while (other && ++i < 1000)
+				while (other && ++i < 1000 && !IsInvincible())
 				{
 					Vector3 movement = ObjectTransform.Position - m_PrevPosition;
 					Vector3 moveDir = glm::normalize(movement);
@@ -214,7 +224,6 @@ namespace Fed
 					// Go Back In Time
 					ObjectTransform.Position = m_PrevPosition;
 
-					
 					// Push Against Object
 					ObjectTransform.Position += moveDir * distToTouch;
 
@@ -231,13 +240,14 @@ namespace Fed
 					ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
 
 					//Steal Fedora
-					if (other->GetHasFedora() && other->CanBeStolenFrom())
+					if (other->GetHasFedora() && other->CanBeStolenFrom() && other->GetTeam() != m_Team)
 					{
 						// Send Frisbee Pickup Event
 						FrisbeePickupEvent event(m_FieldController->GetFedoraPosition(), *this);
 						m_FieldController->FrisbeePickup.Notify(event);
 
 						m_CanBeStolenFromTimer = INVULNERABLE_TIME;
+						m_Speed = GetMaxSpeed(); //speed boost
 
 						m_FieldController->StunAgent(other, 2.0f);
 					}

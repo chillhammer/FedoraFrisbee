@@ -97,6 +97,12 @@ namespace Fed
 	{
 		return (glm::abs(point.x) < 20.0f || glm::abs(point.z) < 35.f);
 	}
+	// Checks if point is within one of the 4 corners on the map. Does not bound it within the court
+	bool Court::IsPointWithinCorner(Vector3 point) const
+	{
+		float width = 7.0f; float length = 7.0f;
+		return (glm::abs(point.x) > 20.0f - width && glm::abs(point.z) > 35.f - length);
+	}
 
 	// Draws walls' debug box
 	void Court::DrawDebugWalls() const

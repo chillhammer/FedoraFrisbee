@@ -43,8 +43,8 @@ namespace Fed::GameStates
 		m_FieldController.GetTeam(TeamColor::Blue)->Update();
 		m_FieldController.GetTeam(TeamColor::Red)->Update();
 
-		m_FieldController.GetTeam(TeamColor::Blue)->DebugRenderPositionScores();
-		m_FieldController.GetTeam(TeamColor::Red)->DebugRenderPositionScores();
+		//m_FieldController.GetTeam(TeamColor::Blue)->DebugRenderPositionScores();
+		//m_FieldController.GetTeam(TeamColor::Red)->DebugRenderPositionScores();
 		for (FedoraAgent& agent : m_Agents)
 			agent.Update();
 		m_Fedora.Update();

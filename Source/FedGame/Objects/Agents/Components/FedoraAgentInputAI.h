@@ -17,13 +17,16 @@ namespace Fed
 		bool MoveAndAvoidEnemies(const Vector3& point);
 		bool MoveToSteal();
 		bool FaceTowards(const Vector3& point, float speed);
+		void FaceRotate(float speed);
 		void MoveBasedOnVelocity();
 		void SetBlocked(bool blocked);
+		void SetCornered(bool cornered);
 		FedoraAgent* GetOwner() const;
 		bool	CanInterceptFedora();
 		Vector3 GetInterceptPosition() const;
 		bool	IsStunned() const;
 		bool	IsBlocked() const;
+		bool	IsCornered() const;
 		FedoraAgent* GetTargetAgent() const;
 		StateMachine<FedoraAgentInputAI>& GetFSM();
 		virtual void OnEvent(const Subject* subject, class Event& event) override;
@@ -44,5 +47,6 @@ namespace Fed
 		float m_Friction;
 		float m_StunTimer;
 		bool m_Blocked;
+		bool m_Cornered;
 	};
 }

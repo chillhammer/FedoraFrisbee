@@ -19,28 +19,41 @@ namespace Fed::AgentAITeamStates
 		Vector3 targetGoalPos = fieldController->GetCourt()->GetGoalPosition(fieldController->GetEnemyTeam(agent->GetTeam()));
 		float agentZ = agent->ObjectTransform.Position.z;
 
-		// Face Frisbee
-		float facingSpeed = 55.5f;
-		if (!agent->GetHasFedora())
-			owner->FaceTowards(frisbeePos, facingSpeed);
+		// Move back if too forwards
+		float defenseZ = 10.0f;
+		if (glm::sign(agentZ) == glm::sign(targetGoalPos.z) || glm::abs(agentZ) < defenseZ) {
+			Vector3 targetPos = agent->ObjectTransform.Position;
+			float facingSpeed = 6.0f;
+			targetPos.z = defenseZ * -1 * glm::sign(targetGoalPos.z);
+			owner->MoveTowards(targetPos);
+			owner->FaceTowards(targetPos, facingSpeed);
+		}
+		else {
+			// Face Frisbee
+			float facingSpeed = 55.5f;
+			if (!agent->GetHasFedora())
+				owner->FaceTowards(frisbeePos, facingSpeed);
 
-		// Chase if close
-		float reactBorder = 14.0f;
-		float goalSign = glm::sign(targetGoalPos.z - agentZ);
-		// React if within react border or behind agent
-		if (glm::abs(frisbeePos.z - agentZ) < reactBorder || glm::sign(frisbeePos.z - agentZ) != goalSign) {
+			// Chase if close
+			float reactBorder = 14.0f;
+			float goalSign = glm::sign(targetGoalPos.z - agentZ);
+			// React if within react border or behind agent
+			if (glm::abs(frisbeePos.z - agentZ) < reactBorder || glm::sign(frisbeePos.z - agentZ) != goalSign) {
 
-			FedoraAgent* agentToStealFrom = fieldController->GetEnemyTeam(agent->GetTeam())->GetAgentWithFedora();
+				FedoraAgent* agentToStealFrom = fieldController->GetEnemyTeam(agent->GetTeam())->GetAgentWithFedora();
 
-			// Pursue fedora, or steal from agent
-			if (agentToStealFrom == nullptr) {
-				owner->GetFSM().ChangeState(AgentAITeamStates::Pursue::Instance());
-			}
-			else {
-				StealSignal signal(*agentToStealFrom);
-				owner->OnEvent(nullptr, signal);
+				// Pursue fedora, or steal from agent
+				if (agentToStealFrom == nullptr) {
+					owner->GetFSM().ChangeState(AgentAITeamStates::Pursue::Instance());
+				}
+				else {
+					StealSignal signal(*agentToStealFrom);
+					owner->OnEvent(nullptr, signal);
+				}
 			}
 		}
+
+		
 	}
 	void Defend::Exit(FedoraAgentInputAI* owner)
 	{

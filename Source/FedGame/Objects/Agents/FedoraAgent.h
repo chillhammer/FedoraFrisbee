@@ -34,6 +34,7 @@ namespace Fed
 		bool	InFedoraPath() const;
 		bool	IsPlayerControlled() const;
 		bool	CanBeStolenFrom() const;
+		bool	IsInvincible() const;
 		const Vector3 GetFuturePosition(float time) const;
 		Vector3 GetAgentPredictedPosition(Vector3 startingPoint, float interceptingSpeed) const;
 		Team* GetTeam() const;
@@ -58,6 +59,6 @@ namespace Fed
 		Vector3 m_PrevPosition;
 		float m_CanGrabTimer;
 		float m_CanBeStolenFromTimer;
-		const float INVULNERABLE_TIME = 1.0f;
+		const float INVULNERABLE_TIME = 0.5f;
 	};
 }

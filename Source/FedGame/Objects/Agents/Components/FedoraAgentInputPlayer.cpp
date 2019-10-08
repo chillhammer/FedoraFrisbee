@@ -24,7 +24,7 @@ namespace Fed
 	{
 		// Setting Up Movement Variables
 		Vector3 moveDir(0, 0, 0);
-		float maxMoveSpeed = owner->m_MaxSpeed;
+		float maxMoveSpeed = owner->GetMaxSpeed();
 
 		float forwardSign	= (Input.IsKeyDown(KEY_W) ? 1 : 0) - (Input.IsKeyDown(KEY_S) ? 1 : 0);
 		float sideSign	= (Input.IsKeyDown(KEY_D) ? 1 : 0) - (Input.IsKeyDown(KEY_A) ? 1 : 0);
@@ -42,7 +42,7 @@ namespace Fed
 		float acceleration = (moved ? 12.5f : -15.f);
 		float speed = owner->m_Speed;
 		speed = (speed < 3.f && forwardSign == 1 ? 3.f : (speed < 1.5f && moved ? 1.5f : speed));
-		float multiplier = (forwardSign == 1.f ? (sideSign == 0 ? 1.f : 1.f) : 0.51f);
+		float multiplier = (forwardSign == 1.f || owner->m_Camera->Mode != CameraMode::Pivot ? 1.0f : 1.0f);
 		speed = glm::min(speed + acceleration * Game.DeltaTime(), maxMoveSpeed * multiplier);
 		speed = (speed < 0 ? 0 : speed);
 		owner->m_Speed = speed;
@@ -58,7 +58,7 @@ namespace Fed
 			owner->ObjectTransform.SetYaw(cameraYaw);
 		}
 
-		float forwardLean = 2.f;
+		float forwardLean = 2.f + (owner->IsInvincible() ? 1.0f : 0.0f);
 		float sideLean = 0.9f;
 		float leanSpeed = 20.f;
 		owner->ObjectTransform.SetPitch(LerpAngle(owner->ObjectTransform.GetPitch(), forwardSign * owner->m_Speed * forwardLean, leanSpeed * Game.DeltaTime()));

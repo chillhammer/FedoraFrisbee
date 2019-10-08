@@ -70,6 +70,10 @@ namespace Fed
 		m_StateMachine.Update();
 
 		m_StunTimer = glm::max(0.0f, m_StunTimer - Game.DeltaTime());
+		if (IsStunned()) {
+			FaceRotate(1440.0f);
+			m_Owner->ObjectTransform.SetPitch(LerpAngle(m_Owner->ObjectTransform.GetPitch(), 0.f, 10.0f * Game.DeltaTime()));
+		}
 	}
 
 	////////////////////////////////////
@@ -208,6 +212,10 @@ namespace Fed
 
 		return false;
 	}
+	void FedoraAgentInputAI::FaceRotate(float speed)
+	{
+		m_Owner->ObjectTransform.SetYaw(m_Owner->ObjectTransform.GetYaw() + speed * Game.DeltaTime());
+	}
 	// Actually moves object based on speed and direction. Changes
 	void FedoraAgentInputAI::MoveBasedOnVelocity()
 	{
@@ -237,6 +245,11 @@ namespace Fed
 	{
 		m_Blocked = blocked;
 	}
+	// If cornered into a wall, then change this flag. It will ignore enemy agents and make risky play to score
+	void FedoraAgentInputAI::SetCornered(bool cornered)
+	{
+		m_Cornered = cornered;
+	}
 	
 	// Returns owner of this component. Used within FSM
 	FedoraAgent * FedoraAgentInputAI::GetOwner() const
@@ -263,6 +276,10 @@ namespace Fed
 	bool FedoraAgentInputAI::IsBlocked() const
 	{
 		return m_Blocked;
+	}
+	bool FedoraAgentInputAI::IsCornered() const
+	{
+		return m_Cornered;
 	}
 	FedoraAgent* FedoraAgentInputAI::GetTargetAgent() const
 	{

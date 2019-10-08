@@ -22,6 +22,7 @@ namespace Fed
 		ASSERT(agent != nullptr && m_Fedora != nullptr, "Agent Colliding Fedora- NullPtr Exception");
 		return agent->IsColliding(*m_Fedora);
 	}
+	// Loops over all agents naively
 	// Returns first agent pointer that given agent is colliding with
 	const FedoraAgent* FrisbeeFieldController::FindAgentCollidingAgent(const FedoraAgent * agent)
 	{
@@ -29,7 +30,7 @@ namespace Fed
 
 		for (const FedoraAgent* other : m_Agents)
 		{
-			if (agent != other && agent->IsColliding(*other))
+			if (agent != other && !other->IsInvincible() && agent->IsColliding(*other))
 			{
 				return other;
 			}

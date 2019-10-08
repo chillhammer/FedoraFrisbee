@@ -313,7 +313,7 @@ namespace Fed
 			ASSERT(glm::abs(glm::length2(agentSide) - 1.0f) < 0.1f, "Side dir is not normalized");
 			
 			float fedoraTravelDist = glm::min(distToAgent, fieldController->GetFedoraRange());
-			float sideDist = potential->GetMaxSpeed() * (fedoraTravelDist / fedoraSpeed) * 0.8f;
+			float sideDist = potential->GetMaxSpeed() * (fedoraTravelDist / fedoraSpeed) * 0.6f;
 
 			std::vector<Vector3> potentialLocs{ agentPos, agentPos + agentSide * sideDist, agentPos - agentSide * sideDist };
 
@@ -329,16 +329,18 @@ namespace Fed
 
 					// Make sure passable
 					if (enemyTeam->CanInterceptFedoraThrow(passing->ObjectTransform.Position, loc)) {
-						LOG("Cannot pass to location: x={0}, y={1}", loc.x, loc.z);
+						//LOG("Cannot pass to location: x={0}, y={1}", loc.x, loc.z);
 						continue;
 					}
 
-					// Assert no agent in path
-					//const FedoraAgent* blockingAgent = fieldController->FindAgentInAgentPath(passing, loc - dirToAgent * 2.0f);
-					//ASSERT(blockingAgent == nullptr, "Blocking agent should not exist");
+					// Make sure no agent in path
+					const FedoraAgent* blockingAgent = fieldController->FindAgentInAgentPath(passing, loc - dirToAgent * 2.0f);
+					//if (blockingAgent != nullptr)
+					//	continue;
 
 					// Find lowest risk
-					float risk = enemyTeam->CalculateRiskAtPos(loc);
+					//float risk = enemyTeam->CalculateRiskAtPos(loc);
+					float risk = glm::length2(fieldController->GetCourt()->GetGoalPosition(enemyTeam) - loc); // try distance to goal as risk
 					if (agentLowestRisk < 0 || agentLowestRisk > risk) {
 						agentLowestRisk = risk;
 							agentBestLoc = loc;

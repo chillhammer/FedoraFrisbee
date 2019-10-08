@@ -13,6 +13,8 @@ namespace Fed::AgentAITeamStates
 	{
 		// This blocked flag means if it's path is blocked and thus abort mission
 		owner->SetBlocked(false);
+		// This cornered flag means they were cornered by the enemy. Thus ignore enemies since you can't do anything
+		owner->SetCornered(false);
 	}
 	void MoveToScore::Execute(FedoraAgentInputAI* owner)
 	{
@@ -34,6 +36,14 @@ namespace Fed::AgentAITeamStates
 			}
 		}
 
+		// Check for cornered state
+		if (!owner->IsCornered()) {
+			if (controller->GetCourt()->IsPointWithinCorner(agent->ObjectTransform.Position)) {
+				owner->SetCornered(true);
+				LOG("Agent is cornered! ID: {0}", owner->GetOwner()->GetID());
+			}
+		}
+
 		// If Path Blocked, Throw To Nearest Teammate
 		if (owner->IsBlocked()) {
 			const Team* team = agent->GetTeam();
@@ -49,7 +59,10 @@ namespace Fed::AgentAITeamStates
 					passToAgent->OnEvent(nullptr, signal);
 				}
 				else {
-					owner->MoveAndAvoidEnemies(throwToPos);
+					if (!owner->IsCornered())
+						owner->MoveAndAvoidEnemies(throwToPos);
+					else
+						owner->MoveTowards(throwToPos);
 				}
 				return;
 			}
@@ -57,17 +70,20 @@ namespace Fed::AgentAITeamStates
 
 		// Actually Move to Goal
 		float facingSpeed = 3.5f;
-		// TODO: Face actual direction moved
 		Vector3 facingPos = targetPos;
 		float dotThreshold = 0.4f; // Min limit before facing moving direction
 		Vector3 toTarget = glm::normalize(targetPos - agent->ObjectTransform.Position);
 
+		// Face to moving direction if threshhold surpassed
 		if (glm::dot(toTarget, agent->GetDirection()) < dotThreshold) {
 			facingPos = agent->ObjectTransform.Position + agent->GetDirection();
 		}
 
 		owner->FaceTowards(facingPos, facingSpeed); 
-		owner->MoveAndAvoidEnemies(targetPos);
+		if (!owner->IsCornered())
+			owner->MoveAndAvoidEnemies(targetPos);
+		else
+			owner->MoveTowards(targetPos);
 
 	}
 	void MoveToScore::Exit(FedoraAgentInputAI* owner)

@@ -27,7 +27,6 @@ namespace Fed::AgentAITeamStates
 		{
 			owner->FaceTowards(controller->GetFedoraPosition(), facingSpeed);
 		}
-		// TODO: once reaching target position, wait for pass
 
 	}
 	void MoveToAssistScore::Exit(FedoraAgentInputAI* owner)

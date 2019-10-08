@@ -14,13 +14,13 @@ namespace Fed {
 		// Field is 40 x 60 in dimensions
 		// Will only consider 30 x 25, in spacing of 5. 6 by 5 positions
 		float x1 = -15.0f;
-		float z1 =   0.0f;
+		float z1 = -25.0f;
 		float x2 =  15.0f;
-		float z2 =  25.0f * zSign;
+		float z2 = 25.0f;// *zSign;
 		float spacing = 5.0f;
 
-		m_Positions.reserve((glm::abs(z2) - glm::abs(z1)) * (x2 - x1) / spacing);
-		for (float z = z1; std::abs(z) <= std::abs(z2); z += spacing * zSign) 
+		m_Positions.reserve((z2 - z1) * (x2 - x1) / spacing);
+		for (float z = z1; z <= z2; z += spacing) 
 		{
 			for (float x = x1; x <= x2; x += spacing) 
 			{
@@ -79,7 +79,7 @@ namespace Fed {
 		for (FieldPosition& pos : m_Positions) {
 			// Reward spots far from fedora
 			float dist = glm::length(pos.Position - fedoraPos);
-			float distScore = dist * 0.03f;
+			float distScore = (dist < fedoraRange ? dist * 0.03f : 0.0f);
 
 			// Reward spots within range of goal
 			Vector3 goalPos = controller->GetCourt()->GetGoalPosition(enemyTeam);
@@ -96,10 +96,6 @@ namespace Fed {
 			bool canPass = !controller->CanEnemyInterceptFedoraThrow(m_Team, fedoraPos, pos.Position);
 			float passScore = (canPass ? 2.0f : 0.0f);
 
-			//distScore = 0.0f;
-			// pass score currently always returning true
-			//passScore = 0.0f;
-			// nearGoalScore = 0.0f;
 
 			pos.Score = 1 + distScore + nearGoalScore + passScore;
 

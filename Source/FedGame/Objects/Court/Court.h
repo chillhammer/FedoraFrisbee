@@ -25,6 +25,7 @@ namespace Fed
 		const GoalTrigger* GetCollidingGoal(const GameObject& other) const;
 		Vector3 GetGoalPosition(const Team* team) const;
 		bool IsPointWithinField(Vector3 point) const;
+		bool IsPointWithinCorner(Vector3 point) const;
 		void DrawDebugWalls() const;
 		void DrawDebugGoals() const;
 	private:

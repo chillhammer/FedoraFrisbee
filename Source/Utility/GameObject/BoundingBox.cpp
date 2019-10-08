@@ -72,7 +72,7 @@ namespace Fed
 	{
 		ASSERT(IsIntersecting(myTrans, otherTrans, other), "Must be intersecting object post-movement");
 		Transform oldTrans = myTrans; 
-		oldTrans.Position -= movement;
+		oldTrans.Position -= movement; // Multiply by buffer space for floating point
 		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object pre-movement"); // Potential floating point error here
 		float dist = 0;
 		Vector3 dir = glm::normalize(movement);
@@ -82,8 +82,8 @@ namespace Fed
 			dist += step;
 			oldTrans.Position += dir * step;
 		}
-		dist -= step * 3.0f;
-		oldTrans.Position -= dir * step * 3.0f;
+		dist -= step * 10.0f;
+		oldTrans.Position -= dir * step * 10.0f;
 		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object post-pushout");
 
 		return dist;
