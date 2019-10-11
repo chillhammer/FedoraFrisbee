@@ -207,9 +207,6 @@ namespace Fed
 					ObjectTransform.Position -= moveDir * 0.01f;
 					walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 				}
-				if (i >= 1000) {
-					LOG_ERROR("Failed on wall collision, i exceeding 1000");
-				}
 			}
 			// Agents
 			{
@@ -220,35 +217,11 @@ namespace Fed
 				if (other == nullptr)
 					m_CanBeStolenFromTimer = glm::max(0.f, m_CanBeStolenFromTimer - Game.DeltaTime());
 
+				Vector3 originalPosition = ObjectTransform.Position;
+
 				int i = 0;
 				while (other && ++i < 1000 && !IsInvincible())
 				{
-					float distToTouch = m_BoundingBox.GetOverlapDistance(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, movement);
-
-					//ASSERT(m_PrevPosition == ObjectTransform.Position - movement, "Making sure movement is movement");
-
-					// Go Back In Time
-					ObjectTransform.Position = m_PrevPosition;
-
-					// Push Against Object
-					ObjectTransform.Position += moveDir * distToTouch;
-
-					// Still Hitting? Make Sure Not Hitting Anything
-					const FedoraAgent* stillHitting = m_FieldController->FindAgentCollidingAgent(this);
-					if (stillHitting) {
-						other = stillHitting;
-						continue;
-					}
-
-					// Slide Into Potentially Other Object
-					m_PrevPosition = ObjectTransform.Position;
-					Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, moveDir);
-					ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
-
-					// Reset Movement
-					movement = slidingDir * m_Speed * Game.DeltaTime();
-					moveDir = glm::normalize(movement);
-
 					//Steal Fedora
 					if (other->GetHasFedora() && other->CanBeStolenFrom() && other->GetTeam() != m_Team)
 					{
@@ -261,10 +234,53 @@ namespace Fed
 
 						m_FieldController->StunAgent(other, 2.0f);
 					}
-					// Move out of other agents
-					other = m_FieldController->FindAgentCollidingAgent(this);
-				}
 
+
+					float distToTouch = m_BoundingBox.GetOverlapDistance(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, movement);
+
+					// Change moved amount, still in same direction
+					movement = moveDir * distToTouch;
+
+					// Go Back In Time
+					ObjectTransform.Position = m_PrevPosition;
+
+					// Push Against Object
+					ObjectTransform.Position += movement;
+
+					// Still Hitting? Make Sure Not Hitting Anything
+					const FedoraAgent* stillHitting = m_FieldController->FindAgentCollidingAgent(this);
+					if (stillHitting) {
+						other = stillHitting;
+						movement = ObjectTransform.Position - m_PrevPosition;
+						moveDir = glm::normalize(movement);
+						ASSERT(glm::normalize(movement) == moveDir, "movement is not in the same direction as moveDir");
+						continue;
+					}
+
+					// Sliding Movement
+					Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, moveDir);
+
+					if (slidingDir != Vector3(0.0f, 0.0f, 0.0f)) {
+						// Reset Original Movement
+						m_PrevPosition = ObjectTransform.Position;
+
+						// Set new movement with new move direction
+						movement = slidingDir * m_Speed * Game.DeltaTime();
+						moveDir = glm::normalize(movement);
+
+						ObjectTransform.Position += movement;
+
+
+						// Find new colliding agent
+						other = m_FieldController->FindAgentCollidingAgent(this);
+					}
+					else {
+						// Cannot move any more
+						other = nullptr;
+					}
+					
+
+				}
 				ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
 			}
 
@@ -274,7 +290,6 @@ namespace Fed
 			{
 				ObjectTransform.Position = m_PrevPosition;
 				walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
-				ASSERT(walls.empty(), "Still colliding with walls somehow");
 			}
 		}
 		

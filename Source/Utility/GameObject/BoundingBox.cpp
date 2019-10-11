@@ -55,11 +55,11 @@ namespace Fed
 		Vector3 mins2 = otherTrans.GetGlobalPosition() + other.m_Center - other.m_HalfExtents * otherTrans.Scale;
 		Vector3 maxs2 = otherTrans.GetGlobalPosition() + other.m_Center + other.m_HalfExtents * otherTrans.Scale;
 		Vector3 newDir = dir;
-		if (mins1.x > maxs2.x || mins2.x > maxs1.x)
+		if (mins1.x >= maxs2.x || mins2.x >= maxs1.x)
 		{
 			newDir.x = 0;
 		}
-		else if (mins1.z > maxs2.z || mins2.z > maxs1.z)
+		else if (mins1.z >= maxs2.z || mins2.z >= maxs1.z)
 		{
 			newDir.z = 0;
 		}
@@ -76,14 +76,15 @@ namespace Fed
 		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object pre-movement"); // Potential floating point error here
 		float dist = 0;
 		Vector3 dir = glm::normalize(movement);
-		float step = 0.001f;
-		while (!IsIntersecting(oldTrans, otherTrans, other))
+		float step = 0.01f;
+		float moveAmountSqr = glm::length2(movement); // Caps it at move amount in case of Corner edge case [step size too big]
+		while (!IsIntersecting(oldTrans, otherTrans, other) && dist * dist < moveAmountSqr)
 		{
 			dist += step;
 			oldTrans.Position += dir * step;
 		}
-		dist -= step * 10.0f;
-		oldTrans.Position -= dir * step * 10.0f;
+		dist -= step;
+		oldTrans.Position -= dir * step;
 		ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object post-pushout");
 
 		return dist;

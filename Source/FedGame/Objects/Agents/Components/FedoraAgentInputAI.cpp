@@ -235,6 +235,7 @@ namespace Fed
 		m_Owner->m_Speed = glm::clamp(m_Owner->m_Speed + acceleration, 0.f, m_Owner->GetMaxSpeed());
 
 		m_Owner->m_PrevPosition = m_Owner->ObjectTransform.Position;
+		ASSERT(m_Owner->GetFieldController()->FindAgentCollidingAgent(m_Owner) == nullptr, "Colliding with object before movement");
 		m_Owner->ObjectTransform.Position += m_Owner->m_Direction * m_Owner->m_Speed * Game.DeltaTime();
 		
 		// Reset Accelertion
