@@ -15,8 +15,6 @@ static void GLFWErrorCallback(int error, const char* description) {
 	LOG_ERROR("GLFW Error ({0}): {1}", error, description);
 }
 
-//extern bool Running; // References because Window closes application
-
 Fed::Window::Window(const WindowProps & props)
 {
 	m_Data.Title = props.Title;

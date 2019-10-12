@@ -32,6 +32,7 @@ namespace Fed::GameStates
 		Vector3 m_Light;
 		ShaderPtr m_Shader;
 		ShaderPtr m_DebugShader;
+		ShaderPtr m_UIShader;
 		Court m_Court;
 		Fedora m_Fedora;
 		FrisbeeFieldController m_FieldController;

@@ -253,7 +253,6 @@ namespace Fed
 						other = stillHitting;
 						movement = ObjectTransform.Position - m_PrevPosition;
 						moveDir = glm::normalize(movement);
-						ASSERT(glm::normalize(movement) == moveDir, "movement is not in the same direction as moveDir");
 						continue;
 					}
 

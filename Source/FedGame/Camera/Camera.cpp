@@ -83,15 +83,13 @@ namespace Fed
 		// Reset Delta Movement
 		m_DeltaMousePosition = Vector2(0, 0);
 
-		
-		//LOG("Camera Pitch: {0} - Local: {1}", m_Transform.GetPitch(), m_Pitch);
-		//LOG("Camera Yaw: {0} - Local: {1}", ObjectTransform.GetYaw(), m_Yaw);
-
-		//LOG("Camera Position: {0}, {1}, {2}", m_Transform.Position.x, m_Transform.Position.y, m_Transform.Position.z);
-		//LOG("Camera Pivot Position: {0}, {1}, {2}", m_PivotPosition.x, m_PivotPosition.y, m_PivotPosition.z);
-		//LOG("Camera Heading: {0}, {1}, {2}", m_Transform.GetHeading().x, m_Transform.GetHeading().y, m_Transform.GetHeading().z);
-		//LOG("Camera Side: {0}, {1}, {2}", m_Transform.GetSide().x, m_Transform.GetSide().y, m_Transform.GetSide().z);
-		//LOG("Camera Up: {0}, {1}, {2}", m_Transform.GetUp().x, m_Transform.GetUp().y, m_Transform.GetUp().z);
+		// Handling Visible Cursor
+		if (Mode == CameraMode::Frozen || (Game.IsPaused() && Mode != CameraMode::NoClip)) {
+			Game.GetWindow().SetCursorEnabled(true);
+		}
+		else {
+			Game.GetWindow().SetCursorEnabled(false);
+		}
 
 	}
 
@@ -115,6 +113,11 @@ namespace Fed
 			aspect = (float)Game.GetWindow().GetWidth() / (float)Game.GetWindow().GetHeight();
 
 		return glm::perspective(glm::radians(fov), aspect, 0.1f, 100.f);
+	}
+
+	Matrix4x4 Camera::GetOrthographicMatrix() const
+	{
+		return glm::ortho(0.0f, (float)Game.GetWindow().GetWidth(), (float)Game.GetWindow().GetHeight(), 0.0f);
 	}
 
 	// Used to update position when pivoting
@@ -155,7 +158,8 @@ namespace Fed
 		{
 			LOG("Inital Camera Jump");
 		}
-		Game.GetWindow().SetCursorPosition(DELTA_CAP, DELTA_CAP);
+		if (!Game.IsPaused() || Mode == CameraMode::NoClip)
+			Game.GetWindow().SetCursorPosition(DELTA_CAP, DELTA_CAP);
 		return false;
 	}
 

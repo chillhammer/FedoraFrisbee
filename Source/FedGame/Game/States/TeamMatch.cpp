@@ -1,12 +1,13 @@
 #include <FedPCH.h>
 #include <Input/InputManager.h>
 #include <Resources/ResourceManager.h>
+#include <Utility/Graphics/Sprite/Sprite.h>
 #include "GameStates.h"
 
 namespace Fed::GameStates
 {
 	static void SetupAgent(FedoraAgent& agent, Camera* camera, FrisbeeFieldController* field, Vector3 position, TeamColor teamColor, AgentInputType input = AgentInputType::AI);
-	static void UpdateShaders(ShaderPtr shader, ShaderPtr debugShader, const Camera& camera);
+	static void UpdateShaders(ShaderPtr shader, ShaderPtr debugShader, ShaderPtr uiShader, const Camera& camera);
 	static void DrawAgents(FedoraAgent* agents, int size);
 	// Team Match State
 	void TeamMatch::Enter(GameManager* owner)
@@ -21,6 +22,7 @@ namespace Fed::GameStates
 		m_Shader->SetUniform3f("u_LightPosition", m_Light.x, m_Light.y, m_Light.z);
 
 		m_DebugShader = Resources.GetShader("Debug");
+		m_UIShader = Resources.GetShader("UI");
 
 		for (int i = 0; i < NUM_AGENTS; i++) {
 			TeamColor color = (i >= NUM_AGENTS / 2 ? TeamColor::Red : TeamColor::Blue);
@@ -49,13 +51,24 @@ namespace Fed::GameStates
 			agent.Update();
 		m_Fedora.Update();
 
-		UpdateShaders(m_Shader, m_DebugShader, m_Camera);
+		UpdateShaders(m_Shader, m_DebugShader, m_UIShader, m_Camera);
+
+		
 
 		m_Court.Draw();
 		//m_Court.DrawDebugWalls();
 		//m_Court.DrawDebugGoals();
 		m_Fedora.Draw();
 		DrawAgents(m_Agents, NUM_AGENTS);
+
+		Sprite sprite(Resources.GetTexture("Wood"));
+		Matrix4x4 model;
+		model[0][0] = 1.0f;
+		model[1][1] = 1.0f;
+		model[2][2] = 1.0f;
+		model[3][3] = 1.0f;
+
+		sprite.Draw(m_UIShader, model);
 	}
 
 	void TeamMatch::Exit(GameManager* owner)
@@ -74,12 +87,15 @@ namespace Fed::GameStates
 		agent.SetTeamColor(teamColor);
 		field->AddAgentReference(&agent);
 	}
-	void UpdateShaders(ShaderPtr shader, ShaderPtr debugShader, const Camera& camera)
+	void UpdateShaders(ShaderPtr shader, ShaderPtr debugShader, ShaderPtr uiShader, const Camera& camera)
 	{
 		shader->Bind();
 		shader->SetUniformMat4f("u_ViewProjection", camera.GetProjectionMatrix() * camera.GetViewMatrix());
 		debugShader->Bind();
 		debugShader->SetUniformMat4f("u_ViewProjection", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+		uiShader->Bind();
+		uiShader->SetUniformMat4f("u_ViewProjection", camera.GetOrthographicMatrix() * camera.GetViewMatrix());
+
 	}
 	void DrawAgents(FedoraAgent* agents, int size)
 	{
