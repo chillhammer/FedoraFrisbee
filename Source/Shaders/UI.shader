@@ -31,4 +31,8 @@ void main()
 		color = texture(u_Texture, v_TexCoord);
 	else
 		color = vec4(u_Color, 1.0);
+
+	color = vec4(1.0, 1.0, 1.0, texture(u_Texture, v_TexCoord).r);
+	//color = vec4(1.0, 1.0, 1.0, 0.5f);
+	//color = vec4(1.0, 1.0, 1.0, 1.0);
 };

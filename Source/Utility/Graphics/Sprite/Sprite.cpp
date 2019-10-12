@@ -20,7 +20,17 @@ namespace Fed {
 	Sprite::Sprite( TexturePtr texture)
 		: m_VertexBuffer(vertices, sizeof(vertices)),
 		m_IndexBuffer(indices, sizeof(indices)),
-		m_Texture(*texture)
+		m_Texture(texture)
+	{
+		m_BufferLayout.Push<float>(2); // Position
+		m_BufferLayout.Push<float>(2); // Texture Coords
+		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
+	}
+
+	Sprite::Sprite(Vector3 color)
+		: m_VertexBuffer(vertices, sizeof(vertices)),
+		m_IndexBuffer(indices, sizeof(indices)),
+		m_Color(color)
 	{
 		m_BufferLayout.Push<float>(2); // Position
 		m_BufferLayout.Push<float>(2); // Texture Coords
@@ -48,8 +58,8 @@ namespace Fed {
 			ASSERT(false, "Mesh cannot draw. It is empty");
 		}
 		shader->Bind();
-		if (m_Texture.GetFilePath() != "") {
-			m_Texture.Bind();
+		if (m_Texture->GetFilePath() != "") {
+			m_Texture->Bind();
 			shader->SetUniform1i("u_Texture", 0);
 			shader->SetUniform1i("u_UseTexture", 1);
 		}

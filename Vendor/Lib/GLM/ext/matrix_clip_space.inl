@@ -9,7 +9,7 @@ namespace glm
 		Result[2][2] = - static_cast<T>(1);
 		Result[3][0] = - (right + left) / (right - left);
 		Result[3][1] = - (top + bottom) / (top - bottom);
-		return Result;
+			return Result;
 	}
 
 	template<typename T>

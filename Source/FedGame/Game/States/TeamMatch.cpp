@@ -1,7 +1,7 @@
 #include <FedPCH.h>
 #include <Input/InputManager.h>
 #include <Resources/ResourceManager.h>
-#include <Utility/Graphics/Sprite/Sprite.h>
+#include <Utility/UI/UIElement.h>
 #include "GameStates.h"
 
 namespace Fed::GameStates
@@ -61,14 +61,12 @@ namespace Fed::GameStates
 		m_Fedora.Draw();
 		DrawAgents(m_Agents, NUM_AGENTS);
 
-		Sprite sprite(Resources.GetTexture("Wood"));
-		Matrix4x4 model;
-		model[0][0] = 1.0f;
-		model[1][1] = 1.0f;
-		model[2][2] = 1.0f;
-		model[3][3] = 1.0f;
+		UIElement element("Wood");
+		element.UITransform.Scale = Vector3(100.0f, 100.0f, 100.0f);
+		//element.Draw();
 
-		sprite.Draw(m_UIShader, model);
+		FontPtr font = Resources.GetFont("Arial");
+		font->RenderText("LHTestTestTestTest", Vector2(0.0f, 0.0f), 1.0f, Vector3(1.0f, 1.0f, 1.0f), Game.GetWindow().GetWidth(), Game.GetWindow().GetHeight());
 	}
 
 	void TeamMatch::Exit(GameManager* owner)
@@ -94,7 +92,7 @@ namespace Fed::GameStates
 		debugShader->Bind();
 		debugShader->SetUniformMat4f("u_ViewProjection", camera.GetProjectionMatrix() * camera.GetViewMatrix());
 		uiShader->Bind();
-		uiShader->SetUniformMat4f("u_ViewProjection", camera.GetOrthographicMatrix() * camera.GetViewMatrix());
+		uiShader->SetUniformMat4f("u_ViewProjection", camera.GetOrthographicMatrix());
 
 	}
 	void DrawAgents(FedoraAgent* agents, int size)

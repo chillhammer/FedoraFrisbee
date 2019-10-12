@@ -17,6 +17,7 @@ namespace Fed
 		LoadMeshes();
 		LoadModels();
 		LoadShaders();
+		LoadFont();
 		LOG("Initialized Resource Manager");
 	}
 	TexturePtr ResourceManager::GetTexture(std::string name)
@@ -38,6 +39,11 @@ namespace Fed
 	{
 		ASSERT(m_ShaderTable[name], "Cannot load shader: " + name);
 		return m_ShaderTable[name];
+	}
+	FontPtr ResourceManager::GetFont(std::string name)
+	{
+		ASSERT(m_FontTable[name], "Cannot load font: " + name);
+		return m_FontTable[name];
 	}
 	void ResourceManager::LoadTextures()
 	{
@@ -64,5 +70,11 @@ namespace Fed
 		m_ShaderTable.emplace("Model", new Shader("Shaders/Model.shader"));
 		m_ShaderTable.emplace("Debug", new Shader("Shaders/Debug.shader"));
 		m_ShaderTable.emplace("UI", new Shader("Shaders/UI.shader"));
+	}
+	void ResourceManager::LoadFont()
+	{
+		FontPtr arial(new Font());
+		arial->Load("../Assets/Fonts/arial.ttf");
+		m_FontTable.emplace("Arial", arial);
 	}
 }

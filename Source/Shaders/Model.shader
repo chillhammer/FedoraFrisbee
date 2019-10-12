@@ -50,4 +50,5 @@ void main()
 		color = vec4(u_Color, 1.0);
 
 	color *= (baseline + intensity);
+	color.w = 1.0f;
 };
