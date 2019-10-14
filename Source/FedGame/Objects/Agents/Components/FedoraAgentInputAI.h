@@ -12,6 +12,7 @@ namespace Fed
 	{
 	public:
 		FedoraAgentInputAI();
+		virtual ~FedoraAgentInputAI();
 		void Update(FedoraAgent* owner) override;
 		bool MoveTowards(const Vector3& point);
 		bool MoveAndAvoidEnemies(const Vector3& point);

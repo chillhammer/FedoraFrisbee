@@ -9,7 +9,7 @@
 namespace Fed
 {
 	Camera::Camera()
-		:	m_Speed(3.8f), m_Sensitivity(40.f), m_Yaw(180), 
+		:	m_Speed(5.8f), m_Sensitivity(10.f), m_Yaw(180), 
 			Mode(CameraMode::Pivot), m_PivotLength(4.9f), m_PivotOffset(0, 2.3f, 0.4f),
 			m_PivotPosition(0, 0, 0)
 	{
@@ -83,14 +83,15 @@ namespace Fed
 		// Reset Delta Movement
 		m_DeltaMousePosition = Vector2(0, 0);
 
+		/*
 		// Handling Visible Cursor
-		if (Mode == CameraMode::Frozen || (Game.IsPaused() && Mode != CameraMode::NoClip)) {
+		if (Game.IsPaused()) {
 			Game.GetWindow().SetCursorEnabled(true);
 		}
 		else {
 			Game.GetWindow().SetCursorEnabled(false);
 		}
-
+		*/
 	}
 
 	void Camera::OnEvent(const Subject * subject, Event & e)
@@ -115,7 +116,7 @@ namespace Fed
 		return glm::perspective(glm::radians(fov), aspect, 0.1f, 100.f);
 	}
 
-	Matrix4x4 Camera::GetOrthographicMatrix() const
+	Matrix4x4 Camera::GetOrthographicMatrix()
 	{
 		return glm::ortho(0.0f, (float)Game.GetWindow().GetWidth(), (float)Game.GetWindow().GetHeight(), 0.0f);
 	}
@@ -150,28 +151,39 @@ namespace Fed
 	bool Camera::OnMouseMoved(MouseMovedEvent & e)
 	{
 		//LOG("Camera: Mouse Moved: {0}, {1}", e.GetX(), e.GetY());
-		if (Input.GetMousePosition() != Vector2(0, 0)) // Initial Mouse Delta Jump Ignored
+		float midWindowX = Game.GetWindow().GetWidth() * 0.5f;
+		float midWindowY = Game.GetWindow().GetHeight() * 0.5f;
+		if (Input.GetMousePosition() != Vector2(0, 0) && !Game.IsPaused()) // Initial Mouse Delta Jump Ignored
 		{
-			m_DeltaMousePosition = Vector2(e.GetX() - DELTA_CAP, e.GetY() - DELTA_CAP);
+			m_DeltaMousePosition = Vector2(e.GetX() - midWindowX, e.GetY() - midWindowY);
+			if (glm::length2(m_DeltaMousePosition) > DELTA_CAP * DELTA_CAP)
+				m_DeltaMousePosition = Vector2(0.0f, 0.0f);
 		}
-		else
-		{
-			LOG("Inital Camera Jump");
-		}
-		if (!Game.IsPaused() || Mode == CameraMode::NoClip)
-			Game.GetWindow().SetCursorPosition(DELTA_CAP, DELTA_CAP);
+		if (!Game.IsPaused())
+			Game.GetWindow().SetCursorPosition(midWindowX, midWindowY);
 		return false;
 	}
 
 	bool Camera::OnKeyPressed(KeyPressedEvent & e)
 	{
+		if (Game.IsPaused()) return false;
 		switch (e.GetKeyCode())
 		{
 		case KEY_C:
 			Mode = (Mode == CameraMode::NoClip ? CameraMode::Pivot : CameraMode::NoClip);
 			break;
 		case KEY_V:
-			Mode = CameraMode::Frozen;
+			if (Mode == CameraMode::Frozen)
+				Mode = CameraMode::NoClip;
+			else
+				Mode = CameraMode::Frozen;
+			break;
+
+		case KEY_ESCAPE:
+			if (Mode == CameraMode::NoClip && Game.IsPaused())
+				Mode = CameraMode::Frozen;
+			else if (Mode == CameraMode::Frozen && !Game.IsPaused())
+				Mode = CameraMode::NoClip;
 			break;
 		}
 		return false;

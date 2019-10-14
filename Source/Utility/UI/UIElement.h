@@ -7,7 +7,7 @@ namespace Fed
 	class UIElement {
 	public:
 		UIElement(std::string textureName);
-		UIElement(Vector3 color);
+		UIElement(Vector4 color);
 		Transform UITransform;
 
 		void Draw(const ShaderPtr& shader);
@@ -15,6 +15,7 @@ namespace Fed
 	private:
 		UIElement() {};
 		UIElement(const UIElement& other) {};
+	protected:
 		Sprite m_Sprite;
 	};
 }

@@ -46,6 +46,9 @@ namespace Fed
 		class FedoraAgent* FindClosestAgentToEnemyGoal(int rank = 0, class FedoraAgent* agentToIgnore = nullptr);
 		class FedoraAgent* FindClosestAgentToRay(Vector3 origin, Vector3 dir, class FedoraAgent* agentToIgnore = nullptr);
 		class FedoraAgent* FindPassToAgent(class FedoraAgent* passing, Vector3& outPassPosition) const;
+		class FedoraAgent* GetAgent(int index) const;
+
+		int Score;
 	private:
 		TeamColor m_Color;
 		AIPositionFinder m_PositionFinder;

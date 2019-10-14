@@ -14,7 +14,7 @@ namespace Fed
 		void OnEvent(const Subject* subject, Event& e);
 		Matrix4x4 GetViewMatrix() const;
 		Matrix4x4 GetProjectionMatrix() const;
-		Matrix4x4 GetOrthographicMatrix() const;
+		static Matrix4x4 GetOrthographicMatrix();
 		void SetPivotPosition(Vector3 newPosition);
 		void LookInDirection(Vector3 direction);
 	public:

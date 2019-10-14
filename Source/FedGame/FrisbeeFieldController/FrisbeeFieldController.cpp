@@ -102,6 +102,10 @@ namespace Fed
 		ASSERT(m_Fedora != nullptr, "Must have fedora reference");
 		return m_Fedora->IsMoving();
 	}
+	bool FrisbeeFieldController::GetScored() const
+	{
+		return m_Scored;
+	}
 	void FrisbeeFieldController::StunAgent(const FedoraAgent* agent, float time)
 	{
 		agent->GetTeam()->StunAgent(agent->GetID(), time);
@@ -174,7 +178,6 @@ namespace Fed
 				return true;
 			}
 		}
-		LOG_WARN("Trying to call CanAgentInterceptFedora() when fedora is not in-air");
 		return false;
 	}
 	// Args: throwTeam: team that will be throwing the fedora. 
@@ -251,6 +254,7 @@ namespace Fed
 	}
 	void FrisbeeFieldController::ResetPositions()
 	{
+		m_Scored = false;
 		m_BlueTeam.ResetPositions();
 		m_RedTeam.ResetPositions();
 
@@ -295,7 +299,16 @@ namespace Fed
 	{
 		m_Fedora->SetCanScore(false);
 		// TODO: Fancy effect when scoring
-		ResetPositions();
+		if (!m_Scored) {
+			GetEnemyTeam(e.GetScoringTeam())->Score++;
+			m_Scored = true;
+
+			WaitSignal signal;
+			m_BlueTeam.BroadcastSignal(signal);
+			m_RedTeam.BroadcastSignal(signal);
+		}
+
+		//ResetPositions();
 
 		return false;
 	}

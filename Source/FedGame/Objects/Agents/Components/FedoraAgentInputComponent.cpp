@@ -5,6 +5,9 @@
 
 namespace Fed
 {
+	FedoraAgentInputComponent::~FedoraAgentInputComponent()
+	{
+	}
 	// Attempts to throw frisbee from agent
 	void FedoraAgentInputComponent::ThrowFrisbee(FedoraAgent * owner)
 	{

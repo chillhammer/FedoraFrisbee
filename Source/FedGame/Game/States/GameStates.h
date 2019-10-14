@@ -4,6 +4,9 @@
 #include <Objects/Box/WoodenBox.h>
 #include <Objects/Fedora/Fedora.h>
 #include <Objects/Court/Court.h>
+#include <Graphics/Model/Skybox.h>
+#include <UI/Button.h>
+#include <Game/Screens/PauseScreen.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
 namespace Fed::GameStates
 {
@@ -32,9 +35,14 @@ namespace Fed::GameStates
 		Vector3 m_Light;
 		ShaderPtr m_Shader;
 		ShaderPtr m_DebugShader;
+		ShaderPtr m_SkyboxShader;
 		ShaderPtr m_UIShader;
+		Skybox m_Skybox;
 		Court m_Court;
 		Fedora m_Fedora;
 		FrisbeeFieldController m_FieldController;
+		float m_ScoredTimer;
+		PauseScreen m_PauseScreen;
+		
 	);
 }

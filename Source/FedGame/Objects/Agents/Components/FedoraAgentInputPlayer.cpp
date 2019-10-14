@@ -14,6 +14,12 @@ namespace Fed
 		Input.MouseClicked.AddObserver(this);
 		Input.KeyPressed.AddObserver(this);
 	}
+	FedoraAgentInputPlayer::~FedoraAgentInputPlayer()
+	{
+		Input.MouseClicked.RemoveObserver(this);
+		Input.KeyPressed.RemoveObserver(this);
+
+	}
 	// Handles events, primarily input
 	void FedoraAgentInputPlayer::OnEvent(const Subject * subject, Event & e)
 	{

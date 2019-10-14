@@ -404,4 +404,8 @@ namespace Fed
 		outPassPosition = bestPassingLoc;
 		return bestAgent;
 	}
+	FedoraAgent* Team::GetAgent(int index) const
+	{
+		return m_Agents[index];
+	}
 }

@@ -26,7 +26,8 @@ namespace Fed {
 		Font();
 		~Font();
 		void Load(const char* fontPath);
-		void RenderText(std::string text, Vector2 pos, GLfloat scale, Vector3 & color, GLsizei screenWidth, GLsizei screenHeight);
+		Vector2 GetTextSize(std::string text, float scale);
+		void RenderText(std::string text, Vector2 pos, float scale, Vector3 & color);
 	};
 	typedef std::shared_ptr<Font> FontPtr;
 }

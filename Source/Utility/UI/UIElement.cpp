@@ -6,7 +6,7 @@ namespace Fed {
 	UIElement::UIElement(std::string textureName) : m_Sprite(Resources.GetTexture(textureName))
 	{
 	}
-	UIElement::UIElement(Vector3 color) : m_Sprite(color)
+	UIElement::UIElement(Vector4 color) : m_Sprite(color)
 	{
 	}
 	void UIElement::Draw(const ShaderPtr& shader)

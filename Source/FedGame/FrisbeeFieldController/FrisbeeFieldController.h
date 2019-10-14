@@ -32,6 +32,7 @@ namespace Fed
 			FedoraAgent** outInterceptAgent = nullptr, Vector3* outInterceptPos = nullptr);
 		bool IsFedoraFree() const;
 		bool IsFedoraMoving() const;
+		bool GetScored() const;
 		void StunAgent(const FedoraAgent* agent, float time = 1.0f);
 		float		GetFedoraLaunchSpeed() const;
 		float		GetFedoraRange() const;
@@ -62,5 +63,6 @@ namespace Fed
 		int m_LastThrownAgentID;
 		Team m_BlueTeam;
 		Team m_RedTeam;
+		bool m_Scored;
 	};
 }

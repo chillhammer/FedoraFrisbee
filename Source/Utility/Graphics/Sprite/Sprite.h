@@ -11,13 +11,13 @@ namespace Fed
 	public:
 		Sprite() { ASSERT(false, "Cannot init default sprite"); };
 		Sprite(TexturePtr texture);
-		Sprite(Vector3 color);
+		Sprite(Vector4 color);
 		Sprite(const Sprite& other);
 
 		virtual ~Sprite();
 		void Draw(const ShaderPtr& shader, const Matrix4x4& model);
 		TexturePtr m_Texture;
-		Vector3 m_Color;
+		Vector4 m_Color;
 	private:
 		VertexBuffer m_VertexBuffer;
 		IndexBuffer m_IndexBuffer;

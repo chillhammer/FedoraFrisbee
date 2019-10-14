@@ -19,13 +19,15 @@ namespace Fed
 		void Run();
 		bool IsRunning() const;
 		void Shutdown();
+		void ChangeState(State<GameManager>* state);
 		void OnEvent(const Subject* subject, Event& event);
 
 		float DeltaTime() const;
 		float DeltaTimeUnscaled() const;
 		float TimeScale() const;
 		void SetTimeScale(float timeScale);
-		void TogglePause();
+		void SetTimeScaleFreeze(bool freeze);
+		void SetPause(bool pause);
 		bool IsPaused() const;
 
 		const class Window& GetWindow() const;
@@ -41,6 +43,7 @@ namespace Fed
 		double m_TimeScale = 1;
 		double m_UnpausedTimeScale = 1;
 		bool m_Running = true;
+		bool m_Paused = false;
 
 		// Big Classes - in Initialized Order
 		Window m_Window;

@@ -105,18 +105,37 @@ namespace Fed {
 		FT_Done_Face(face);
 		FT_Done_FreeType(ft);
 	}
+	// Computes the width and height of given string
+	Vector2 Font::GetTextSize(std::string text, float scale)
+	{
+		Vector2 size(0.0f, 0.0f);
 
-	void Font::RenderText(std::string text, Vector2 pos, GLfloat scale, Vector3& color, GLsizei screenWidth, GLsizei screenHeight)
+		// Iterate through all characters
+		std::string::const_iterator c;
+		for (c = text.begin(); c != text.end(); c++)
+		{
+			Character ch = Characters[*c];
+
+			size.x += (ch.advance >> 6) * scale;
+			size.y = glm::max(size.y, ch.size.y * scale);
+		}
+		return size;
+	}
+
+	void Font::RenderText(std::string text, Vector2 pos, float scale, Vector3& color)
 	{
 		//Matrix4x4 textProjection = Matrix4x4();
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		textShader = Resources.GetShader("UI");
+		textShader = Resources.GetShader("Text");
 		textShader->Bind();
 		Matrix4x4 model(1.0f);
 		textShader->SetUniformMat4f("u_Model", model);
+		textShader->SetUniformMat4f("u_Projection", Camera::GetOrthographicMatrix());
+
+		textShader->SetUniform1i("u_UseTexture", 1);
 
 		// Disable depth testing when rending text and re-enable when done.
 		glDisable(GL_DEPTH_TEST);
@@ -132,7 +151,7 @@ namespace Fed {
 			Character ch = Characters[*c];
 
 			GLfloat xpos = pos.x + ch.bearing.x * scale;
-			GLfloat ypos = pos.y - (ch.size.y - ch.bearing.y) * scale + (35.0f - ch.size.y) * scale;
+			GLfloat ypos = pos.y + (ch.size.y - ch.bearing.y) * scale + (35.0f - ch.size.y) * scale; //Uses hard-coded offset
 
 
 			GLfloat w = ch.size.x * scale;

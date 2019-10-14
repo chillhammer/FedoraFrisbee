@@ -9,5 +9,7 @@ namespace Fed
 	public:
 
 		virtual void OnEvent(const Subject* subject, class Event& event) = 0;
+
+
 	};
 }

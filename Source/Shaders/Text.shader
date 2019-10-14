@@ -11,7 +11,7 @@ uniform mat4 u_Projection;
 void main()
 {
 	v_TexCoord = vertex.zw;
-	gl_Position = u_Projection * u_Model * vec4(vertex.xy, 0.1f, 1.0);
+	gl_Position = u_Projection * u_Model * vec4(vertex.xy, 0.0, 1.0);
 };
 
 #shader fragment
@@ -23,14 +23,9 @@ in vec2 v_TexCoord;
 
 uniform sampler2D u_Texture;
 uniform bool u_UseTexture;
-uniform vec4 u_Color;
+uniform vec3 u_Color;
 
 void main()
 {
-	if (u_UseTexture) {
-		color = texture(u_Texture, v_TexCoord);
-
-	}
-	else
-		color = u_Color;
+	color = vec4(u_Color.x, u_Color.y, u_Color.z, texture(u_Texture, v_TexCoord).r);
 };

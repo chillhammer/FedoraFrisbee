@@ -27,7 +27,7 @@ namespace Fed {
 		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
 	}
 
-	Sprite::Sprite(Vector3 color)
+	Sprite::Sprite(Vector4 color)
 		: m_VertexBuffer(vertices, sizeof(vertices)),
 		m_IndexBuffer(indices, sizeof(indices)),
 		m_Color(color)
@@ -58,13 +58,13 @@ namespace Fed {
 			ASSERT(false, "Mesh cannot draw. It is empty");
 		}
 		shader->Bind();
-		if (m_Texture->GetFilePath() != "") {
+		if (m_Texture != nullptr) {
 			m_Texture->Bind();
 			shader->SetUniform1i("u_Texture", 0);
 			shader->SetUniform1i("u_UseTexture", 1);
 		}
 		else {
-			shader->SetUniform3f("u_Color", m_Color.x, m_Color.y, m_Color.z);
+			shader->SetUniform4f("u_Color", m_Color.x, m_Color.y, m_Color.z, m_Color.w);
 			shader->SetUniform1i("u_UseTexture", 0);
 		}
 		shader->SetUniformMat4f("u_Model", model);

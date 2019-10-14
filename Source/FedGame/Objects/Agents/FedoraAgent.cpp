@@ -33,6 +33,8 @@ namespace Fed
 			return;
 		if (m_InputType != AgentInputType::NONE)
 		{
+			if (m_InputType == AgentInputType::PLAYER && m_Camera)
+				m_Camera->Mode = CameraMode::NoClip;
 			delete m_InputComponent;
 		}
 		m_InputType = inputType;
@@ -45,6 +47,8 @@ namespace Fed
 			break;
 		case AgentInputType::PLAYER:
 			m_InputComponent = new FedoraAgentInputPlayer();
+			if (m_Camera)
+				m_Camera->Mode = CameraMode::Pivot;
 			break;
 		case AgentInputType::AI:
 			m_InputComponent = new FedoraAgentInputAI();

@@ -1,6 +1,7 @@
 #include <FedPCH.h>
 #include "ResourceManager.h"
 #include <Graphics/Model/ImportedModel.h>
+#include <Graphics/OpenGL/Cubemap.h>
 #include <Objects/Box/BoxMesh.h>
 #include <Objects/Box/WoodenBoxModel.h>
 
@@ -50,6 +51,10 @@ namespace Fed
 		TexturePtr wood(new Texture("../Assets/Textures/wood.png"));
 		wood->LoadTexture();
 		m_TextureTable.emplace("Wood", wood);
+
+		TexturePtr sky(new Cubemap("../Assets/Textures/Skybox/Skybox"));
+		sky->LoadTexture();
+		m_TextureTable.emplace("Skybox", sky);
 	}
 	void ResourceManager::LoadMeshes()
 	{
@@ -70,6 +75,8 @@ namespace Fed
 		m_ShaderTable.emplace("Model", new Shader("Shaders/Model.shader"));
 		m_ShaderTable.emplace("Debug", new Shader("Shaders/Debug.shader"));
 		m_ShaderTable.emplace("UI", new Shader("Shaders/UI.shader"));
+		m_ShaderTable.emplace("Text", new Shader("Shaders/Text.shader"));
+		m_ShaderTable.emplace("Skybox", new Shader("Shaders/Skybox.shader"));
 	}
 	void ResourceManager::LoadFont()
 	{

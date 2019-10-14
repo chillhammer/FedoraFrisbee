@@ -55,6 +55,11 @@ namespace Fed
 		m_Running = false;
 	}
 
+	void GameManager::ChangeState(State<GameManager>* state)
+	{
+		m_StateMachine.ChangeState(state);
+	}
+
 	void GameManager::OnEvent(const Subject * subject, Event & event)
 	{
 		Evnt::Dispatch<KeyPressedEvent>(event, EVENT_BIND_FN(GameManager, OnKeyPressed));
@@ -90,20 +95,26 @@ namespace Fed
 		m_TimeScale = timeScale;
 	}
 
-	void GameManager::TogglePause()
+	void GameManager::SetTimeScaleFreeze(bool freeze)
 	{
-		if (IsPaused())
+		if (!freeze)
 			m_TimeScale = m_UnpausedTimeScale;
-		else
+		else if (m_TimeScale != 0.0f)
 		{
 			m_UnpausedTimeScale = m_TimeScale;
-			m_TimeScale = 0;
+			m_TimeScale = 0.0f;
 		}
+	}
+
+	void GameManager::SetPause(bool pause)
+	{
+		m_Paused = pause;
+		SetTimeScaleFreeze(pause);
 	}
 
 	bool GameManager::IsPaused() const
 	{
-		return m_TimeScale <= 0;
+		return m_Paused;
 	}
 
 	const Window& GameManager::GetWindow() const
@@ -121,10 +132,13 @@ namespace Fed
 
 	bool GameManager::OnKeyPressed(KeyPressedEvent& e)
 	{
+		if (IsPaused())
+			return false;
+
 		switch (e.GetKeyCode())
 		{
 		case KEY_X:
-			TogglePause();
+			SetTimeScaleFreeze(m_TimeScale != 0.0f);
 			break;
 		case KEY_R:
 			m_StateMachine.ChangeState(GameStates::TeamMatch::Instance());

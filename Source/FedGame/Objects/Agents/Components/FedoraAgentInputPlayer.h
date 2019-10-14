@@ -11,6 +11,7 @@ namespace Fed
 	{
 	public:
 		FedoraAgentInputPlayer();
+		virtual ~FedoraAgentInputPlayer();
 		void OnEvent(const Subject* subject, Event& e);
 		void Update(FedoraAgent* owner) override;
 		void LateUpdate(FedoraAgent* owner) override;
