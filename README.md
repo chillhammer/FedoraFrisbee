@@ -9,7 +9,7 @@
 - Event system driven logic <br>
 - Finite State Machine driven <br>
 - Playable controller with third-person movement & hat throwing <br>
-- 2D UI with Buttons, Text, Playable controller with third-person movement & hat throwing <br>
+- 2D UI with Buttons, Text, Pause menu <br>
 
 ### To Compile and Play: ###
 1. Click on GenerateProject.bat <br>
