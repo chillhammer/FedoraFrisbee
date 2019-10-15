@@ -26,9 +26,11 @@ namespace Fed::AgentAITeamStates
 		const GoalTrigger& targetGoal = (color != goals[0].Color ? goals[0] : goals[1]);
 		Team* team = agent->GetTeam();
 		const Team* enemyTeam = controller->GetEnemyTeam(team);
+		
 
 		ASSERT(targetGoal.Object.ObjectTransform.Position == Vector3(0, 0, 0), "Assumption that goals' position has no offset is false.");
 		Vector3 targetPos = targetGoal.Object.GetBoundingBox().GetCenter(); targetPos.y = 0;
+		Vector3 toTarget = targetPos - agentPos;
 
 		// Check for blocking agents
 		if (!owner->IsBlocked()) {
@@ -41,9 +43,12 @@ namespace Fed::AgentAITeamStates
 			// Close enemy in front of me
 			const FedoraAgent* closest = enemyTeam->FindClosesetAgentToFedora();
 			Vector3 closestPos = closest->ObjectTransform.Position;
-			float reactRadius = 1.0f;
-			if (glm::dot(targetPos - agentPos, closestPos - agentPos) > 0.0f && glm::length2(closestPos - agentPos) < reactRadius * reactRadius) {
-				owner->SetBlocked(true);
+			const FedoraAgent* closestToTarget = enemyTeam->FindClosestAgent(targetPos);
+			float reactRadius = 2.0f;
+			if (glm::length2(closestPos - agentPos) < reactRadius * reactRadius) {
+				if (glm::dot(targetPos - agentPos, closestPos - agentPos) > 0.0f
+					|| glm::length2(toTarget) > glm::length2(closestToTarget->ObjectTransform.Position - targetPos))
+					owner->SetBlocked(true);
 			}
 		}
 
@@ -62,12 +67,6 @@ namespace Fed::AgentAITeamStates
 
 			if (passToAgent != nullptr) {
 				ASSERT(throwToPos != Vector3(0.0f, 0.0f, 0.0f), "Error in calculating throwToPos");
-
-				// TODO: Remove debug draw here /////
-				Fedora f;
-				f.ObjectTransform.Position = throwToPos;
-				f.DrawBoundingBox();
-				/////////////////////////////////////
 
 				if (owner->FaceTowards(throwToPos, 15.5f)) {
 					owner->ThrowFrisbee(agent);
@@ -93,10 +92,10 @@ namespace Fed::AgentAITeamStates
 		float facingSpeed = 3.5f;
 		Vector3 facingPos = targetPos;
 		float dotThreshold = 0.4f; // Min limit before facing moving direction
-		Vector3 toTarget = glm::normalize(targetPos - agentPos);
+		Vector3 toTargetDir = glm::normalize(toTarget);
 
 		// Face to moving direction if threshhold surpassed
-		if (glm::dot(toTarget, agent->GetDirection()) < dotThreshold) {
+		if (glm::dot(toTargetDir, agent->GetDirection()) < dotThreshold) {
 			facingPos = agent->ObjectTransform.Position + agent->GetDirection();
 		}
 

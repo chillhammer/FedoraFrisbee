@@ -82,13 +82,16 @@ namespace Fed
 		// Input Trigger Fedora Throwing Event
 		if (m_InputFedoraThrow)
 		{
-			ThrowFrisbee(owner);
 			m_InputFedoraThrow = false;
 
-			FedoraAgent* bestReceiver = owner->m_Team->FindClosestAgentToRay(owner->ObjectTransform.Position, owner->ObjectTransform.GetHeading(), owner);
-			PursueSignal signal;
-			if (bestReceiver)
-				bestReceiver->OnEvent(nullptr, signal);
+			if (owner->GetHasFedora()) {
+				FedoraAgent* bestReceiver = owner->m_Team->FindClosestAgentToRay(owner->ObjectTransform.Position, owner->ObjectTransform.GetHeading(), owner);
+				PursueSignal signal;
+				if (bestReceiver)
+					bestReceiver->OnEvent(nullptr, signal);
+			}
+
+			ThrowFrisbee(owner);
 		}
 	}
 	bool FedoraAgentInputPlayer::OnKeyPressed(KeyPressedEvent & e)
@@ -103,7 +106,6 @@ namespace Fed
 	{
 		if (e.GetMouseButton() == 0)
 		{
-			LOG("Mouse Pressed. Throw frisbee");
 			m_InputFedoraThrow = true;
 		}
 		return false;

@@ -1,5 +1,6 @@
 #pragma once
 #include <EventSystem/Event.h>
+#include <EventSystem/Subject.h>
 #include <EventSystem/Events/ApplicationEvent.h>
 
 struct GLFWwindow;
@@ -49,6 +50,7 @@ namespace Fed
 
 		bool OnWindowResized(WindowResizeEvent& e);
 		GLFWwindow* m_Window;
+		Subject WindowResized;
 
 		struct WindowData
 		{

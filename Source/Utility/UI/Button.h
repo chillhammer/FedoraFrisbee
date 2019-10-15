@@ -8,7 +8,8 @@ namespace Fed
 	{
 	public:
 		Button();
-		Button(float x, float y, float width, float height, std::string label, std::function<void(void)>& onClick);
+		Button(float x, float y, float width, float height, std::string label, std::function<void(void)> onClick);
+		virtual ~Button();
 		void SetProperties(float x, float y, float width, float height, std::string label, std::function<void(void)> onClick);
 		void SetLabel(std::string label);
 		void UpdateAndDraw();

@@ -95,9 +95,11 @@ namespace Fed
 		if (diffuseTexture.GetFilePath() == "")
 		{
 			aiColor3D color;
-			ASSERT(AI_SUCCESS == material->Get(AI_MATKEY_COLOR_DIFFUSE, color), "Failed to find color or texture");
+			bool getColor = AI_SUCCESS == material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+			ASSERT(getColor, "Failed to find color or texture");
 			aiString name;
-			ASSERT(AI_SUCCESS == material->Get(AI_MATKEY_NAME, name), "Failed to get color name");
+			bool getName = AI_SUCCESS == material->Get(AI_MATKEY_NAME, name);
+			ASSERT(getName, "Failed to get color name");
 			LOG("Sucessfully loaded color material: {0}", name.C_Str());
 			return ImportedMesh(vertices, indices, Vector3(color.r, color.g, color.b));
 		}

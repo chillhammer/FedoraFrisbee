@@ -20,6 +20,7 @@ namespace Fed
 		bool IsRunning() const;
 		void Shutdown();
 		void ChangeState(State<GameManager>* state);
+		State<GameManager>* GetState() const;
 		void OnEvent(const Subject* subject, Event& event);
 
 		float DeltaTime() const;
@@ -31,6 +32,7 @@ namespace Fed
 		bool IsPaused() const;
 
 		const class Window& GetWindow() const;
+		Subject& GetWindowResizedSubject();
 		~GameManager();
 	private:
 		GameManager();

@@ -42,6 +42,8 @@ namespace Fed
 		Team*		GetEnemyTeam(TeamColor color);
 		Team*		GetEnemyTeam(Team* team);
 		Court*		GetCourt() const;
+		bool		GetGameEnded() const;
+		void		SetGameEnded(bool gameEnded);
 		void		SetFedoraReference(Fedora* fedora);
 		void		SetCourtReference(class Court* court);
 		void		ResetPositions();
@@ -50,6 +52,7 @@ namespace Fed
 		Subject FrisbeeThrown;
 		Subject FrisbeePickup;
 		Subject FrisbeeScored;
+		Subject GameEnded;
 
 	private:
 		bool OnFedoraThrown(FrisbeeThrownEvent& e);
@@ -64,5 +67,7 @@ namespace Fed
 		Team m_BlueTeam;
 		Team m_RedTeam;
 		bool m_Scored;
+		int m_ScoreLimit;
+		bool m_GameEnded;
 	};
 }

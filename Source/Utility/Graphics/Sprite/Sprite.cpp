@@ -19,21 +19,19 @@ namespace Fed {
 
 	Sprite::Sprite( TexturePtr texture)
 		: m_VertexBuffer(vertices, sizeof(vertices)),
-		m_IndexBuffer(indices, sizeof(indices)),
+		m_IndexBuffer(indices, sizeof(indices) / sizeof(indices[0])),
 		m_Texture(texture)
 	{
-		m_BufferLayout.Push<float>(2); // Position
-		m_BufferLayout.Push<float>(2); // Texture Coords
+		m_BufferLayout.Push<float>(4); // Position / Tex Coords
 		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
 	}
 
 	Sprite::Sprite(Vector4 color)
 		: m_VertexBuffer(vertices, sizeof(vertices)),
-		m_IndexBuffer(indices, sizeof(indices)),
+		m_IndexBuffer(indices, sizeof(indices) / sizeof(indices[0])),
 		m_Color(color)
 	{
-		m_BufferLayout.Push<float>(2); // Position
-		m_BufferLayout.Push<float>(2); // Texture Coords
+		m_BufferLayout.Push<float>(4); // Position / Tex Coords
 		m_VertexArray.AddBuffer(m_VertexBuffer, m_BufferLayout);
 	}
 

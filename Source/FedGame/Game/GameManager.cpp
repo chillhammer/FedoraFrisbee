@@ -22,7 +22,7 @@ namespace Fed
 	// Called to enter first state
 	void GameManager::Start()
 	{
-		m_StateMachine.ChangeState(GameStates::TeamMatch::Instance());
+		m_StateMachine.ChangeState(GameStates::MainMenu::Instance());
 	}
 	static WindowProps props;
 	GameManager::GameManager() : m_Window(props),
@@ -58,6 +58,11 @@ namespace Fed
 	void GameManager::ChangeState(State<GameManager>* state)
 	{
 		m_StateMachine.ChangeState(state);
+	}
+
+	State<GameManager>* GameManager::GetState() const
+	{
+		return m_StateMachine.CurrentState();
 	}
 
 	void GameManager::OnEvent(const Subject * subject, Event & event)
@@ -122,6 +127,11 @@ namespace Fed
 		return m_Window;
 	}
 
+	Subject& GameManager::GetWindowResizedSubject()
+	{
+		return m_Window.WindowResized;
+	}
+
 	// Delta time allows objects to move despite rendering lag
 	void GameManager::UpdateDeltaTime()
 	{
@@ -139,9 +149,6 @@ namespace Fed
 		{
 		case KEY_X:
 			SetTimeScaleFreeze(m_TimeScale != 0.0f);
-			break;
-		case KEY_R:
-			m_StateMachine.ChangeState(GameStates::TeamMatch::Instance());
 			break;
 		}
 		return false;

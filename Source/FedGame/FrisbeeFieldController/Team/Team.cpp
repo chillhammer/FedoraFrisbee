@@ -97,6 +97,10 @@ namespace Fed
 	{
 		m_StateMachine.ChangeState(TeamStates::Pursue::Instance());
 	}
+	bool Team::InStandoff() const
+	{
+		return m_StateMachine.CurrentState() == TeamStates::Standoff::Instance();
+	}
 	// Sets team play and changes team state
 	void Team::SetTeamPlay(TeamPlay play, FedoraAgent* agentWithFedora)
 	{

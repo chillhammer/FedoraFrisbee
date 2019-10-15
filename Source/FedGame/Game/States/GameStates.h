@@ -7,6 +7,7 @@
 #include <Graphics/Model/Skybox.h>
 #include <UI/Button.h>
 #include <Game/Screens/PauseScreen.h>
+#include <Game/Screens/EndGameScreen.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
 namespace Fed::GameStates
 {
@@ -43,6 +44,12 @@ namespace Fed::GameStates
 		FrisbeeFieldController m_FieldController;
 		float m_ScoredTimer;
 		PauseScreen m_PauseScreen;
-		
+		EndGameScreen m_EndGameScreen;
+		float m_ControlsTimer;
+	);
+
+	STATE_CLASS_SINGLETON(GameManager, MainMenu,
+		ShaderPtr m_UIShader;
+		Button m_Start;
 	);
 }

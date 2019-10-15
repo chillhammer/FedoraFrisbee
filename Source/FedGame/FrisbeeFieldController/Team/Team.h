@@ -24,6 +24,7 @@ namespace Fed
 		void RemoveAgent(class FedoraAgent* agent);
 		void ResetPositions();
 		void ExitStandoff();
+		bool InStandoff() const;
 		void SetTeamPlay(TeamPlay play, class FedoraAgent* agentWithFedora);
 		void SetFieldControllerReference(class FrisbeeFieldController* controller);
 		void SetPursuitAgent(class FedoraAgent* agent);

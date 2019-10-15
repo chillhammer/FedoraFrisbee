@@ -21,12 +21,14 @@ namespace Fed
 
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnWindowResized(WindowResizeEvent& e);
 
 		FrisbeeFieldController* m_FieldController;
 		FontPtr m_Font;
 		UIElement m_Backdrop;
 		Button m_Resume;
 		Button m_Takeover;
+		Button m_Music;
 		Button m_Exit;
 		bool m_Enabled;
 	};

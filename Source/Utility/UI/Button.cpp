@@ -1,6 +1,7 @@
 #include "FedPCH.h"
 #include <Resources/ResourceManager.h>
 #include <Input/InputManager.h>
+#include <Audio/AudioEngine.h>
 #include "Button.h"
 
 namespace Fed {
@@ -8,10 +9,14 @@ namespace Fed {
 	{
 		Input.MouseClicked.AddObserver(this);
 	}
-	Button::Button(float x, float y, float width, float height, std::string label, std::function<void(void)>& onClick) : UIElement(Vector4(0.0f, 0.0f, 0.0f, 1.0f))
+	Button::Button(float x, float y, float width, float height, std::string label, std::function<void(void)> onClick) : UIElement(Vector4(0.0f, 0.0f, 0.0f, 1.0f))
 	{
 		SetProperties(x, y, width, height, label, onClick);
 		Input.MouseClicked.AddObserver(this);
+	}
+	Button::~Button()
+	{
+		Input.MouseClicked.RemoveObserver(this);
 	}
 	void Button::SetProperties(float x, float y, float width, float height, std::string label, std::function<void(void)> onClick)
 	{
@@ -26,7 +31,7 @@ namespace Fed {
 	}
 	void Button::UpdateAndDraw()
 	{
-		FontPtr font = Resources.GetFont("Arial");
+		FontPtr font = Resources.GetFont("InGame");
 		Vector2 topLeft = UITransform.Position;
 		Vector2 bottomRight = UITransform.Position + UITransform.Scale;
 		Vector2 middle = UITransform.Position + UITransform.Scale * 0.5f;
@@ -54,6 +59,7 @@ namespace Fed {
 		if (m_IsHovering) {
 			m_OnClick();
 			m_IsHovering = false;
+			Audio.PlaySound("Select.wav");
 		}
 		return false;
 	}

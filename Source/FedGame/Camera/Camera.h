@@ -27,9 +27,12 @@ namespace Fed
 		Vector2 m_DeltaMousePosition;
 		float m_Pitch;
 		float m_Yaw;
+		float m_TargetYaw;
 		Vector3 m_PivotPosition;
 		Vector3 m_PivotOffset;
 		float m_PivotLength;
+
+		Vector3 m_TargetLocation;
 	private:
 		bool OnMouseMoved(class MouseMovedEvent& e);
 		bool OnKeyPressed(class KeyPressedEvent& e);

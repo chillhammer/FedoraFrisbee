@@ -3,13 +3,14 @@
 #include <EventSystem/Events/MouseEvent.h>
 #include <EventSystem/Events/KeyEvent.h>
 #include <Game/GameManager.h>
+#include <Game/States/GameStates.h>
 #include <GLFW/glfw3.h>
 #include "Camera.h"
 
 namespace Fed
 {
 	Camera::Camera()
-		:	m_Speed(5.8f), m_Sensitivity(10.f), m_Yaw(180), 
+		:	m_Speed(7.8f), m_Sensitivity(12.f), m_Yaw(180), m_TargetYaw(180),
 			Mode(CameraMode::Pivot), m_PivotLength(4.9f), m_PivotOffset(0, 2.3f, 0.4f),
 			m_PivotPosition(0, 0, 0)
 	{
@@ -150,6 +151,7 @@ namespace Fed
 	// Sets delta mouse movement
 	bool Camera::OnMouseMoved(MouseMovedEvent & e)
 	{
+		if (Game.GetState() == GameStates::MainMenu::Instance()) return false;
 		//LOG("Camera: Mouse Moved: {0}, {1}", e.GetX(), e.GetY());
 		float midWindowX = Game.GetWindow().GetWidth() * 0.5f;
 		float midWindowY = Game.GetWindow().GetHeight() * 0.5f;

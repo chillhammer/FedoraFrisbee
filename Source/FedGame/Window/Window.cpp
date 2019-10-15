@@ -7,6 +7,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <Game/GameManager.h>
+#include <stb_image/stb_image.h>
+#include <Windows.h>
 
 #include "Window.h"
 
@@ -22,6 +24,12 @@ Fed::Window::Window(const WindowProps & props)
 	m_Data.Height = props.Height;
 
 	LOG("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+
+	// Removing Console
+	#ifdef FED_DIST
+	::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+	FreeConsole();
+	#endif
 
 	if (!s_GLFWInitialized) {
 		// TODO: glfwTerminate on system shutdown
@@ -40,6 +48,13 @@ Fed::Window::Window(const WindowProps & props)
 	glewInit();
 	glfwSetWindowUserPointer(m_Window, &m_Data);
 	SetVSync(true);
+
+	// Icon
+	GLFWimage images[1];
+	images[0].pixels = stbi_load("../Assets/Textures/Icon.png", &images[0].width, &images[0].height, 0, 4);
+	//rgba channels 
+	glfwSetWindowIcon(m_Window, 1, images);
+	stbi_image_free(images[0].pixels);
 
 	//GLCall(glEnable(GL_BLEND));
 	//GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -199,6 +214,10 @@ void Fed::Window::SetCursorPosition(float x, float y) const
 bool Fed::Window::OnWindowResized(WindowResizeEvent & e)
 {
 	LOG("Window Resized: ({0}, {1})", e.GetWidth(), e.GetHeight());
+	//m_Data.Width = e.GetWidth();
+	//m_Data.Height = e.GetHeight();
+	glViewport(0, 0, e.GetWidth(), e.GetHeight());
+	WindowResized.Notify(e);
 	return true;
 }
 

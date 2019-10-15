@@ -2,11 +2,13 @@
 #include <Objects/Fedora/Fedora.h>
 #include <Objects/Agents/FedoraAgent.h>
 #include <EventSystem/Events/TeamSignal.h>
+#include <Audio/AudioEngine.h>
 #include "FrisbeeFieldController.h"
 
 namespace Fed
 {
-	FrisbeeFieldController::FrisbeeFieldController() : m_Fedora(nullptr), m_LastThrownAgentID(0), m_BlueTeam(TeamColor::Blue), m_RedTeam(TeamColor::Red), m_Court(nullptr)
+	FrisbeeFieldController::FrisbeeFieldController() : m_Fedora(nullptr), m_LastThrownAgentID(0), m_BlueTeam(TeamColor::Blue), m_RedTeam(TeamColor::Red), m_Court(nullptr), 
+		m_ScoreLimit(5)
 	{
 		FrisbeeThrown.AddObserver(this);
 		FrisbeeScored.AddObserver(this);
@@ -215,6 +217,14 @@ namespace Fed
 	{
 		return m_Court;
 	}
+	bool FrisbeeFieldController::GetGameEnded() const
+	{
+		return m_GameEnded;
+	}
+	void FrisbeeFieldController::SetGameEnded(bool gameEnded)
+	{
+		m_GameEnded = gameEnded;
+	}
 	#pragma endregion
 
 	#pragma region Setters / Modifiers
@@ -262,7 +272,12 @@ namespace Fed
 		m_Fedora->SetOwner(nullptr);
 		m_Fedora->Stop();
 
-		
+		// Game Ended Check
+		if ((m_BlueTeam.Score >= m_ScoreLimit || m_RedTeam.Score >= m_ScoreLimit) && !m_GameEnded) {
+			GameEndedEvent e(m_BlueTeam.Score, m_RedTeam.Score);
+			GameEnded.Notify(e);
+			m_GameEnded = true;
+		}
 	}
 	#pragma endregion
 	
@@ -306,6 +321,11 @@ namespace Fed
 			WaitSignal signal;
 			m_BlueTeam.BroadcastSignal(signal);
 			m_RedTeam.BroadcastSignal(signal);
+
+			if (e.GetScoringTeam() != TeamColor::Blue)
+				Audio.PlaySound("Scored.wav");
+			else
+				Audio.PlaySound("LostPoint.wav");
 		}
 
 		//ResetPositions();
@@ -318,7 +338,6 @@ namespace Fed
 		Team* other = (&m_BlueTeam == pickup ? &m_RedTeam : &m_BlueTeam);
 		pickup->SetTeamPlay(TeamPlay::Offensive, &e.GetAgent());
 		other->SetTeamPlay(TeamPlay::Defensive, &e.GetAgent());
-		LOG("Team {0} goes on Attack", pickup->GetColor() == TeamColor::Blue ? "Blue" : "Red");
 		return false;
 	}
 	#pragma endregion

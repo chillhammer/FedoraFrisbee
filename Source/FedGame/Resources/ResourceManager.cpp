@@ -55,6 +55,18 @@ namespace Fed
 		TexturePtr sky(new Cubemap("../Assets/Textures/Skybox/Skybox"));
 		sky->LoadTexture();
 		m_TextureTable.emplace("Skybox", sky);
+
+		TexturePtr title(new Texture("../Assets/Textures/TitleScreen.png"));
+		title->LoadTexture();
+		m_TextureTable.emplace("TitleScreen", title);
+
+		TexturePtr blueScore(new Texture("../Assets/Textures/BlueScoreboard.png"));
+		blueScore->LoadTexture();
+		m_TextureTable.emplace("BlueScoreboard", blueScore);
+
+		TexturePtr redScore(new Texture("../Assets/Textures/RedScoreboard.png"));
+		redScore->LoadTexture();
+		m_TextureTable.emplace("RedScoreboard", redScore);
 	}
 	void ResourceManager::LoadMeshes()
 	{
@@ -83,5 +95,9 @@ namespace Fed
 		FontPtr arial(new Font());
 		arial->Load("../Assets/Fonts/arial.ttf");
 		m_FontTable.emplace("Arial", arial);
+
+		FontPtr inGame(new Font());
+		inGame->Load("../Assets/Fonts/BunnyFunny.ttf");
+		m_FontTable.emplace("InGame", inGame);
 	}
 }

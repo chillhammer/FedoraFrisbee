@@ -4,6 +4,7 @@
 #include <Game/GameManager.h>
 #include <EventSystem/Events/FrisbeeFieldEvent.h>
 #include <EventSystem/IObserver.h>
+#include <Audio/AudioEngine.h>
 #include "FedoraAgent.h"
 #include "Components/FedoraAgentInputPlayer.h"
 #include "Components/FedoraAgentInputComponent.h"
@@ -195,7 +196,11 @@ namespace Fed
 			if (!walls.empty())
 			{
 				const GameObject* wall = walls[0];
-				ObjectTransform.Position = m_PrevPosition;
+				float distToTouch = m_BoundingBox.GetOverlapDistance(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), movement);
+
+				ObjectTransform.Position = m_PrevPosition;			// Move out
+				ObjectTransform.Position += moveDir * distToTouch * 0.99f;	// Push against wall
+
 				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), m_Direction);
 				ASSERT(slidingDir != Vector3(0.0f, 0.0f, 0.0f), "Sliding Dir should not be zero");
 				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
@@ -237,6 +242,7 @@ namespace Fed
 						m_Speed = GetMaxSpeed(); //speed boost
 
 						m_FieldController->StunAgent(other, 2.0f);
+						Audio.PlaySound3D("Stole.wav", ObjectTransform.Position);
 					}
 
 
@@ -343,6 +349,7 @@ namespace Fed
 		{
 			m_CanGrabTimer = 0.1f;
 			m_CanBeStolenFromTimer = 0.1f;
+			Audio.PlaySound3D("Pickup.wav", ObjectTransform.Position);
 		}
 		else {
 			m_CanGrabTimer = 0.0f;

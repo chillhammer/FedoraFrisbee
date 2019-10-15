@@ -3,6 +3,7 @@
 #include <Resources/ResourceManager.h>
 #include <Utility/UI/UIElement.h>
 #include <Objects/Box/BoxMesh.h>
+#include <Audio/AudioEngine.h>
 #include "GameStates.h"
 
 namespace Fed::GameStates
@@ -39,8 +40,12 @@ namespace Fed::GameStates
 		m_FieldController.SetFedoraReference(&m_Fedora);
 		m_FieldController.SetCourtReference(&m_Court);
 		m_FieldController.ResetPositions();
+		m_FieldController.SetGameEnded(false);
 		m_ScoredTimer = -1.0f;
+		m_ControlsTimer = 2.0f;
 		m_PauseScreen.SetFieldControllerReference(&m_FieldController);
+		m_EndGameScreen.SetFieldControllerReference(&m_FieldController);
+		Audio.SetCameraReference(&m_Camera);
 	}
 
 	void TeamMatch::Execute(GameManager* owner)
@@ -67,27 +72,67 @@ namespace Fed::GameStates
 
 		m_Skybox.Draw();	
 
-		m_PauseScreen.UpdateAndDraw();
+		if (!m_EndGameScreen.IsEnabled())
+			m_PauseScreen.UpdateAndDraw();
 
+		m_EndGameScreen.UpdateAndDraw();
+
+		#pragma region Controls and Goal
+		 if (m_FieldController.GetTeam(TeamColor::Blue)->Score == 0 
+			 && m_FieldController.GetTeam(TeamColor::Red)->Score == 0
+			 && m_FieldController.GetTeam(TeamColor::Blue)->InStandoff()) 
+		 {
+
+			float scale = 1.0f;
+			FontPtr font = Resources.GetFont("InGame");
+			std::string controlsText = "WASD + Mouse to Move and Pass";
+			Vector2 controlsSize = font->GetTextSize(controlsText, scale);
+			float midY = Game.GetWindow().GetHeight() * 0.5f;
+			
+			std::string goalText = "Score 5 goals to win!";
+			Vector2 goalSize = font->GetTextSize(goalText, scale);
+
+			float blackBoxHeight = goalSize.y + controlsSize.y + 100.0f;
+			UIElement blackbox(Vector4(0.0f, 0.0f, 0.0f, 0.85f));
+			blackbox.UITransform.Position = Vector3(0.0f, midY - blackBoxHeight*0.5f, 0.1f);
+			blackbox.UITransform.Scale = Vector3(Game.GetWindow().GetWidth(), blackBoxHeight, 0.1f);
+			blackbox.Draw();
+
+
+			Vector2 pos = Vector2(Game.GetWindow().GetWidth() * 0.5f, midY - blackBoxHeight * 0.15f) - controlsSize * 0.5f;
+			font->RenderText(controlsText, pos, scale, Vector3(1.0f, 1.0f, 1.0f));
+
+
+			pos = Vector2(Game.GetWindow().GetWidth() * 0.5f, midY + blackBoxHeight * 0.15f) - goalSize * 0.5f;
+			font->RenderText(goalText, pos, scale, Vector3(1.0f, 1.0f, 1.0f));
+		 }
+		#pragma endregion
+
+		
 		#pragma region Score UI
-		UIElement blueScoreBoard(Vector4(0.1f, 0.1f, 0.5f, 1.0f));
+		UIElement blueScoreBoard("BlueScoreboard");
 		blueScoreBoard.UITransform.Scale = Vector3(200.0f, 80.f, 1.0f);
 		blueScoreBoard.Draw();
 
-		UIElement redScoreBoard(Vector4(0.5f, 0.1f, 0.1f, 1.0f));
+		UIElement redScoreBoard("RedScoreboard");
 		redScoreBoard.UITransform.Scale = Vector3(200.0f, 80.f, 1.0f);
 		redScoreBoard.UITransform.Position = Vector3(Game.GetWindow().GetWidth() - redScoreBoard.UITransform.Scale.x, 0.0f, 0.0f);
 		redScoreBoard.Draw();
 
+		FontPtr font = Resources.GetFont("InGame");
+
 		std::stringstream scoreStream;
-		scoreStream << "Blue: " << m_FieldController.GetTeam(TeamColor::Blue)->Score
-					<< "                                                                        "
-					<< "Red: " << m_FieldController.GetTeam(TeamColor::Red)->Score;
+		scoreStream << "Blue: " << m_FieldController.GetTeam(TeamColor::Blue)->Score;
+		std::string score = scoreStream.str();
+		font->RenderText(score, Vector2(30.0f, 20.0f), 1.0f, Vector3(1.0f, 1.0f, 1.0f));
 
-		FontPtr font = Resources.GetFont("Arial");
-		font->RenderText(scoreStream.str(), Vector2(20.0f, 20.0f), 1.0f, Vector3(1.0f, 1.0f, 1.0f));
+		scoreStream.str("");
+		scoreStream << "Red: " << m_FieldController.GetTeam(TeamColor::Red)->Score;
+		score = scoreStream.str();
+
+		font->RenderText(score, Vector2(Game.GetWindow().GetWidth() - 30.0f - font->GetTextSize(score, 1.0f).x, 20.0f), 1.0f, Vector3(1.0f, 1.0f, 1.0f));
 		#pragma endregion
-
+		
 		#pragma region Scored Delay before Resetting
 		float scoreDelay = 1.5f;
 		if (m_FieldController.GetScored()) {
@@ -101,11 +146,14 @@ namespace Fed::GameStates
 			}
 		}
 		#pragma endregion
+		
 	}
 
 	void TeamMatch::Exit(GameManager* owner)
 	{
 		m_FieldController.SetFedoraReference(nullptr);
+		m_FieldController.GetTeam(TeamColor::Blue)->Score = 0;
+		m_FieldController.GetTeam(TeamColor::Red)->Score = 0;
 	}
 
 	// Sets up agent initial settings

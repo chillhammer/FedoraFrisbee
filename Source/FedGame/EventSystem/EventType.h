@@ -14,7 +14,7 @@ enum class EventType
 	MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled,
 
 	// Frisbee Field Controller Events
-	FrisbeeThrown, FrisbeePickup, FrisbeeScored,
+	FrisbeeThrown, FrisbeePickup, FrisbeeScored, GameEnded,
 
 	// Team Signals
 	Wait, Pursue, Score, Defend, Steal, Stun, AssistScore

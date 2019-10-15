@@ -1,6 +1,7 @@
 #include <FedPCH.h>
 #include <Objects/Agents/FedoraAgent.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
+#include <Audio/AudioEngine.h>
 #include "FedoraAgentInputComponent.h"
 
 namespace Fed
@@ -21,6 +22,7 @@ namespace Fed
 				throwDirection = glm::normalize(throwDirection);
 				FrisbeeThrownEvent e(throwDirection, owner->ObjectTransform.Position, *owner);
 				fieldController->FrisbeeThrown.Notify(e);
+				Audio.PlaySound3D("Pass.wav", owner->ObjectTransform.Position);
 			}
 		}
 	}

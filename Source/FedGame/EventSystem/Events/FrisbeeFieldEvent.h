@@ -87,4 +87,29 @@ namespace Fed
 		TeamColor m_ScoringTeam;
 		const FedoraAgent* m_ScoringAgent;
 	};
+
+	// Game ended
+	class GameEndedEvent : public Event
+	{
+	public:
+		GameEndedEvent(int blueScore, int redScore)
+			: m_BlueScore(blueScore), m_RedScore(redScore)
+		{
+		}
+
+		inline std::pair<int, int> GetScores() const { return std::pair<int, int>(m_BlueScore, m_RedScore); }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "Game ended!";
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(GameEnded)
+		EVENT_CLASS_CATEGORY(EventCategoryFrisbeeField)
+	private:
+		int m_BlueScore;
+		int m_RedScore;
+	};
 }
