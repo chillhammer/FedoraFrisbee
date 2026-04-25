@@ -78,7 +78,9 @@ namespace Fed
 				continue;
 
 			//Vector3 toA = glm::normalize(aPos - loc);
-			Vector3 toT = glm::normalize(target - loc);
+			Vector3 toT = SafeNormalize(target - loc);
+			if (toT == Vector3(0.0f, 0.0f, 0.0f))
+				return nullptr;
 
 			Vector3 futurePos = loc + toT * dist;
 			
@@ -139,7 +141,9 @@ namespace Fed
 			Vector3 toAgent = agentPos - fedoraPos;
 			Vector3 fedoraHeading = m_Fedora->GetDirection();
 			float toAgentDist = glm::length(toAgent);
-			toAgent = glm::normalize(toAgent);
+			toAgent = SafeNormalize(toAgent);
+			if (toAgent == Vector3(0.0f, 0.0f, 0.0f))
+				return false;
 			float distFromLaunch = glm::length(agentPos - m_Fedora->GetLastThrownPosition());
 			// Within reachable range
 			if (distFromLaunch <= m_Fedora->GetThrowRange())

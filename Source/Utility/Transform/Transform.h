@@ -81,7 +81,7 @@ namespace Fed
 			heading.x = cos(glm::radians(GetYaw() + 90.f)) * cos(glm::radians(GetPitch()));
 			heading.y = sin(glm::radians(GetPitch()));
 			heading.z = sin(glm::radians(GetYaw() + 90.f)) * cos(glm::radians(GetPitch()));
-			heading = glm::normalize(heading);
+			heading = SafeNormalize(heading, Vector3(0.0f, 0.0f, 1.0f));
 			//LOG("Heading: {0}, {1}, {2}, {3}", heading.x, heading.y, heading.z, heading.w);
 			//LOG("Rotation: {0}, {1}, {2}, {3}", Rotation.x, Rotation.y, Rotation.z, Rotation.w);
 			return heading;
@@ -89,11 +89,11 @@ namespace Fed
 		Vector3 GetSide() const
 		{
 			Vector3 up(0.f, 1.f, 0.f);
-			return glm::normalize(glm::cross(GetHeading(), up));
+			return SafeNormalize(glm::cross(GetHeading(), up), Vector3(1.0f, 0.0f, 0.0f));
 		}
 		Vector3 GetUp() const
 		{
-			return glm::normalize(glm::cross(GetSide(), GetHeading()));
+			return SafeNormalize(glm::cross(GetSide(), GetHeading()), Vector3(0.0f, 1.0f, 0.0f));
 		}
 
 		float GetPitch() const

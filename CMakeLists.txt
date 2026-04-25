@@ -49,17 +49,20 @@ target_include_directories(FedoraFrisbee PRIVATE
 # Assets are mounted in MEMFS at the literal virtual paths the source already
 # requests ("../Assets/..." and "Shaders/..."), avoiding any code changes.
 set(EM_LINK_FLAGS
+    "-O3"
+    "-flto"
     "-sUSE_GLFW=3"
     "-sUSE_FREETYPE=1"
     "-sUSE_WEBGL2=1"
     "-sFULL_ES3=1"
     "-sMIN_WEBGL_VERSION=2"
     "-sMAX_WEBGL_VERSION=2"
-    "-sALLOW_MEMORY_GROWTH=1"
-    "-sINITIAL_MEMORY=128MB"
+    "-sASSERTIONS=0"
+    "-sALLOW_MEMORY_GROWTH=0"
+    "-sINITIAL_MEMORY=256MB"
     "-sSTACK_SIZE=4MB"
-    "-sEXPORTED_FUNCTIONS=['_main','_FedoraFrisbeeSendEscape']"
-    "-sEXPORTED_RUNTIME_METHODS=['callMain','ccall']"
+    "-sEXPORTED_FUNCTIONS=['_main','_FedoraFrisbeeSendEscape','_FedoraFrisbeeProfilerGetMetric']"
+    "-sEXPORTED_RUNTIME_METHODS=['callMain','ccall','FS']"
     "-sINVOKE_RUN=0"
     "-sEXIT_RUNTIME=0"
     "-sNO_DISABLE_EXCEPTION_CATCHING"
@@ -69,6 +72,8 @@ set(EM_LINK_FLAGS
     "--use-preload-plugins"
 )
 set(EM_COMPILE_FLAGS
+    "-O3"
+    "-flto"
     "-sUSE_GLFW=3"
     "-sUSE_FREETYPE=1"
     "-sUSE_WEBGL2=1"

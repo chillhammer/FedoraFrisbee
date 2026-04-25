@@ -1,6 +1,7 @@
 #include <FedPCH.h>
 #include "Renderer.h"
 #include "GL/glew.h"
+#include <Profiler/FrameProfiler.h>
 namespace Fed
 {
 	Renderer::Renderer()
@@ -20,6 +21,7 @@ namespace Fed
 	// Draws onto screen
 	void Renderer::Draw(const VertexArray & va, const IndexBuffer & ib, const ShaderPtr & shader) const
 	{
+		FrameProfiler::Instance().AddDrawCall(ib.GetCount());
 		shader->Bind();
 		va.Bind();
 		ib.Bind();

@@ -19,7 +19,7 @@ namespace Fed
 			{
 				Vector3 throwDirection = owner->ObjectTransform.GetHeading();
 				throwDirection.y = 0;
-				throwDirection = glm::normalize(throwDirection);
+				throwDirection = SafeNormalize(throwDirection, owner->GetDirection());
 				FrisbeeThrownEvent e(throwDirection, owner->ObjectTransform.Position, *owner);
 				fieldController->FrisbeeThrown.Notify(e);
 				Audio.PlaySound3D("Pass.wav", owner->ObjectTransform.Position);

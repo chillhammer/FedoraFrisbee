@@ -75,9 +75,12 @@ namespace Fed
 		oldTrans.Position -= movement; // Multiply by buffer space for floating point
 		//ASSERT(!IsIntersecting(oldTrans, otherTrans, other), "Not intersecting object pre-movement"); // Potential floating point error here
 		float dist = 0;
-		Vector3 dir = glm::normalize(movement);
-		float step = 0.01f;
 		float moveAmountSqr = glm::length2(movement); // Caps it at move amount in case of Corner edge case [step size too big]
+		if (!std::isfinite(moveAmountSqr) || moveAmountSqr <= 0.000001f)
+			return 0.0f;
+
+		Vector3 dir = SafeNormalize(movement);
+		float step = 0.01f;
 		while (!IsIntersecting(oldTrans, otherTrans, other) && dist * dist < moveAmountSqr)
 		{
 			dist += step;

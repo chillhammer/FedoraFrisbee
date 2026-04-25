@@ -87,7 +87,10 @@ namespace Fed
 	bool FedoraAgentInputAI::MoveTowards(const Vector3 & point)
 	{
 		FedoraAgent* owner = GetOwner();
-		Vector3 dir = point - owner->ObjectTransform.Position;
+		Vector3 target = point;
+		target.y = owner->ObjectTransform.Position.y;
+		Vector3 dir = target - owner->ObjectTransform.Position;
+		dir.y = 0.0f;
 		float distSqr = glm::length2(dir);
 		// How much time at the current speed would decelerating bring speed to 0
 		float timeToStop = owner->m_Speed / m_Friction * -1.f;
@@ -100,7 +103,7 @@ namespace Fed
 		float snapRange = 0.2f;
 		if (distSqr < snapRange * snapRange) {
 			m_Accelerate = false;
-			owner->ObjectTransform.Position = point;
+			owner->ObjectTransform.Position = target;
 			owner->m_Speed = 0.0f;
 			return true;
 		}
@@ -113,7 +116,7 @@ namespace Fed
 		}
 		else
 		{
-			owner->m_Direction = glm::normalize(dir);
+			owner->m_Direction = SafeNormalize(dir, owner->m_Direction);
 			owner->m_Speed = glm::max(owner->m_Speed, owner->GetMaxSpeed() * 0.5f);
 			m_Accelerate = true;
 			return false;
@@ -123,9 +126,12 @@ namespace Fed
 	bool FedoraAgentInputAI::MoveAndAvoidEnemies(const Vector3& point)
 	{
 		FedoraAgent* owner = GetOwner();
+		Vector3 target = point;
+		target.y = owner->ObjectTransform.Position.y;
 		Vector3 agentPos = owner->ObjectTransform.Position;
-		Vector3 toDest = point - agentPos;
-		Vector3 dir = glm::normalize(toDest);
+		Vector3 toDest = target - agentPos;
+		toDest.y = 0.0f;
+		Vector3 dir = SafeNormalize(toDest, owner->m_Direction);
 		float visionRadius = 10.0f;
 		Team* enemyTeam = owner->GetFieldController()->GetEnemyTeam(owner->GetTeam());
 		
@@ -135,6 +141,7 @@ namespace Fed
 
 		for (const Vector3& ePos : enemyPositions) {
 			Vector3 toEnemy = ePos - agentPos;
+			toEnemy.y = 0.0f;
 			float dot = glm::dot(dir, toEnemy);
 			// Only consider enemies in front of you
 			if (dot < 0)
@@ -151,7 +158,7 @@ namespace Fed
 			// Ignore if farther than avoidance radius
 			if (distFromPath >= avoidanceRadius)
 				continue;
-			Vector3 avoidanceDir = glm::normalize(-toEnemy);
+			Vector3 avoidanceDir = SafeNormalize(-toEnemy);
 			float avoidanceWeight = 0.5f;
 			avoidanceSteer += avoidanceDir * (avoidanceRadius - dist) * avoidanceWeight;
 		}
@@ -164,7 +171,7 @@ namespace Fed
 			float wallRadius = 2.0f;
 			float distSqr = glm::length2(closest - agentPos);
 			if (distSqr < wallRadius * wallRadius) {
-				Vector3 avoidanceDir = glm::normalize(agentPos - closest);
+				Vector3 avoidanceDir = SafeNormalize(agentPos - closest);
 				float dist = glm::pow(distSqr, 0.5f);
 				float avoidanceWeight = 2.0f;
 
@@ -178,8 +185,10 @@ namespace Fed
 			avoidanceSteer.z = glm::sign(agentPos.z - goalPos.z);
 		}
 
-		bool result = MoveTowards(point);
-		owner->m_Direction = glm::normalize(owner->m_Direction + avoidanceSteer + wallAvoidanceSteer);
+		bool result = MoveTowards(target);
+		owner->m_Direction = SafeNormalize(owner->m_Direction + avoidanceSteer + wallAvoidanceSteer, owner->m_Direction);
+		owner->m_Direction.y = 0.0f;
+		owner->m_Direction = SafeNormalize(owner->m_Direction, Vector3(0.0f, 0.0f, 1.0f));
 		
 
 		return result;
@@ -191,16 +200,22 @@ namespace Fed
 		FedoraAgent* owner = GetOwner();
 		// Move towards agent future position to intercept them
 		Vector3 targetPos = m_TargetAgent->GetAgentPredictedPosition(owner->ObjectTransform.Position, glm::max(m_TargetAgent->GetMaxSpeed() * 0.5f, m_TargetAgent->m_Speed));
+		targetPos.y = owner->ObjectTransform.Position.y;
 		Vector3 dir = targetPos - m_Owner->ObjectTransform.Position;
+		dir.y = 0.0f;
 		m_Accelerate = true;
 		owner->m_Speed = glm::max(owner->m_Speed, owner->GetMaxSpeed() * 0.5f);
 		// Move To Predicted if Far
 		if (glm::length2(dir) > 1.0f) {
-			owner->m_Direction = glm::normalize(dir);
+			owner->m_Direction = SafeNormalize(dir, owner->m_Direction);
 		}
 		else { // Or just chase
-			owner->m_Direction = glm::normalize(m_TargetAgent->ObjectTransform.Position - m_Owner->ObjectTransform.Position);
+			Vector3 targetAgentDir = m_TargetAgent->ObjectTransform.Position - m_Owner->ObjectTransform.Position;
+			targetAgentDir.y = 0.0f;
+			owner->m_Direction = SafeNormalize(targetAgentDir, owner->m_Direction);
 		}
+		owner->m_Direction.y = 0.0f;
+		owner->m_Direction = SafeNormalize(owner->m_Direction, Vector3(0.0f, 0.0f, 1.0f));
 		// Keeps same format as other move functions, but accelerate into target
 		return false;
 	}
@@ -211,7 +226,7 @@ namespace Fed
 		Vector3 dir = point - owner->ObjectTransform.Position; dir.y = 0; 
 		if (dir == Vector3(0, 0, 0))
 			return false;
-		dir = glm::normalize(dir);
+		dir = SafeNormalize(dir, Vector3(0.0f, 0.0f, 1.0f));
 		// (0, 0, 1) = 0 Yaw
 		float targetYaw = glm::degrees(std::atan2(dir.z, dir.x)) - 90.f;
 
@@ -236,15 +251,19 @@ namespace Fed
 		// Accelerate / Slow down
 		float acceleration = (m_Accelerate ? m_Acceleration : m_Friction) * Game.DeltaTime();
 		m_Owner->m_Speed = glm::clamp(m_Owner->m_Speed + acceleration, 0.f, m_Owner->GetMaxSpeed());
+		m_Owner->m_Direction.y = 0.0f;
+		m_Owner->m_Direction = SafeNormalize(m_Owner->m_Direction, Vector3(0.0f, 0.0f, 1.0f));
 
 		m_Owner->m_PrevPosition = m_Owner->ObjectTransform.Position;
+		m_Owner->m_PrevPosition.y = 0.0f;
 		ASSERT(m_Owner->GetFieldController()->FindAgentCollidingAgent(m_Owner) == nullptr, "Colliding with object before movement");
 		m_Owner->ObjectTransform.Position += m_Owner->m_Direction * m_Owner->m_Speed * Game.DeltaTime();
+		m_Owner->ObjectTransform.Position.y = 0.0f;
 		
 		// Reset Accelertion
 		m_Accelerate = false;
 
-		Vector3 heading = m_Owner->ObjectTransform.GetHeading(); heading.y = 0; heading = glm::normalize(heading);
+		Vector3 heading = m_Owner->ObjectTransform.GetHeading(); heading.y = 0; heading = SafeNormalize(heading, Vector3(0.0f, 0.0f, 1.0f));
 		float horLean = 1 - glm::abs(glm::dot(heading, m_Owner->m_Direction));
 		float moveAngle = glm::degrees(std::atan2(m_Owner->m_Direction.z, m_Owner->m_Direction.x)) + 180;
 		float moveAngleOffset = 180 - moveAngle;

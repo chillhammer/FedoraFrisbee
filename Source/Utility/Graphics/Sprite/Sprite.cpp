@@ -1,4 +1,4 @@
-#include <FedPch.h>
+#include <FedPCH.h>
 #include "Sprite.h"
 
 namespace Fed {
@@ -29,6 +29,7 @@ namespace Fed {
 	Sprite::Sprite(Vector4 color)
 		: m_VertexBuffer(vertices, sizeof(vertices)),
 		m_IndexBuffer(indices, sizeof(indices) / sizeof(indices[0])),
+		m_Texture(nullptr),
 		m_Color(color)
 	{
 		m_BufferLayout.Push<float>(4); // Position / Tex Coords

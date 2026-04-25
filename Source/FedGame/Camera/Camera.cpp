@@ -16,7 +16,7 @@ namespace Fed
 #else
 			m_Sensitivity(12.f),
 #endif
-			m_Yaw(180), m_TargetYaw(180),
+			m_Pitch(-10.0f), m_Yaw(180), m_TargetYaw(180),
 			Mode(CameraMode::Pivot), m_PivotLength(4.9f), m_PivotOffset(0, 2.3f, 0.4f),
 			m_PivotPosition(0, 0, 0)
 	{
@@ -27,7 +27,14 @@ namespace Fed
 		LOG("Initialized Camera");
 		Input.MouseMoved.AddObserver(this);
 		Input.KeyPressed.AddObserver(this);
+		m_DeltaMousePosition = Vector2(0.0f, 0.0f);
 		m_PrevMousePosition = Input.GetMousePosition();
+		m_Pitch = -10.0f;
+		m_Yaw = 180.0f;
+		m_TargetYaw = m_Yaw;
+		m_PivotPosition = Vector3(0.0f, 0.0f, 0.0f);
+		ObjectTransform.Position = Vector3(0.0f, 2.3f, 2.0f);
+		ObjectTransform.Rotation = Vector3(0.0f, 180.0f, 0.0f);
 
 		// Invisible Cursor
 		Game.GetWindow().SetCursorEnabled(false);
@@ -131,12 +138,15 @@ namespace Fed
 	// Used to update position when pivoting
 	void Camera::SetPivotPosition(Vector3 newPosition)
 	{
+		if (!IsFiniteVector(newPosition))
+			return;
 		m_PivotPosition = newPosition;
 		UpdatePivotPosition();
 	}
 	void Camera::LookInDirection(Vector3 direction)
 	{
-		direction = glm::normalize(direction);
+		direction.y = 0.0f;
+		direction = SafeNormalize(direction, Vector3(0.0f, 0.0f, 1.0f));
 		float newYaw = glm::degrees(std::atan2(direction.z, direction.x)) + 90;
 		float newPitch = glm::degrees(std::atan2(direction.y, direction.x));
 		m_Yaw = newYaw;
@@ -147,6 +157,13 @@ namespace Fed
 	{
 		if (Mode != CameraMode::Pivot)
 			return;
+		if (!IsFiniteVector(m_PivotPosition))
+			m_PivotPosition = Vector3(0.0f, 0.0f, 0.0f);
+		if (!std::isfinite(ObjectTransform.GetYaw()) || !std::isfinite(ObjectTransform.GetPitch()))
+		{
+			ObjectTransform.SetYaw(180.0f);
+			ObjectTransform.SetPitch(-10.0f);
+		}
 		Vector3 pivotStick = m_PivotLength * -1 * ObjectTransform.GetHeading();
 		Matrix4x4 rotMat = glm::eulerAngleXYZ(0.f, glm::radians(-ObjectTransform.GetYaw()), 0.f);
 		Vector3 rotatedPivotOffset = rotMat * Vector4(m_PivotOffset, 1);

@@ -1,11 +1,15 @@
 #pragma once
+#include <memory>
+#include <string>
 #include "../GameManager.h"
 #include <Objects/Agents/FedoraAgent.h>
 #include <Objects/Box/WoodenBox.h>
 #include <Objects/Fedora/Fedora.h>
 #include <Objects/Court/Court.h>
 #include <Graphics/Model/Skybox.h>
+#include <Graphics/Text/Font.h>
 #include <UI/Button.h>
+#include <Utility/UI/UIElement.h>
 #include <Game/Screens/PauseScreen.h>
 #include <Game/Screens/EndGameScreen.h>
 #include <FrisbeeFieldController/FrisbeeFieldController.h>
@@ -46,6 +50,20 @@ namespace Fed::GameStates
 		PauseScreen m_PauseScreen;
 		EndGameScreen m_EndGameScreen;
 		float m_ControlsTimer;
+		std::unique_ptr<UIElement> m_BlueScoreBoard;
+		std::unique_ptr<UIElement> m_RedScoreBoard;
+		std::unique_ptr<UIElement> m_ControlsBackdrop;
+		std::string m_BlueScoreText;
+		std::string m_RedScoreText;
+		Vector2 m_RedScoreTextSize;
+		Vector2 m_ControlsTextSize;
+		Vector2 m_GoalTextSize;
+		float m_ControlsBackdropHeight;
+		int m_CachedBlueScore;
+		int m_CachedRedScore;
+		void DrawControlsPrompt(const FontPtr& font);
+		void DrawScoreUI(const FontPtr& font);
+		void UpdateScoreText(const FontPtr& font);
 	);
 
 	STATE_CLASS_SINGLETON(GameManager, MainMenu,

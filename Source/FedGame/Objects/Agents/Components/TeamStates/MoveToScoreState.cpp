@@ -92,7 +92,7 @@ namespace Fed::AgentAITeamStates
 		float facingSpeed = 3.5f;
 		Vector3 facingPos = targetPos;
 		float dotThreshold = 0.4f; // Min limit before facing moving direction
-		Vector3 toTargetDir = glm::normalize(toTarget);
+		Vector3 toTargetDir = SafeNormalize(toTarget, agent->GetDirection());
 
 		// Face to moving direction if threshhold surpassed
 		if (glm::dot(toTargetDir, agent->GetDirection()) < dotThreshold) {

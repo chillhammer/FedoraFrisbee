@@ -111,7 +111,7 @@ namespace Fed {
 		FT_Done_FreeType(ft);
 	}
 	// Computes the width and height of given string
-	Vector2 Font::GetTextSize(std::string text, float scale)
+	Vector2 Font::GetTextSize(const std::string& text, float scale)
 	{
 		Vector2 size(0.0f, 0.0f);
 
@@ -127,7 +127,7 @@ namespace Fed {
 		return size;
 	}
 
-	void Font::RenderText(std::string text, Vector2 pos, float scale, const Vector3& color)
+	void Font::RenderText(const std::string& text, Vector2 pos, float scale, const Vector3& color)
 	{
 		//Matrix4x4 textProjection = Matrix4x4();
 

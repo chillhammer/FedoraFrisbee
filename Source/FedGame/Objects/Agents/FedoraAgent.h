@@ -44,6 +44,7 @@ namespace Fed
 		void Update();
 		void Reset();
 	private:
+		void KeepOnGround();
 		bool OnFrisbeeThrown(class FrisbeeThrownEvent& e);
 		bool OnFrisbeePickup(class FrisbeePickupEvent& e);
 	private:

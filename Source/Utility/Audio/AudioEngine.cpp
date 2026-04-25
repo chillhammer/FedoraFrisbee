@@ -1,6 +1,10 @@
 #include "FedPCH.h"
 #include "AudioEngine.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 namespace Fed {
 	AudioEngine& AudioEngine::Instance()
 	{
@@ -11,13 +15,38 @@ namespace Fed {
 	}
 
 #ifdef __EMSCRIPTEN__
-	// Web build: silent stub. miniaudio integration lands in a follow-up step.
 	AudioEngine::AudioEngine() : m_Camera(nullptr), m_Enabled(true) {}
 	AudioEngine::~AudioEngine() {}
-	void AudioEngine::PlaySound(std::string) {}
-	void AudioEngine::PlaySound3D(std::string, Vector3) {}
-	void AudioEngine::PlayMusic(std::string) {}
-	void AudioEngine::SetAudioEnabled(bool enabled) { m_Enabled = enabled; }
+	void AudioEngine::PlaySound(std::string file)
+	{
+		if (!m_Enabled) return;
+		EM_ASM({
+			if (window.FedoraFrisbeeAudio) {
+				window.FedoraFrisbeeAudio.playSound(UTF8ToString($0));
+			}
+		}, file.c_str());
+	}
+	void AudioEngine::PlaySound3D(std::string file, Vector3)
+	{
+		PlaySound(file);
+	}
+	void AudioEngine::PlayMusic(std::string file)
+	{
+		EM_ASM({
+			if (window.FedoraFrisbeeAudio) {
+				window.FedoraFrisbeeAudio.playMusic(UTF8ToString($0));
+			}
+		}, file.c_str());
+	}
+	void AudioEngine::SetAudioEnabled(bool enabled)
+	{
+		m_Enabled = enabled;
+		EM_ASM({
+			if (window.FedoraFrisbeeAudio) {
+				window.FedoraFrisbeeAudio.setEnabled(!!$0);
+			}
+		}, enabled ? 1 : 0);
+	}
 	bool AudioEngine::GetAudioEnabled() const { return m_Enabled; }
 #else
 	AudioEngine::AudioEngine() : m_Camera(nullptr), m_Enabled(true)

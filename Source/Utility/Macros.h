@@ -1,7 +1,10 @@
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
+#include <cmath>
 #include <Logger/Log.h>
 #include <vec3.hpp>
 #include <glm.hpp>
+#include <gtx/norm.hpp>
 #include <gtc/quaternion.hpp>
 #include <GL/glew.h>
 
@@ -13,17 +16,47 @@
 
 #define BIT(x) (1 << x)
 
-#define GLM_ENABLE_EXPERIMENTAL
-
 typedef glm::vec3 Vector3;
 typedef glm::vec2 Vector2;
 typedef glm::mat4 Matrix4x4;
 typedef glm::quat Quaternion;
 typedef glm::vec4 Vector4;
 
+inline bool IsFiniteVector(const Vector2& value)
+{
+	return std::isfinite(value.x) && std::isfinite(value.y);
+}
+
+inline bool IsFiniteVector(const Vector3& value)
+{
+	return std::isfinite(value.x) && std::isfinite(value.y) && std::isfinite(value.z);
+}
+
+inline bool IsFiniteVector(const Vector4& value)
+{
+	return std::isfinite(value.x) && std::isfinite(value.y) && std::isfinite(value.z) && std::isfinite(value.w);
+}
+
+inline Vector3 SafeNormalize(const Vector3& value, const Vector3& fallback = Vector3(0.0f), float epsilon = 0.000001f)
+{
+	float lengthSquared = glm::length2(value);
+	if (!std::isfinite(lengthSquared) || lengthSquared <= epsilon)
+		return fallback;
+	return value * glm::inversesqrt(lengthSquared);
+}
+
+inline Vector2 SafeNormalize(const Vector2& value, const Vector2& fallback = Vector2(0.0f), float epsilon = 0.000001f)
+{
+	float lengthSquared = glm::length2(value);
+	if (!std::isfinite(lengthSquared) || lengthSquared <= epsilon)
+		return fallback;
+	return value * glm::inversesqrt(lengthSquared);
+}
+
 
 
 #pragma region Debug OpenGl Call
+#ifdef ENABLE_ASSERTS
 #define GLCall(x)	\
 	GLClearError();	\
 	x;				\
@@ -43,4 +76,8 @@ static bool GLLogCall(const char* function, const char* file, int line)
 	}
 	return true;
 }
+#else
+#define GLCall(x)	\
+	x
+#endif
 #pragma endregion

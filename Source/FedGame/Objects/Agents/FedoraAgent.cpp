@@ -9,11 +9,18 @@
 #include "Components/FedoraAgentInputPlayer.h"
 #include "Components/FedoraAgentInputComponent.h"
 #include "Components/FedoraAgentInputAI.h"
+
+namespace
+{
+	constexpr float AGENT_GROUND_Y = 0.0f;
+}
+
 namespace Fed
 {
 	FedoraAgent::FedoraAgent() 
-		: GameObject("FedoraAgent"), m_FieldController(nullptr), m_CanGrabTimer(0.f), m_MaxSpeed(10.75f), 
-			m_SuitModel(Resources.GetModel("SuitBlue")), m_InputType(AgentInputType::NONE), m_InputComponent(nullptr), m_Team(nullptr),
+		: GameObject("FedoraAgent"), m_InputType(AgentInputType::NONE), m_InputComponent(nullptr), m_Team(nullptr),
+			m_SuitModel(Resources.GetModel("SuitBlue")), m_Camera(nullptr), m_FieldController(nullptr), m_Speed(0.0f), m_MaxSpeed(10.75f),
+			m_Direction(0.0f, 0.0f, 1.0f), m_PrevPosition(0.0f, 0.0f, 0.0f), m_CanGrabTimer(0.f), m_CanBeStolenFromTimer(0.0f),
 			INVULNERABLE_TIME(1.0f)
 	{
 		SetBoundingBox(Vector3(0, 1, 0), Vector3(0.5, 1, 0.5));
@@ -86,7 +93,7 @@ namespace Fed
 	void FedoraAgent::SetFacingVector(Vector3 facing)
 	{
 		facing.y = 0;
-		facing = glm::normalize(facing);
+		facing = SafeNormalize(facing, Vector3(0.0f, 0.0f, 1.0f));
 		float newYaw = glm::degrees(std::atan2(facing.z, facing.x)) - 90;
 		ObjectTransform.SetYaw(newYaw);
 		if (m_Camera && m_Camera->Mode == CameraMode::Pivot)
@@ -145,12 +152,15 @@ namespace Fed
 	const Vector3 FedoraAgent::GetFuturePosition(float time) const
 	{
 		Vector3 futurePos = ObjectTransform.Position + m_Speed * m_Direction * time;
+		futurePos.y = AGENT_GROUND_Y;
 		return futurePos;
 	}
 
 	// Uses predicted future movement to throw fedora or to steal fedora
 	Vector3 FedoraAgent::GetAgentPredictedPosition(Vector3 startingPoint, float interceptingSpeed) const
 	{
+		if (interceptingSpeed <= 0.000001f || !std::isfinite(interceptingSpeed))
+			return ObjectTransform.Position;
 		float dist = glm::length(ObjectTransform.Position - startingPoint);
 		float timeForObjectToIntercept = dist / interceptingSpeed;
 		Vector3 predictedAgentPos = GetFuturePosition(timeForObjectToIntercept);
@@ -170,6 +180,13 @@ namespace Fed
 		{
 			m_InputComponent->Update(this);
 		}
+		if (!IsFiniteVector(ObjectTransform.Position))
+		{
+			ObjectTransform.Position = IsFiniteVector(m_PrevPosition) ? m_PrevPosition : Vector3(0.0f, 0.0f, 0.0f);
+			m_Speed = 0.0f;
+			m_Direction = SafeNormalize(m_Direction, Vector3(0.0f, 0.0f, 1.0f));
+		}
+		KeepOnGround();
 
 		// Grab Fedora
 		m_CanGrabTimer = glm::max(0.f, m_CanGrabTimer - Game.DeltaTime());
@@ -189,7 +206,11 @@ namespace Fed
 		{
 			ASSERT(ObjectTransform.Position.x > -1000, "Object teleported out");
 			Vector3 movement = ObjectTransform.Position - m_PrevPosition;
-			Vector3 moveDir = glm::normalize(movement);
+			movement.y = 0.0f;
+			if (!IsFiniteVector(movement))
+				movement = Vector3(0.0f, 0.0f, 0.0f);
+			Vector3 moveDir = SafeNormalize(movement, SafeNormalize(m_Direction, Vector3(1.0f, 0.0f, 0.0f)));
+			moveDir.y = 0.0f;
 
 			// Walls
 			std::vector<const GameObject*> walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
@@ -200,20 +221,27 @@ namespace Fed
 
 				ObjectTransform.Position = m_PrevPosition;			// Move out
 				ObjectTransform.Position += moveDir * distToTouch * 0.99f;	// Push against wall
+				KeepOnGround();
 
 				Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, wall->ObjectTransform, wall->GetBoundingBox(), m_Direction);
+				slidingDir.y = 0.0f;
 				ASSERT(slidingDir != Vector3(0.0f, 0.0f, 0.0f), "Sliding Dir should not be zero");
 				ObjectTransform.Position += slidingDir * m_Speed * Game.DeltaTime();
+				KeepOnGround();
 
 				movement = slidingDir * m_Speed * Game.DeltaTime();
-				moveDir = glm::normalize(movement);
+				movement.y = 0.0f;
+				moveDir = SafeNormalize(movement, moveDir);
+				moveDir.y = 0.0f;
 				
 				walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 				int i = 0;
 				while (!walls.empty() && ++i < 1000)
 				{
-					Vector3 moveDir = glm::normalize(slidingDir);
+					Vector3 moveDir = SafeNormalize(slidingDir, Vector3(1.0f, 0.0f, 0.0f));
+					moveDir.y = 0.0f;
 					ObjectTransform.Position -= moveDir * 0.01f;
+					KeepOnGround();
 					walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 				}
 			}
@@ -246,6 +274,24 @@ namespace Fed
 					}
 
 
+					if (!IsFiniteVector(movement) || glm::length2(movement) <= 0.000001f)
+					{
+						Vector3 pushDir = SafeNormalize(ObjectTransform.Position - other->ObjectTransform.Position, moveDir);
+						pushDir.y = 0.0f;
+						pushDir = SafeNormalize(pushDir, moveDir);
+						int pushIterations = 0;
+						while (other && ++pushIterations < 100)
+						{
+							ObjectTransform.Position += pushDir * 0.02f;
+							KeepOnGround();
+							other = m_FieldController->FindAgentCollidingAgent(this);
+						}
+						m_PrevPosition = ObjectTransform.Position;
+						movement = Vector3(0.0f, 0.0f, 0.0f);
+						moveDir = pushDir;
+						continue;
+					}
+
 					float distToTouch = m_BoundingBox.GetOverlapDistance(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, movement);
 
 					// Change moved amount, still in same direction
@@ -262,22 +308,29 @@ namespace Fed
 					if (stillHitting) {
 						other = stillHitting;
 						movement = ObjectTransform.Position - m_PrevPosition;
-						moveDir = glm::normalize(movement);
+						movement.y = 0.0f;
+						moveDir = SafeNormalize(movement, moveDir);
+						moveDir.y = 0.0f;
 						continue;
 					}
 
 					// Sliding Movement
 					Vector3 slidingDir = m_BoundingBox.GetSlidingDirection(ObjectTransform, other->ObjectTransform, other->m_BoundingBox, moveDir);
+					slidingDir.y = 0.0f;
 
 					if (slidingDir != Vector3(0.0f, 0.0f, 0.0f)) {
 						// Reset Original Movement
 						m_PrevPosition = ObjectTransform.Position;
+						m_PrevPosition.y = AGENT_GROUND_Y;
 
 						// Set new movement with new move direction
 						movement = slidingDir * m_Speed * Game.DeltaTime();
-						moveDir = glm::normalize(movement);
+						movement.y = 0.0f;
+						moveDir = SafeNormalize(movement, moveDir);
+						moveDir.y = 0.0f;
 
 						ObjectTransform.Position += movement;
+						KeepOnGround();
 
 
 						// Find new colliding agent
@@ -298,11 +351,18 @@ namespace Fed
 			if (!walls.empty())
 			{
 				ObjectTransform.Position = m_PrevPosition;
+				KeepOnGround();
 				walls = m_FieldController->GetCourt()->GetCollidingWalls(*this);
 			}
 		}
 		
 		#pragma endregion
+		if (!IsFiniteVector(ObjectTransform.Position))
+		{
+			ObjectTransform.Position = IsFiniteVector(m_PrevPosition) ? m_PrevPosition : Vector3(0.0f, 0.0f, 0.0f);
+			m_Speed = 0.0f;
+		}
+		KeepOnGround();
 
 		if (m_InputComponent)
 		{
@@ -314,6 +374,24 @@ namespace Fed
 	{
 		m_CanGrabTimer = 0.f;
 		m_CanBeStolenFromTimer = 0.f;
+		m_Speed = 0.0f;
+		if (!IsFiniteVector(ObjectTransform.Position))
+			ObjectTransform.Position = Vector3(0.0f, 0.0f, 0.0f);
+		if (!IsFiniteVector(ObjectTransform.Rotation))
+			ObjectTransform.Rotation = Vector3(0.0f, 0.0f, 0.0f);
+		m_Direction = SafeNormalize(ObjectTransform.GetHeading(), Vector3(0.0f, 0.0f, 1.0f));
+		m_Direction.y = 0.0f;
+		m_Direction = SafeNormalize(m_Direction, Vector3(0.0f, 0.0f, 1.0f));
+		KeepOnGround();
+		m_PrevPosition = ObjectTransform.Position;
+	}
+
+	void FedoraAgent::KeepOnGround()
+	{
+		ObjectTransform.Position.y = AGENT_GROUND_Y;
+		m_PrevPosition.y = AGENT_GROUND_Y;
+		m_Direction.y = 0.0f;
+		m_Direction = SafeNormalize(m_Direction, Vector3(0.0f, 0.0f, 1.0f));
 	}
 
 	// Draws suit ontop of agent

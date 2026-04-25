@@ -5,6 +5,7 @@
 #include <Input/InputManager.h>
 #include <EventSystem/Events/KeyEvent.h>
 #include "GameManager.h"
+#include <Profiler/FrameProfiler.h>
 
 namespace Fed
 {
@@ -38,10 +39,16 @@ namespace Fed
 	void GameManager::Run()
 	{
 		UpdateDeltaTime();
-		m_StateMachine.Update();
+		{
+			FrameProfileScope stateScope("Game.State");
+			m_StateMachine.Update();
+		}
 
 		// Poll Window Events
-		m_Window.OnUpdate();
+		{
+			FrameProfileScope windowScope("Game.Window");
+			m_Window.OnUpdate();
+		}
 	}
 
 	bool GameManager::IsRunning() const

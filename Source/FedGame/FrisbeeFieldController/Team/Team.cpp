@@ -91,6 +91,7 @@ namespace Fed
 				break;
 
 			}
+			agent->Reset();
 		}
 	}
 	void Team::ExitStandoff()
@@ -202,7 +203,7 @@ namespace Fed
 			float timeAhead = distToFedora / fedoraSpeed; // estimation, not counting deceleration
 
 			float distFedoraTraveled = glm::min(timeAhead * fedoraSpeed, m_FieldController->GetFedoraRange());
-			Vector3 interceptPoint = throwPos + glm::normalize(toTarget) * distFedoraTraveled;
+			Vector3 interceptPoint = throwPos + SafeNormalize(toTarget) * distFedoraTraveled;
 
 			float distToIntercept = glm::length(agent->ObjectTransform.Position - interceptPoint);
 			float timeToIntercept = distToIntercept / agent->GetMaxSpeed();
@@ -324,7 +325,9 @@ namespace Fed
 			// Find best passing location
 			Vector3 agentPos = potential->ObjectTransform.Position;
 			float distToAgent = glm::length(agentPos - passing->ObjectTransform.Position);
-			Vector3 dirToAgent = glm::normalize(agentPos - passing->ObjectTransform.Position);
+			Vector3 dirToAgent = SafeNormalize(agentPos - passing->ObjectTransform.Position);
+			if (dirToAgent == Vector3(0.0f, 0.0f, 0.0f))
+				continue;
 			Vector3 agentSide = Vector3(-dirToAgent.z, 0.0f, dirToAgent.x);
 			ASSERT(glm::abs(glm::length2(agentSide) - 1.0f) < 0.1f, "Side dir is not normalized");
 

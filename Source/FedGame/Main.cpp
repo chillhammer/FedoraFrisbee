@@ -20,6 +20,7 @@
 #include <Objects/Box/WoodenBox.h>
 #include <EventSystem/Events/KeyEvent.h>
 #include <Input/Keys.h>
+#include <Profiler/FrameProfiler.h>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -42,8 +43,16 @@ namespace {
 	void RunFrame(void* userData)
 	{
 		Renderer* renderer = static_cast<Renderer*>(userData);
-		renderer->Clear();
-		Game.Run();
+		FrameProfiler::Instance().BeginFrame();
+		{
+			FrameProfileScope clearScope("Frame.Clear");
+			renderer->Clear();
+		}
+		{
+			FrameProfileScope runScope("Game.Run");
+			Game.Run();
+		}
+		FrameProfiler::Instance().EndFrame();
 	}
 }
 

@@ -34,15 +34,18 @@ namespace Fed
 
 		float forwardSign	= (Input.IsKeyDown(KEY_W) ? 1 : 0) - (Input.IsKeyDown(KEY_S) ? 1 : 0);
 		float sideSign	= (Input.IsKeyDown(KEY_D) ? 1 : 0) - (Input.IsKeyDown(KEY_A) ? 1 : 0);
-		Vector3 heading = owner->ObjectTransform.GetHeading(); heading.y = 0; heading = glm::normalize(heading);
-		Vector3 side	= owner->ObjectTransform.GetSide(); side.y = 0; side = glm::normalize(side);
+		Vector3 heading = owner->ObjectTransform.GetHeading(); heading.y = 0; heading = SafeNormalize(heading, Vector3(0.0f, 0.0f, 1.0f));
+		Vector3 side	= owner->ObjectTransform.GetSide(); side.y = 0; side = SafeNormalize(side, Vector3(1.0f, 0.0f, 0.0f));
 		moveDir += heading	* forwardSign;
 		moveDir += side		* sideSign;
-		bool moved = glm::length(moveDir) != 0;
+		bool moved = glm::length2(moveDir) > 0.000001f;
 		if (moved) {
-			moveDir = glm::normalize(moveDir);
+			moveDir = SafeNormalize(moveDir, owner->m_Direction);
 			owner->m_Direction = glm::lerp(owner->m_Direction, moveDir, 0.5f);
+			owner->m_Direction.y = 0.0f;
+			owner->m_Direction = SafeNormalize(owner->m_Direction, moveDir);
 			owner->m_PrevPosition = owner->ObjectTransform.Position;
+			owner->m_PrevPosition.y = 0.0f;
 		}
 		// Accelerate / Friction - Speed
 		float acceleration = (moved ? 12.5f : -15.f);
@@ -54,7 +57,10 @@ namespace Fed
 		owner->m_Speed = speed;
 
 		// Actual Movement
+		owner->m_Direction.y = 0.0f;
+		owner->m_Direction = SafeNormalize(owner->m_Direction, Vector3(0.0f, 0.0f, 1.0f));
 		owner->ObjectTransform.Position += owner->m_Speed * owner->m_Direction * Game.DeltaTime();
+		owner->ObjectTransform.Position.y = 0.0f;
 
 
 		// Rotates Agent

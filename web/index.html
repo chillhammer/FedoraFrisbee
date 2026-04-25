@@ -16,6 +16,12 @@
   #log { position: fixed; bottom: 0; left: 0; right: 0; max-height: 25vh; overflow: auto;
          background: rgba(0,0,0,0.6); color: #6f8; font-family: monospace; font-size: 11px;
          padding: 4px; display: none; white-space: pre-wrap; }
+  #profiler { position: fixed; top: 8px; left: 8px; z-index: 10; min-width: 260px;
+              background: rgba(0,0,0,0.72); color: #d8f6ff; border: 1px solid rgba(160,220,255,0.35);
+              border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+              font-size: 11px; line-height: 1.35; padding: 8px 10px; margin: 0; display: none;
+              pointer-events: none; white-space: pre; }
+  #profiler.warn { color: #ffe0aa; border-color: rgba(255,190,110,0.6); }
 </style>
 </head>
 <body>
@@ -25,13 +31,20 @@
   <canvas id="canvas" tabindex="0" width="1280" height="720" style="display:none"></canvas>
 </div>
 <pre id="log"></pre>
+<pre id="profiler"></pre>
 
 <script>
   const startBtn = document.getElementById('start');
   const statusEl = document.getElementById('status');
   const canvas   = document.getElementById('canvas');
   const logEl    = document.getElementById('log');
-  const debugLog = new URLSearchParams(window.location.search).has('debug');
+  const profilerEl = document.getElementById('profiler');
+  const query = new URLSearchParams(window.location.search);
+  const debugLog = query.has('debug');
+  let profilerVisible = query.has('profile') || debugLog;
+  let latestProfilerStats = null;
+  let profilerMetric = null;
+  let profilerPollTimer = null;
   let gameWantsPointerLock = false;
   let ignoreNextPointerUnlock = false;
   let suppressUnlockPauseUntil = 0;
@@ -44,6 +57,240 @@
     logEl.textContent += s + '\n';
     logEl.scrollTop = logEl.scrollHeight;
   }
+
+  window.FedoraFrisbeeAudio = (() => {
+    const SFX_VOLUME = 0.25;
+    const MUSIC_VOLUME = 0.05;
+    const SOUND_ROOT = '/Assets/Sounds/';
+    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+    const bufferPromises = new Map();
+    let context = null;
+    let masterGain = null;
+    let sfxGain = null;
+    let musicGain = null;
+    let enabled = true;
+    let currentMusicSource = null;
+    let currentMusicName = '';
+
+    function warn(message) {
+      logLine('[audio] ' + message, debugLog);
+    }
+
+    function ensureContext() {
+      if (!AudioContextCtor) {
+        warn('Web Audio is not supported by this browser.');
+        return null;
+      }
+
+      if (!context) {
+        context = new AudioContextCtor();
+        masterGain = context.createGain();
+        sfxGain = context.createGain();
+        musicGain = context.createGain();
+        masterGain.gain.value = enabled ? 1.0 : 0.0;
+        sfxGain.gain.value = SFX_VOLUME;
+        musicGain.gain.value = MUSIC_VOLUME;
+        sfxGain.connect(masterGain);
+        musicGain.connect(masterGain);
+        masterGain.connect(context.destination);
+      }
+
+      if (context.state === 'suspended') {
+        context.resume().catch((e) => warn('Could not resume audio context: ' + e));
+      }
+      return context;
+    }
+
+    function copyBytesToArrayBuffer(bytes) {
+      return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+    }
+
+    function loadBuffer(file) {
+      if (bufferPromises.has(file)) return bufferPromises.get(file);
+
+      const promise = (async () => {
+        const ctx = ensureContext();
+        if (!ctx) throw new Error('Audio context unavailable');
+        if (!Module || !Module.FS) throw new Error('Emscripten FS is unavailable');
+
+        const bytes = Module.FS.readFile(SOUND_ROOT + file);
+        return ctx.decodeAudioData(copyBytesToArrayBuffer(bytes));
+      })().catch((e) => {
+        bufferPromises.delete(file);
+        warn('Could not load ' + file + ': ' + e);
+        throw e;
+      });
+
+      bufferPromises.set(file, promise);
+      return promise;
+    }
+
+    function stopMusic() {
+      if (!currentMusicSource) return;
+
+      try {
+        currentMusicSource.stop();
+      } catch (_) {
+      }
+      currentMusicSource.disconnect();
+      currentMusicSource = null;
+    }
+
+    function setEnabled(value) {
+      enabled = !!value;
+      const ctx = ensureContext();
+      if (!ctx || !masterGain) return;
+
+      const target = enabled ? 1.0 : 0.0;
+      masterGain.gain.cancelScheduledValues(ctx.currentTime);
+      masterGain.gain.setTargetAtTime(target, ctx.currentTime, 0.015);
+    }
+
+    function playSound(file) {
+      if (!enabled) return;
+      const ctx = ensureContext();
+      if (!ctx) return;
+
+      loadBuffer(file).then((buffer) => {
+        if (!enabled) return;
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(sfxGain);
+        source.start();
+      }).catch(() => {});
+    }
+
+    function playMusic(file) {
+      const ctx = ensureContext();
+      if (!ctx) return;
+
+      currentMusicName = file;
+      stopMusic();
+
+      loadBuffer(file).then((buffer) => {
+        if (currentMusicName !== file) return;
+
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(musicGain);
+        source.start();
+        currentMusicSource = source;
+      }).catch(() => {});
+    }
+
+    function unlock() {
+      const ctx = ensureContext();
+      if (!ctx) return;
+
+      const source = ctx.createBufferSource();
+      source.buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+      source.connect(masterGain);
+      try {
+        source.start(0);
+      } catch (_) {
+      }
+    }
+
+    return {
+      unlock,
+      playSound,
+      playMusic,
+      setEnabled,
+    };
+  })();
+
+  function formatMs(value) {
+    return Number.isFinite(value) ? value.toFixed(2) : '0.00';
+  }
+
+  function formatNumber(value) {
+    return Number.isFinite(value) ? Math.round(value).toString() : '0';
+  }
+
+  function renderProfiler() {
+    if (!profilerVisible) return;
+
+    if (!latestProfilerStats) {
+      profilerEl.textContent = 'Profiler warming up...';
+      return;
+    }
+
+    const s = latestProfilerStats;
+    const overBudget = s.frameAvg > 16.67 || s.cpuAvg > 16.67;
+    profilerEl.classList.toggle('warn', overBudget);
+    profilerEl.textContent = [
+      `FPS ${s.fps.toFixed(1)} | frame ${formatMs(s.frameAvg)} ms avg (${formatMs(s.frameLast)} last)`,
+      `CPU ${formatMs(s.cpuAvg)} ms avg (${formatMs(s.cpuLast)} last)`,
+      `Max frame ${formatMs(s.frameMax)} ms | max CPU ${formatMs(s.cpuMax)} ms`,
+      `Draws ${formatNumber(s.drawCallsAvg)} avg (${s.drawCallsLast} last) | tris ${formatNumber(s.trianglesAvg)} avg`,
+      '',
+      `clear        ${formatMs(s.clearAvg)} ms`,
+      `game run     ${formatMs(s.gameRunAvg)} ms`,
+      `state        ${formatMs(s.gameStateAvg)} ms`,
+      `swap/poll    ${formatMs(s.gameWindowAvg)} ms`,
+      `team update  ${formatMs(s.teamUpdateAvg)} ms`,
+      `team world   ${formatMs(s.teamDrawWorldAvg)} ms`,
+      `team ui      ${formatMs(s.teamUiAvg)} ms`,
+      `score reset  ${formatMs(s.teamScoreAvg)} ms`
+    ].join('\n');
+  }
+
+  function setProfilerVisible(visible) {
+    profilerVisible = visible;
+    profilerEl.style.display = visible ? 'block' : 'none';
+    pollProfiler();
+    renderProfiler();
+  }
+
+  function readProfilerStats() {
+    const metric = (id) => profilerMetric(id);
+    if (!profilerMetric || metric(0) < 0.5) return null;
+
+    return {
+      fps: metric(1),
+      frameAvg: metric(2),
+      frameLast: metric(3),
+      cpuAvg: metric(4),
+      cpuLast: metric(5),
+      frameMax: metric(6),
+      cpuMax: metric(7),
+      drawCallsAvg: metric(8),
+      drawCallsLast: metric(9),
+      trianglesAvg: metric(10),
+      trianglesLast: metric(11),
+      clearAvg: metric(12),
+      gameRunAvg: metric(13),
+      gameStateAvg: metric(14),
+      gameWindowAvg: metric(15),
+      teamUpdateAvg: metric(16),
+      teamDrawWorldAvg: metric(17),
+      teamUiAvg: metric(18),
+      teamScoreAvg: metric(19),
+    };
+  }
+
+  function pollProfiler() {
+    if (!profilerMetric) return;
+
+    const stats = readProfilerStats();
+    if (stats) latestProfilerStats = stats;
+    renderProfiler();
+  }
+
+  function initProfilerPolling() {
+    if (profilerMetric || !Module.ccall) return;
+
+    try {
+      profilerMetric = (id) => Module.ccall('FedoraFrisbeeProfilerGetMetric', 'number', ['number'], [id]);
+      profilerPollTimer = window.setInterval(pollProfiler, 500);
+      pollProfiler();
+    } catch (e) {
+      logLine('[warn] Could not initialize profiler: ' + e, profilerVisible);
+    }
+  }
+
+  setProfilerVisible(profilerVisible);
 
   function requestPointerLock() {
     if (!gameWantsPointerLock) return;
@@ -88,6 +335,7 @@
       startBtn.disabled = false;
       startBtn.textContent = 'Start Game';
       statusEl.textContent = 'Ready. Click to launch.';
+      initProfilerPolling();
     },
   };
 
@@ -95,6 +343,7 @@
   startBtn.textContent = 'Loading…';
 
   startBtn.addEventListener('click', () => {
+    window.FedoraFrisbeeAudio.unlock();
     startBtn.style.display = 'none';
     canvas.style.display = 'block';
     canvas.focus();
@@ -107,6 +356,7 @@
   });
 
   canvas.addEventListener('click', () => {
+    window.FedoraFrisbeeAudio.unlock();
     canvas.focus();
     if (gameWantsPointerLock) requestPointerLock();
   });
@@ -136,6 +386,12 @@
 
   // Stop the browser stealing key events meant for the game.
   window.addEventListener('keydown', (e) => {
+    if (e.key === 'F3') {
+      e.preventDefault();
+      setProfilerVisible(!profilerVisible);
+      return;
+    }
+
     if (canvas.style.display !== 'none' &&
         ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Tab'].includes(e.key)) {
       e.preventDefault();
