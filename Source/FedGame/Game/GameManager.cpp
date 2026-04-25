@@ -136,7 +136,15 @@ namespace Fed
 	void GameManager::UpdateDeltaTime()
 	{
 		double currentTime = glfwGetTime();
-		m_DeltaTime = glm::min(currentTime - m_LastUpdatedTime, 1.0);
+		double rawDeltaTime = currentTime - m_LastUpdatedTime;
+#ifdef __EMSCRIPTEN__
+		if (rawDeltaTime > 0.25)
+			m_DeltaTime = 0.0;
+		else
+			m_DeltaTime = glm::min(rawDeltaTime, 1.0 / 30.0);
+#else
+		m_DeltaTime = glm::min(rawDeltaTime, 0.1);
+#endif
 		m_LastUpdatedTime = currentTime;
 	}
 

@@ -9,6 +9,17 @@ namespace Fed {
 			return instance;
 		}
 	}
+
+#ifdef __EMSCRIPTEN__
+	// Web build: silent stub. miniaudio integration lands in a follow-up step.
+	AudioEngine::AudioEngine() : m_Camera(nullptr), m_Enabled(true) {}
+	AudioEngine::~AudioEngine() {}
+	void AudioEngine::PlaySound(std::string) {}
+	void AudioEngine::PlaySound3D(std::string, Vector3) {}
+	void AudioEngine::PlayMusic(std::string) {}
+	void AudioEngine::SetAudioEnabled(bool enabled) { m_Enabled = enabled; }
+	bool AudioEngine::GetAudioEnabled() const { return m_Enabled; }
+#else
 	AudioEngine::AudioEngine() : m_Camera(nullptr), m_Enabled(true)
 	{
 		m_Engine = irrklang::createIrrKlangDevice();
@@ -69,4 +80,5 @@ namespace Fed {
 	{
 		return m_Enabled;
 	}
+#endif
 }

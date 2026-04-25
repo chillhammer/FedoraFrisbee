@@ -11,8 +11,8 @@ uniform mat4 u_Projection;
 void main()
 {
 	v_TexCoord = vertex.zw;
-	gl_Position = u_Projection * u_Model * vec4(vertex.xy, 0.1f, 1.0);
-};
+	gl_Position = u_Projection * u_Model * vec4(vertex.xy, 0.1, 1.0);
+}
 
 #shader fragment
 #version 330 core
@@ -33,4 +33,4 @@ void main()
 	}
 	else
 		color = u_Color;
-};
+}

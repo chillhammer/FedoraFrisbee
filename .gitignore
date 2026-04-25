@@ -1,6 +1,10 @@
 # Directories
 .vs/
 Temp/
+build/
+build-*/
+out/
+cmake-build-*/
 
 # Visual Studio
 *.user
@@ -8,3 +12,16 @@ Temp/
 # Fedora Frisbee
 FedoraFrisbee.vcxproj
 FedoraFrisbee.vcxproj.filters
+
+# CMake / Ninja generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+_deps/
+build.ninja
+.ninja_deps
+.ninja_log

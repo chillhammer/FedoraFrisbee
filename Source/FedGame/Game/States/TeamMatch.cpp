@@ -70,7 +70,11 @@ namespace Fed::GameStates
 		DrawAgents(m_Agents, NUM_AGENTS);
 
 
-		m_Skybox.Draw();	
+#ifndef __EMSCRIPTEN__
+		// Skybox is cut from the web demo (saves ~6 MB of cubemap textures and
+		// avoids a WebGL2 cubemap-mip path that's unverified for this codebase).
+		m_Skybox.Draw();
+#endif
 
 		if (!m_EndGameScreen.IsEnabled())
 			m_PauseScreen.UpdateAndDraw();

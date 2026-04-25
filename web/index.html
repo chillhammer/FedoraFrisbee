@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FedoraFrisbee</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #111; color: #ddd;
+               font-family: system-ui, sans-serif; overflow: hidden; }
+  #wrap { display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; }
+  #canvas { display: block; background: #000; outline: none; image-rendering: pixelated;
+            width: 1280px; height: 720px; max-width: 100vw; max-height: 100vh; }
+  #start { padding: 1em 2em; font-size: 1.25em; background: #2a8; color: white;
+           border: none; border-radius: 6px; cursor: pointer; }
+  #start:disabled { opacity: 0.5; cursor: progress; }
+  #status { margin-top: 1em; min-height: 1.5em; font-family: monospace; }
+  #log { position: fixed; bottom: 0; left: 0; right: 0; max-height: 25vh; overflow: auto;
+         background: rgba(0,0,0,0.6); color: #6f8; font-family: monospace; font-size: 11px;
+         padding: 4px; display: none; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <button id="start">Click to Start</button>
+  <div id="status">Ready.</div>
+  <canvas id="canvas" tabindex="0" width="1280" height="720" style="display:none"></canvas>
+</div>
+<pre id="log"></pre>
+
+<script>
+  const startBtn = document.getElementById('start');
+  const statusEl = document.getElementById('status');
+  const canvas   = document.getElementById('canvas');
+  const logEl    = document.getElementById('log');
+  const debugLog = new URLSearchParams(window.location.search).has('debug');
+  let gameWantsPointerLock = false;
+  let ignoreNextPointerUnlock = false;
+  let suppressUnlockPauseUntil = 0;
+
+  function logLine(s, forceVisible = false) {
+    console.log(s);
+    if (!debugLog && !forceVisible) return;
+
+    logEl.style.display = 'block';
+    logEl.textContent += s + '\n';
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function requestPointerLock() {
+    if (!gameWantsPointerLock) return;
+    if (document.pointerLockElement === canvas) return;
+    if (!canvas.requestPointerLock) return;
+
+    try {
+      const result = canvas.requestPointerLock({ unadjustedMovement: true });
+      if (result && result.catch) {
+        result.catch(() => canvas.requestPointerLock());
+      }
+    } catch (_) {
+      canvas.requestPointerLock();
+    }
+  }
+
+  window.FedoraFrisbeeSetCursorVisible = (visible) => {
+    gameWantsPointerLock = !visible;
+    if (visible) {
+      if (document.pointerLockElement === canvas && document.exitPointerLock) {
+        ignoreNextPointerUnlock = true;
+        document.exitPointerLock();
+      }
+      statusEl.textContent = '';
+      return;
+    }
+
+    suppressUnlockPauseUntil = performance.now() + 750;
+    requestPointerLock();
+  };
+
+  var Module = {
+    canvas: canvas,
+    noInitialRun: true,
+    print: (t) => logLine(t),
+    printErr: (t) => {
+      console.error(t);
+      logLine('[err] ' + t);
+    },
+    setStatus: (t) => { if (t) statusEl.textContent = t; },
+    onRuntimeInitialized: () => {
+      startBtn.disabled = false;
+      startBtn.textContent = 'Start Game';
+      statusEl.textContent = 'Ready. Click to launch.';
+    },
+  };
+
+  startBtn.disabled = true;
+  startBtn.textContent = 'Loading…';
+
+  startBtn.addEventListener('click', () => {
+    startBtn.style.display = 'none';
+    canvas.style.display = 'block';
+    canvas.focus();
+    statusEl.textContent = '';
+    try {
+      Module.callMain([]);
+    } catch (e) {
+      if (e !== 'unwind') logLine('[fatal] ' + e, true);
+    }
+  });
+
+  canvas.addEventListener('click', () => {
+    canvas.focus();
+    if (gameWantsPointerLock) requestPointerLock();
+  });
+
+  document.addEventListener('pointerlockchange', () => {
+    if (document.pointerLockElement === canvas) {
+      canvas.focus();
+      statusEl.textContent = '';
+      ignoreNextPointerUnlock = false;
+    } else if (ignoreNextPointerUnlock) {
+      ignoreNextPointerUnlock = false;
+    } else if (performance.now() < suppressUnlockPauseUntil) {
+      if (gameWantsPointerLock) {
+        statusEl.textContent = 'Click the game to capture the mouse.';
+      }
+    } else if (canvas.style.display !== 'none' && gameWantsPointerLock) {
+      try {
+        Module.ccall('FedoraFrisbeeSendEscape');
+      } catch (e) {
+        logLine('[warn] Could not notify game about pointer unlock: ' + e);
+      }
+      if (gameWantsPointerLock) {
+        statusEl.textContent = 'Click the game to capture the mouse. Press Esc to release.';
+      }
+    }
+  });
+
+  // Stop the browser stealing key events meant for the game.
+  window.addEventListener('keydown', (e) => {
+    if (canvas.style.display !== 'none' &&
+        ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Tab'].includes(e.key)) {
+      e.preventDefault();
+    }
+  });
+</script>
+
+{{{ SCRIPT }}}
+</body>
+</html>

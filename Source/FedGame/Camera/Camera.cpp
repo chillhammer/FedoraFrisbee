@@ -10,7 +10,13 @@
 namespace Fed
 {
 	Camera::Camera()
-		:	m_Speed(7.8f), m_Sensitivity(12.f), m_Yaw(180), m_TargetYaw(180),
+		:	m_Speed(7.8f),
+#ifdef __EMSCRIPTEN__
+			m_Sensitivity(4.0f),
+#else
+			m_Sensitivity(12.f),
+#endif
+			m_Yaw(180), m_TargetYaw(180),
 			Mode(CameraMode::Pivot), m_PivotLength(4.9f), m_PivotOffset(0, 2.3f, 0.4f),
 			m_PivotPosition(0, 0, 0)
 	{
@@ -153,6 +159,16 @@ namespace Fed
 	{
 		if (Game.GetState() == GameStates::MainMenu::Instance()) return false;
 		//LOG("Camera: Mouse Moved: {0}, {1}", e.GetX(), e.GetY());
+#ifdef __EMSCRIPTEN__
+		Vector2 mousePosition(e.GetX(), e.GetY());
+		if (m_PrevMousePosition != Vector2(0, 0) && !Game.IsPaused())
+		{
+			m_DeltaMousePosition = mousePosition - m_PrevMousePosition;
+			if (glm::length2(m_DeltaMousePosition) > DELTA_CAP * DELTA_CAP)
+				m_DeltaMousePosition = Vector2(0.0f, 0.0f);
+		}
+		m_PrevMousePosition = mousePosition;
+#else
 		float midWindowX = Game.GetWindow().GetWidth() * 0.5f;
 		float midWindowY = Game.GetWindow().GetHeight() * 0.5f;
 		if (Input.GetMousePosition() != Vector2(0, 0) && !Game.IsPaused()) // Initial Mouse Delta Jump Ignored
@@ -163,6 +179,7 @@ namespace Fed
 		}
 		if (!Game.IsPaused())
 			Game.GetWindow().SetCursorPosition(midWindowX, midWindowY);
+#endif
 		return false;
 	}
 

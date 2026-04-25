@@ -2,6 +2,9 @@
 
 namespace Fed
 {
+	class Event;
+	class Subject;
+
 	// Interface to recieve events
 	class IObserver
 	{

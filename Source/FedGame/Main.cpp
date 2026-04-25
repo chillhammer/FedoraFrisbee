@@ -18,8 +18,34 @@
 #include <Resources/ResourceManager.h>
 #include <Objects/Agents/FedoraAgent.h>
 #include <Objects/Box/WoodenBox.h>
+#include <EventSystem/Events/KeyEvent.h>
+#include <Input/Keys.h>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 using namespace Fed;
+
+#ifdef __EMSCRIPTEN__
+extern "C" EMSCRIPTEN_KEEPALIVE void FedoraFrisbeeSendEscape()
+{
+	KeyPressedEvent event(KEY_ESCAPE, 0);
+	Input.KeyPressed.Notify(event);
+}
+#endif
+
+namespace {
+	// One iteration of the game loop. Pulled out so emscripten_set_main_loop_arg
+	// can call it from the browser's requestAnimationFrame, while desktop keeps
+	// driving it from a plain while().
+	void RunFrame(void* userData)
+	{
+		Renderer* renderer = static_cast<Renderer*>(userData);
+		renderer->Clear();
+		Game.Run();
+	}
+}
 
 int main()
 {
@@ -30,19 +56,19 @@ int main()
 	// Loads All Resources
 	Resources.Init();
 
-	Renderer renderer;
+	static Renderer renderer;
 	Game.Start();
+
+#ifdef __EMSCRIPTEN__
+	// fps=0 → use requestAnimationFrame; simulate_infinite_loop=1 unwinds main()
+	// so destructors of stack objects don't fire mid-frame.
+	emscripten_set_main_loop_arg(&RunFrame, &renderer, 0, 1);
+#else
 	while (Game.IsRunning())
 	{
-		// App Render
-		renderer.Clear();
-
-
-		Game.Run();
-
+		RunFrame(&renderer);
 	}
-
-
+#endif
 
 	return 0;
 }

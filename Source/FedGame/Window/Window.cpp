@@ -8,7 +8,12 @@
 #include <GLFW/glfw3.h>
 #include <Game/GameManager.h>
 #include <stb_image/stb_image.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 #include "Window.h"
 
@@ -38,10 +43,17 @@ Fed::Window::Window(const WindowProps & props)
 		glfwSetErrorCallback(GLFWErrorCallback);
 
 		s_GLFWInitialized = true;
+#ifdef __EMSCRIPTEN__
+		// Emscripten's GLFW emulation backs the canvas with WebGL2 directly when
+		// USE_WEBGL2=1 is set at link time. The version/profile hints are ignored;
+		// Keep MSAA off on web; it is a noticeable cost on integrated GPUs.
+		glfwWindowHint(GLFW_SAMPLES, 0);
+#else
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_SAMPLES, 4);
+#endif
 	}
 	m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(m_Window);
@@ -65,8 +77,14 @@ Fed::Window::Window(const WindowProps & props)
 	GLCall(glEnable(GL_CULL_FACE));
 	GLCall(glDepthMask(GL_TRUE));
 	GLCall(glDepthFunc(GL_LESS));
+#ifdef __EMSCRIPTEN__
+	// glDepthRange takes floats in GLES3; glDepthRangef is the spec-correct call.
+	GLCall(glDepthRangef(0.f, 1.f));
+	// GL_MULTISAMPLE has no equivalent in GLES3 — antialiasing is a context attribute.
+#else
 	GLCall(glDepthRange(0.f, 1.f));
 	GLCall(glEnable(GL_MULTISAMPLE));
+#endif
 
 	m_Data.EventCallback = EVENT_BIND_FN(Window, OnEvent);
 
@@ -197,10 +215,16 @@ void Fed::Window::SetCursorEnabled(bool enabled) const
 {
 	if (!enabled)
 	{
-		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+#ifdef __EMSCRIPTEN__
+		emscripten_run_script("if (window.FedoraFrisbeeSetCursorVisible) window.FedoraFrisbeeSetCursorVisible(false);");
+#endif
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	else
 	{
+#ifdef __EMSCRIPTEN__
+		emscripten_run_script("if (window.FedoraFrisbeeSetCursorVisible) window.FedoraFrisbeeSetCursorVisible(true);");
+#endif
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 }

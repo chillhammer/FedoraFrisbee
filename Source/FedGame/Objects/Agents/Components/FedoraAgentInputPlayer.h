@@ -7,7 +7,7 @@
 namespace Fed
 {
 	class FedoraAgentInputPlayer
-		: public FedoraAgentInputComponent, public IObserver
+		: public FedoraAgentInputComponent
 	{
 	public:
 		FedoraAgentInputPlayer();

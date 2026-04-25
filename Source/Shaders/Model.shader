@@ -18,7 +18,7 @@ void main()
 	v_FragPos = vec3(u_Model * vec4(position, 1.0));
 	v_TexCoord = texCoord;
 	v_Normal = normals;
-};
+}
 
 #shader fragment
 #version 330 core
@@ -41,8 +41,8 @@ void main()
 	float intensity = dot(norm, lightDir);
 
 	// Cell-Shading
-	intensity = (intensity + 0.3f > 0.5f ? 0.8f : 0.2f);
-	float baseline = 0.6f;
+	intensity = (intensity + 0.3 > 0.5 ? 0.8 : 0.2);
+	float baseline = 0.6;
 
 	if (u_UseTexture)
 		color = texture(u_Texture, v_TexCoord);
@@ -50,5 +50,5 @@ void main()
 		color = vec4(u_Color, 1.0);
 
 	color *= (baseline + intensity);
-	color.w = 1.0f;
-};
+	color.w = 1.0;
+}

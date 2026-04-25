@@ -75,10 +75,15 @@ namespace Fed {
 			GLuint texture;
 			glGenTextures(1, &texture);
 			glBindTexture(GL_TEXTURE_2D, texture);
+#ifdef __EMSCRIPTEN__
+			GLint glyphInternalFormat = GL_R8;
+#else
+			GLint glyphInternalFormat = GL_RED;
+#endif
 			glTexImage2D(
 				GL_TEXTURE_2D,
 				0,
-				GL_RED,
+				glyphInternalFormat,
 				face->glyph->bitmap.width,
 				face->glyph->bitmap.rows,
 				0,
@@ -96,7 +101,7 @@ namespace Fed {
 				texture,
 				Vector2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 				Vector2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-				face->glyph->advance.x
+				static_cast<GLuint>(face->glyph->advance.x)
 			};
 			Characters.insert(std::pair<GLchar, Character>(c, character));
 		}
@@ -122,7 +127,7 @@ namespace Fed {
 		return size;
 	}
 
-	void Font::RenderText(std::string text, Vector2 pos, float scale, Vector3& color)
+	void Font::RenderText(std::string text, Vector2 pos, float scale, const Vector3& color)
 	{
 		//Matrix4x4 textProjection = Matrix4x4();
 

@@ -9,9 +9,9 @@ uniform mat4 u_ViewProjection;
 void main()
 {
 	v_TexCoord = position;
-	vec4 pos = u_ViewProjection * vec4(position * 100.0f, 1.0);
+	vec4 pos = u_ViewProjection * vec4(position * 100.0, 1.0);
 	gl_Position = pos.xyww;
-};
+}
 
 #shader fragment
 #version 330 core

@@ -31,6 +31,22 @@ namespace Fed
 			}
 			else
 			{
+#ifdef __EMSCRIPTEN__
+				// WebGL2 wants GLSL ES 3.00. The on-disk shaders are written for
+				// desktop OpenGL 3.3 (#version 330 core). Rewrite the version line
+				// and emit default precision qualifiers; the rest of GLSL 330's
+				// modern syntax (layout(location=...), out, texture()) carries over.
+				if (line.find("#version") != std::string::npos &&
+				    line.find("330") != std::string::npos)
+				{
+					ss[(int)type] << "#version 300 es\n";
+					ss[(int)type] << "precision highp float;\n";
+					ss[(int)type] << "precision highp int;\n";
+					ss[(int)type] << "precision highp sampler2D;\n";
+					ss[(int)type] << "precision highp samplerCube;\n";
+					continue;
+				}
+#endif
 				//Adding to appropriate string stream
 				ss[(int)type] << line << '\n';
 			}
@@ -69,6 +85,17 @@ namespace Fed
 		unsigned int program = glCreateProgram();
 		unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
 		unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+		if (vs == 0 || fs == 0)
+		{
+			LOG_ERROR("Failed to create shader program: {0}", m_FilePath);
+			if (vs != 0)
+				GLCall(glDeleteShader(vs));
+			if (fs != 0)
+				GLCall(glDeleteShader(fs));
+			GLCall(glDeleteProgram(program));
+			return 0;
+		}
+
 		GLCall(glAttachShader(program, vs));
 		GLCall(glAttachShader(program, fs));
 		GLCall(glLinkProgram(program));

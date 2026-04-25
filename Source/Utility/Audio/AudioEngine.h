@@ -1,5 +1,7 @@
 #pragma once
+#ifndef __EMSCRIPTEN__
 #include <irrKlang.h>
+#endif
 #include <Camera/Camera.h>
 
 namespace Fed
@@ -8,7 +10,7 @@ namespace Fed
 	class AudioEngine
 	{
 	public:
-		static AudioEngine& AudioEngine::Instance();
+		static AudioEngine& Instance();
 		AudioEngine();
 		~AudioEngine();
 		void SetCameraReference(Camera* camera) { m_Camera = camera; }
@@ -21,8 +23,10 @@ namespace Fed
 		bool GetAudioEnabled() const;
 	private:
 		const std::string m_Directory = "../Assets/Sounds/";
+#ifndef __EMSCRIPTEN__
 		irrklang::ISoundEngine* m_Engine;
 		irrklang::ISound* m_Music;
+#endif
 		Camera* m_Camera;
 		bool m_Enabled;
 	};

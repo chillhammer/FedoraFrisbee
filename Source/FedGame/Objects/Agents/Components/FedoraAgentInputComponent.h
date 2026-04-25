@@ -8,7 +8,7 @@ namespace Fed
 		Used to switch between player input and AI input.
 		Shares common behavior
 	**/
-	class FedoraAgentInputComponent : IObserver
+	class FedoraAgentInputComponent : public IObserver
 	{
 	public:
 		FedoraAgentInputComponent() {}

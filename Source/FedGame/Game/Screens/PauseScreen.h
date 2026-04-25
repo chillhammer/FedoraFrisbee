@@ -20,6 +20,7 @@ namespace Fed
 		virtual void OnEvent(const Subject* subject, class Event& event) override;
 
 	private:
+		void SetEnabled(bool enabled);
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 
@@ -31,5 +32,6 @@ namespace Fed
 		Button m_Music;
 		Button m_Exit;
 		bool m_Enabled;
+		double m_LastToggleTime;
 	};
 }

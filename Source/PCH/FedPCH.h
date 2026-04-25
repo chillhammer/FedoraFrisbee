@@ -29,3 +29,16 @@
 #ifdef FED_PLATFORM_WINDOWS
 #include <Windows.h>
 #endif
+
+// __debugbreak is an MSVC intrinsic; provide a portable equivalent for
+// clang/emcc so the existing call sites (Macros.h ASSERT, VertexBuffer.cpp)
+// compile on the wasm build. __builtin_trap aborts the program with a SIGTRAP-
+// equivalent on wasm, which surfaces in the browser DevTools console.
+#if !defined(_MSC_VER)
+#  if defined(__clang__) || defined(__GNUC__)
+#    define __debugbreak() __builtin_trap()
+#  else
+#    include <cstdlib>
+#    define __debugbreak() std::abort()
+#  endif
+#endif

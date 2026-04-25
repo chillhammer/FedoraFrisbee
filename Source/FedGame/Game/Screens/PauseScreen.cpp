@@ -5,7 +5,13 @@
 #include <Game/States/GameStates.h>
 #include <Audio/AudioEngine.h>
 #include <Input/Keys.h>
+#include <GLFW/glfw3.h>
 #include "PauseScreen.h"
+
+namespace
+{
+	constexpr double PAUSE_TOGGLE_DEBOUNCE_SECONDS = 0.25;
+}
 
 namespace Fed
 {
@@ -13,7 +19,8 @@ namespace Fed
 		m_FieldController(nullptr),
 		m_Font(Resources.GetFont("InGame")),
 		m_Backdrop(Vector4(0.0f, 0.0f, 0.0f, 0.5f)), m_Resume(), m_Takeover(), m_Exit(),
-		m_Enabled(false)
+		m_Enabled(false),
+		m_LastToggleTime(-1.0)
 	{
 		float ww = Game.GetWindow().GetWidth();
 		float wh = Game.GetWindow().GetHeight();
@@ -32,12 +39,16 @@ namespace Fed
 		float byy = by;
 		// Resume
 		m_Resume.SetProperties(bx, byy, bWidth, bHeight, "Resume Game", [&] {
-			ToggleScreen();
+			if (!m_Enabled)
+				return;
+			SetEnabled(false);
 		});
 		byy += bHeight + bPad;
 		// Takeover
 		m_Takeover.SetProperties(bx, byy, bWidth, bHeight, "Let AI Takeover", [&] {
-			ToggleScreen();
+			if (!m_Enabled)
+				return;
+			SetEnabled(false);
 			const FedoraAgent* player = m_FieldController->FindPlayerAgent();
 			AgentInputType input = (player == nullptr ? AgentInputType::PLAYER : AgentInputType::AI);
 			
@@ -52,6 +63,8 @@ namespace Fed
 
 		// Music
 		m_Music.SetProperties(bx, byy, bWidth, bHeight, "Sound: On", [&] {
+			if (!m_Enabled)
+				return;
 			Audio.SetAudioEnabled(!Audio.GetAudioEnabled());
 			// Change label
 			std::string label = (Audio.GetAudioEnabled() ? "Sound: On" : "Sound: Off");
@@ -61,17 +74,27 @@ namespace Fed
 		byy += bHeight + bPad;
 		// Exit
 		m_Exit.SetProperties(bx, byy, bWidth, bHeight, "Exit to Main Menu", [&] {
-			ToggleScreen();
+			if (!m_Enabled)
+				return;
+			SetEnabled(false);
 			Game.ChangeState(GameStates::MainMenu::Instance());
 		});
 		// Adding Event Listener
 		Input.KeyPressed.AddObserver(this);
 	}
-	void PauseScreen::ToggleScreen()
+	void PauseScreen::SetEnabled(bool enabled)
 	{
-		m_Enabled = !m_Enabled;
+		if (m_Enabled == enabled && Game.IsPaused() == enabled)
+			return;
+
+		m_Enabled = enabled;
 		Game.SetPause(m_Enabled);
 		Game.GetWindow().SetCursorEnabled(m_Enabled);
+		m_LastToggleTime = glfwGetTime();
+	}
+	void PauseScreen::ToggleScreen()
+	{
+		SetEnabled(!m_Enabled);
 	}
 	bool PauseScreen::IsEnabled()
 	{
@@ -104,7 +127,18 @@ namespace Fed
 	{
 		if (e.GetKeyCode() == KEY_ESCAPE)
 		{
+			if (e.GetRepeatCount() > 0)
+				return true;
+
+			if (Game.GetState() != GameStates::TeamMatch::Instance())
+				return false;
+
+			double now = glfwGetTime();
+			if (m_LastToggleTime >= 0.0 && now - m_LastToggleTime < PAUSE_TOGGLE_DEBOUNCE_SECONDS)
+				return true;
+
 			ToggleScreen();
+			return true;
 		}
 		return false;
 	}

@@ -28,7 +28,7 @@ namespace Fed
 	// Macros for creating/handling events       //
 	///////////////////////////////////////////////
 	#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() \
-										{ return EventType::##type; }\
+										{ return EventType::type; }\
 									virtual EventType GetEventType() const override \
 										{ return GetStaticType(); }\
 									virtual const char* GetName() const override \
@@ -42,12 +42,12 @@ namespace Fed
 		class type ## Event : public Event \
 		{ \
 		public: \
-			EVENT_CLASS_TYPE(WindowClose) \
-			EVENT_CLASS_CATEGORY(EventCategory##Application) \
+			EVENT_CLASS_TYPE(type) \
+			EVENT_CLASS_CATEGORY(EventCategory##category) \
 		}
 	// Allows binding functions with 1 argument. Usually used with Dispatch
 	// Example Usage: Dispatch<Event1>(event, EVENT_BIND_FN(Window, OnEvent1));
-	#define EVENT_BIND_FN(Class, function) std::bind(&Fed::##Class##::function, this, std::placeholders::_1)
+	#define EVENT_BIND_FN(Class, function) std::bind(&Fed::Class::function, this, std::placeholders::_1)
 	////////////////////////////////////////////////
 	// Namespace for functions dealing with Event //
 	////////////////////////////////////////////////

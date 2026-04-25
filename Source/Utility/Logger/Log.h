@@ -3,8 +3,6 @@
 
 namespace Fed {
 
-	template class std::shared_ptr<spdlog::logger>;
-
 	class Log
 	{
 	public:
