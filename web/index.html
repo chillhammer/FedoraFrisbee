@@ -332,32 +332,29 @@
     },
     setStatus: (t) => { if (t) statusEl.textContent = t; },
     onRuntimeInitialized: () => {
-      startBtn.disabled = false;
-      startBtn.textContent = 'Start Game';
-      statusEl.textContent = 'Ready. Click to launch.';
       initProfilerPolling();
+      startBtn.style.display = 'none';
+      canvas.style.display = 'block';
+      canvas.focus();
+      // Browser autoplay policy blocks AudioContext until a user gesture, so the
+      // game starts silent and the canvas-click handler below unlocks audio on
+      // first interaction. Pointer lock is gated the same way.
+      statusEl.textContent = 'Click the game to enable sound and capture the mouse.';
+      try {
+        Module.callMain([]);
+      } catch (e) {
+        if (e !== 'unwind') logLine('[fatal] ' + e, true);
+      }
     },
   };
 
   startBtn.disabled = true;
   startBtn.textContent = 'Loading…';
 
-  startBtn.addEventListener('click', () => {
-    window.FedoraFrisbeeAudio.unlock();
-    startBtn.style.display = 'none';
-    canvas.style.display = 'block';
-    canvas.focus();
-    statusEl.textContent = '';
-    try {
-      Module.callMain([]);
-    } catch (e) {
-      if (e !== 'unwind') logLine('[fatal] ' + e, true);
-    }
-  });
-
   canvas.addEventListener('click', () => {
     window.FedoraFrisbeeAudio.unlock();
     canvas.focus();
+    statusEl.textContent = '';
     if (gameWantsPointerLock) requestPointerLock();
   });
 
